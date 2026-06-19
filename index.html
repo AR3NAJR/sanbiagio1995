@@ -331,24 +331,55 @@ nav{
 #squadra .sec-title{color:var(--white);margin-bottom:1.5rem;}
 
 /* Tabs */
-.squad-tabs{
-  display:flex;width:fit-content;
-  border-bottom:2px solid rgba(255,255,255,.07);
-  margin-bottom:2.5rem;position:relative;z-index:1;
+.squad-tabs {
+  display: flex;
+  width: fit-content;
+  border-bottom: 2px solid rgba(255, 255, 255, .07);
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 1;
 }
-.tab-btn{
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;
-  font-size:clamp(.78rem,1.7vw,1rem);letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);background:none;border:none;cursor:pointer;
-  padding:.8rem 2rem .9rem;position:relative;transition:color .25s;
+
+.tab-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(.78rem, 1.7vw, 1rem);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: .8rem 2rem .9rem;
+  position: relative;
+  transition: color .25s;
 }
-.tab-btn::after{
-  content:'';position:absolute;bottom:-2px;left:0;
-  width:0;height:2px;background:var(--red);transition:width .3s ease;
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--red);
+  transition: width .3s ease;
 }
-.tab-btn.active{color:var(--white);}
-.tab-btn.active::after{width:100%;}
-.tab-btn:hover:not(.active){color:rgba(255,255,255,.6);}
+
+/* Stato attivo forzato a bianco */
+.tab-btn.active {
+  color: #ffffff !important;
+}
+
+.tab-btn.active::after {
+  width: 100%;
+}
+
+/* Hover pulito */
+.tab-btn:hover:not(.active) {
+  color: #ffffff !important;
+  opacity: 0.7;
+}
 
 /* Tab panels */
 .tab-panel{display:none;position:relative;z-index:1;}
