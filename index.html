@@ -1,6 +1,3 @@
-bash
-
-cat > /mnt/user-data/outputs/san-biagio-monza.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -70,9 +67,6 @@ nav{
 }
 .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0;}
 
-/* ── Logo placeholder SVG ── */
-.logo-ph{width:48px;height:48px;flex-shrink:0;}
-
 .nav-brand{
   font-family:'Barlow Condensed',sans-serif;font-weight:800;
   font-size:1.1rem;letter-spacing:.05em;text-transform:uppercase;
@@ -97,7 +91,7 @@ nav{
 /* Hamburger */
 .hamburger{
   display:none;flex-direction:column;gap:5px;cursor:pointer;
-  padding:6px;background:none;border:none;z-index:600;
+  padding:12px;background:none;border:none;z-index:600;
 }
 .hamburger span{
   display:block;width:24px;height:2px;background:var(--white);
@@ -119,6 +113,7 @@ nav{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;
   font-size:clamp(2rem,8vw,3rem);letter-spacing:.08em;text-transform:uppercase;
   color:var(--white);text-decoration:none;transition:color .2s;
+  padding:0.5rem 1rem;
 }
 .mobile-nav a:hover{color:var(--red);}
 .mn-divider{width:40px;height:2px;background:rgba(200,16,46,.35);}
@@ -133,7 +128,6 @@ nav{
   padding-top:var(--nav-h);
 }
 
-/* Diagonal jersey-cut motif */
 .hero-panel{position:absolute;inset:0;pointer-events:none;}
 .hero-panel::before{
   content:'';position:absolute;top:0;right:0;
@@ -148,7 +142,6 @@ nav{
   clip-path:polygon(14% 0,19.5% 0,5.5% 100%,0% 100%);
 }
 
-/* Ghost watermark */
 .hero-wm{
   position:absolute;bottom:-.06em;left:-.04em;
   font-family:'Barlow Condensed',sans-serif;font-weight:900;
@@ -198,7 +191,6 @@ nav{
   color:var(--muted);max-width:420px;line-height:1.65;margin-bottom:2rem;
 }
 
-/* Stats with counter */
 .hero-stats{display:flex;flex-wrap:wrap;gap:2rem 3.5rem;margin-bottom:2rem;}
 .stat{display:flex;flex-direction:column;gap:2px;}
 .stat-num{
@@ -312,7 +304,7 @@ nav{
 .card.mini .card-excerpt{font-size:.81rem;margin-bottom:.75rem;}
 
 /* ══════════════════════════════════════════════════════
-   SQUADRA
+   SQUADRA & STATISTICHE
 ══════════════════════════════════════════════════════ */
 #squadra{
   background:var(--dark2);
@@ -366,16 +358,12 @@ nav{
   transition: width .3s ease;
 }
 
-/* Stato attivo forzato a bianco */
 .tab-btn.active {
   color: #ffffff !important;
 }
-
 .tab-btn.active::after {
   width: 100%;
 }
-
-/* Hover pulito */
 .tab-btn:hover:not(.active) {
   color: #ffffff !important;
   opacity: 0.7;
@@ -445,6 +433,57 @@ nav{
 .pc-role.staff{color:#B0A0FF;}
 
 /* ══════════════════════════════════════════════════════
+   STYLING TABELLA STATISTICHE INTERATTIVA
+══════════════════════════════════════════════════════ */
+.stats-ctrl{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;margin-bottom:1.8rem;flex-wrap:wrap;}
+.stats-select{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:.06em;
+  color:var(--white);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:2px;padding:.5rem 2.5rem .5rem 1rem;cursor:pointer;outline:none;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3Csvg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;background-size:18px;
+  transition:border-color .25s,background .25s;
+}
+.stats-select:hover{border-color:rgba(200,16,46,.5);background-color:rgba(255,255,255,.09);}
+.stats-select option{background:var(--dark2);color:var(--white);}
+
+.table-responsive{width:100%;overflow-x:auto;border-radius:2px;border:1px solid rgba(255,255,255,.06);}
+.stats-tbl{width:100%;border-collapse:collapse;text-align:left;font-size:.88rem;background:rgba(255,255,255,.015);}
+.stats-tbl th{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.03);
+  padding:1.1rem 1.25rem;border-bottom:2px solid rgba(255,255,255,.06);
+  cursor:pointer;user-select:none;transition:color .2s,background .2s;position:relative;
+}
+.stats-tbl th:hover{color:var(--white);background:rgba(255,255,255,.06);}
+.stats-tbl th::after{content:'↕';position:absolute;right:10px;opacity:.25;font-size:.7rem;}
+.stats-tbl th.s-asc::after{content:'↑';opacity:1;color:var(--red);}
+.stats-tbl th.s-desc::after{content:'↓';opacity:1;color:var(--red);}
+
+.stats-tbl td{padding:1rem 1.25rem;color:rgba(255,255,255,.76);border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+.stats-tbl tr:hover td{background:rgba(255,255,255,.025);color:var(--white);}
+.stats-tbl tr.is-top td{background:rgba(200,16,46,.035);}
+
+.p-cell{display:flex;align-items:center;gap:14px;}
+.p-avatar{
+  width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:.74rem;color:var(--muted);letter-spacing:.05em;border:1px solid rgba(255,255,255,.08);
+}
+.tr:hover .p-avatar{border-color:rgba(200,16,46,.3);color:var(--white);}
+.p-cell-name{font-weight:600;font-size:.92rem;letter-spacing:.02em;}
+.p-num-badge{
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:.66rem;
+  color:rgba(255,255,255,.32);background:rgba(255,255,255,.05);padding:1px 5px;border-radius:1px;
+}
+
+.sv{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;display:inline-block;}
+.sv.gol{color:#FF6B8A;text-shadow:0 0 12px rgba(255,107,138,.2);}
+.sv.zero{color:rgba(255,255,255,.2);font-weight:400;}
+.sv.amm-r{color:#FF4D4D;background:rgba(255,77,77,.12);padding:2px 6px;border-radius:2px;}
+
+/* ══════════════════════════════════════════════════════
    KIT & DESIGN
 ══════════════════════════════════════════════════════ */
 #kit{
@@ -462,7 +501,6 @@ nav{
 #kit .sec-label::before{background:var(--red);}
 #kit .sec-title{color:var(--white);margin-bottom:.8rem;}
 
-/* Credit block */
 .kit-credit-bar{
   display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 0;
   margin-bottom:3.5rem;position:relative;z-index:1;
@@ -473,30 +511,14 @@ nav{
   border-radius:2px;
   width:fit-content;max-width:100%;
 }
-.kc-item{
-  display:flex;align-items:baseline;gap:8px;
-  padding:0 1.6rem 0 0;
-}
-.kc-item:not(:last-child){
-  border-right:1px solid rgba(255,255,255,.1);
-  margin-right:1.6rem;
-}
-.kc-lbl{
-  font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
-}
-.kc-val{
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;
-  font-size:1rem;letter-spacing:.05em;
-}
+.kc-item{display:flex;align-items:baseline;gap:8px;padding:0 1.6rem 0 0;}
+.kc-item:not(:last-child){border-right:1px solid rgba(255,255,255,.1);margin-right:1.6rem;}
+.kc-lbl{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.kc-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1rem;letter-spacing:.05em;}
 .kc-val.designer{color:var(--red);}
 .kc-val.maker{color:var(--white);}
 
-/* Kit grid */
-.kit-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:2rem;max-width:960px;position:relative;z-index:1;
-}
-
+.kit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:960px;position:relative;z-index:1;}
 .kit-card{display:flex;flex-direction:column;align-items:center;gap:1.4rem;}
 
 .kit-wrap{
@@ -513,8 +535,6 @@ nav{
   box-shadow:0 22px 65px rgba(0,0,0,.45);
   border-color:rgba(255,255,255,.16);
 }
-
-/* Shimmer sweep on hover */
 .kit-wrap::after{
   content:'';position:absolute;inset:0;
   background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.09) 50%,transparent 62%);
@@ -523,7 +543,6 @@ nav{
 }
 .kit-wrap:hover::after{background-position:200% 0;}
 
-/* placeholder badge */
 .kit-ph{
   position:absolute;top:10px;right:10px;
   font-family:'Barlow Condensed',sans-serif;font-size:.55rem;
@@ -556,7 +575,6 @@ nav{
 #sponsor .sec-title{color:var(--dark);margin-bottom:.8rem;}
 .sponsor-intro{font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:2.8rem;max-width:480px;}
 
-/* Main sponsor */
 .sp-row-lbl{
   font-family:'Barlow Condensed',sans-serif;font-weight:700;
   font-size:.63rem;letter-spacing:.22em;text-transform:uppercase;
@@ -578,16 +596,9 @@ nav{
   font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;
   color:rgba(200,16,46,.42);
 }
-.sp-slot-hint{
-  display:block;font-size:.63rem;letter-spacing:.1em;
-  color:#A0A0C0;margin-top:4px;
-}
+.sp-slot-hint{display:block;font-size:.63rem;letter-spacing:.1em;color:#A0A0C0;margin-top:4px;}
 
-/* Secondary sponsors */
-.sp-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-  gap:1rem;max-width:1000px;
-}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;max-width:1000px;}
 .sp-slot{
   display:flex;align-items:center;justify-content:center;
   height:72px;background:var(--white);
@@ -625,15 +636,8 @@ nav{
   border-radius:2px;display:flex;align-items:center;justify-content:center;
   font-size:1.1rem;margin-bottom:.9rem;
 }
-.ci-lbl{
-  font-family:'Barlow Condensed',sans-serif;font-weight:700;
-  font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;
-  color:rgba(255,255,255,.32);margin-bottom:.35rem;
-}
-.ci-val{
-  font-weight:500;font-size:.95rem;color:var(--white);
-  text-decoration:none;transition:color .2s;margin-bottom:.22rem;
-}
+.ci-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-bottom:.35rem;}
+.ci-val{font-weight:500;font-size:.95rem;color:var(--white);text-decoration:none;transition:color .2s;margin-bottom:.22rem;}
 a.ci-val:hover{color:#FF8098;}
 .ci-sub{font-size:.76rem;color:rgba(255,255,255,.3);}
 
@@ -645,1589 +649,578 @@ footer{
   border-top:1px solid rgba(255,255,255,.05);
   padding:2.2rem clamp(1.5rem,5vw,4.5rem);
 }
-.footer-top{
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:1.25rem;margin-bottom:1.8rem;
-}
+.footer-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.25rem;margin-bottom:1.8rem;}
 .footer-brand{
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;
-  font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;
-  color:rgba(255,255,255,.38);
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;
+  color:rgba(255,255,255,.38);display: flex;align-items: center;gap: 10px;
 }
 .footer-brand span{color:var(--red);}
+.footer-logo-img {width: 30px;height: 30px;object-fit: contain;filter: brightness(.75);flex-shrink: 0;}
 .footer-links{list-style:none;display:flex;gap:1.5rem;flex-wrap:wrap;}
-.footer-links a{
-  font-size:.74rem;letter-spacing:.07em;
-  color:rgba(255,255,255,.2);text-decoration:none;transition:color .2s;
-}
+.footer-links a{font-size:.74rem;letter-spacing:.07em;color:rgba(255,255,255,.2);text-decoration:none;transition:color .2s;padding: 0.25rem 0;}
 .footer-links a:hover{color:rgba(255,255,255,.55);}
-.footer-bottom{
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:.75rem;padding-top:1.5rem;
-  border-top:1px solid rgba(255,255,255,.05);
-}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.05);}
 .footer-copy{font-size:.7rem;color:rgba(255,255,255,.18);letter-spacing:.04em;}
 
-/* ✦ Designer credit */
 .footer-designer{
   display:inline-flex;align-items:center;gap:8px;
-  font-family:'Barlow Condensed',sans-serif;font-weight:700;
-  font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(255,255,255,.22);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.22);
 }
-.footer-designer .fd-dot{
-  width:6px;height:6px;background:var(--red);
-  border-radius:50%;flex-shrink:0;
-}
+.footer-designer .fd-dot{width:6px;height:6px;background:var(--red);border-radius:50%;flex-shrink:0;}
 .footer-designer strong{color:rgba(255,255,255,.5);font-weight:800;}
 
 /* ══════════════════════════════════════════════════════
-   RESPONSIVE
+   MEDIA QUERIES (RESPONSIVE) - BY CLAUDE
 ══════════════════════════════════════════════════════ */
 @media(max-width:1050px){
   .news-grid{grid-template-columns:1fr;}
   .news-sb{display:grid;grid-template-columns:repeat(2,1fr);}
   .kit-grid{gap:1.3rem;}
 }
-@media(max-width:800px){
+
+@media(max-width:900px){
+  .cal-grid {grid-template-columns: 1fr !important;gap: 2.5rem !important;}
+  .cal-main iframe, .cal-side iframe {height: 480px !important;}
+}
+
+@media(max-width:800px) {
   .hamburger{display:flex;}
   .nav-links{display:none;}
-  .kit-grid{grid-template-columns:1fr;max-width:300px;margin:0 auto;}
-  .squad-tabs{width:100%;border-bottom:none;}
-  .tab-btn{
-    border-bottom:1px solid rgba(255,255,255,.07);
-    text-align:left;padding:.85rem 0;width:100%;
-  }
-  .tab-btn::after{display:none;}
-  .tab-btn.active{color:var(--red);}
-}
-@media(max-width:600px){
-  .news-sb{grid-template-columns:1fr;}
-  .squad-grid{grid-template-columns:repeat(2,1fr);}
-  .contacts-grid{grid-template-columns:1fr;}
-  .footer-top,.footer-bottom{flex-direction:column;}
-  .footer-bottom{text-align:center;}
+  
+  .sec-pad{padding:4.5rem clamp(1.25rem,5vw,2rem);}
+  
+  .kit-grid{grid-template-columns:1fr !important;max-width:320px !important;margin:0 auto !important;}
+  
+  .squad-tabs{width:100% !important;border-bottom:none !important;flex-direction: row !important;}
+  .tab-btn{border-bottom:1px solid rgba(255,255,255,.07) !important;text-align:center !important;padding:.9rem 1rem !important;width:100% !important;}
+  .tab-btn::after{display:none !important;}
+  .tab-btn.active{color:var(--red) !important;border-bottom: 2px solid var(--red) !important;}
+
+  .news-sb { grid-template-columns: 1fr !important; }
+  .contacts-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+  
+  .footer-top, .footer-bottom { flex-direction: column !important; text-align: center !important; gap: 1.5rem !important; }
+  
   .hero-panel::before{width:100%;clip-path:polygon(0 58%,100% 48%,100% 100%,0 100%);}
   .hero-panel::after{width:100%;clip-path:polygon(0 58%,5.5% 58%,5.5% 100%,0 100%);}
+  
   .kc-item:not(:last-child){border-right:none;margin-right:0;padding-right:0;}
-  .kit-credit-bar{flex-direction:column;border-left-width:2px;}
-}
-@media(max-width:400px){
-  .squad-grid{grid-template-columns:1fr;}
-  .hero-stats{gap:1.5rem 2.5rem;}
+  .kit-credit-bar{flex-direction:column;border-left-width:2px; width: 100%;}
+  
+  .stats-ctrl{flex-direction:column;align-items:flex-start;gap:1rem;}
 }
 
-/* ════════════════════════════════════════════════════
-   UPGRADE 1 · LOGO UFFICIALE
-════════════════════════════════════════════════════ */
-.club-logo {
-  width: 48px; height: 48px;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,.45));
-  flex-shrink: 0;
-}
-.footer-brand { display: flex; align-items: center; gap: 10px; }
-.footer-logo-img {
-  width: 30px; height: 30px;
-  object-fit: contain;
-  filter: brightness(.75);
-  flex-shrink: 0;
+@media(max-width:480px) {
+  .sec-pad { padding: 3.25rem clamp(1rem, 4vw, 1.5rem); }
+  .squad-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.75rem !important; }
 }
 
-/* ════════════════════════════════════════════════════
-   UPGRADE 2 · CAROUSEL MOCKUP
-════════════════════════════════════════════════════ */
-.mockup-section {
-  margin-top: 5rem;
-  position: relative; z-index: 1;
-}
-.mockup-eyebrow {
-  display: flex; align-items: center; gap: 10px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: .7rem;
-  letter-spacing: .25em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 1.4rem;
-}
-.mockup-eyebrow::before {
-  content: ''; width: 22px; height: 1px;
-  background: rgba(255,255,255,.18);
+@media(max-width:380px) {
+  .squad-grid { grid-template-columns: 1fr !important; }
+  .hero-stats { gap: 1.5rem 2rem; }
+  .sp-grid { grid-template-columns: 1fr !important; }
 }
 
-/* Viewport: overflow hidden wrapper */
-.c-viewport {
-  position: relative;
-  overflow: hidden;
-  border-radius: 2px;
+@media(max-width:768px) {
+  .hero-wm { font-size: 140px !important; opacity: 0.6; }
+  #squadra::before { font-size: 16vw !important; }
+  #kit::before { font-size: 20vw !important; }
 }
 
-/* Track scrollable con scroll-snap */
-.c-track {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-.c-track::-webkit-scrollbar { display: none; }
+/* ══════════════════════════════════════════════════════
+   UPGRADE STYLES (LOGO & CAROUSEL)
+══════════════════════════════════════════════════════ */
+.club-logo {width: 48px;height: 48px;object-fit: contain;filter: drop-shadow(0 2px 8px rgba(0,0,0,.45));flex-shrink: 0;}
 
-/* Singola slide */
-.c-slide {
-  flex: 0 0 100%;
-  scroll-snap-align: start;
-  padding: 0 1px; /* anti aliasing */
+.kit-carousel-container {position: relative;max-width: 960px;margin: 0 auto;}
+.kit-carousel-dots {display: flex;justify-content: center;gap: 12px;margin-top: 2rem;}
+.kit-dot {
+  width: 8px;height: 8px;background: rgba(255,255,255,.2);border-radius: 50%;cursor: pointer;transition: background .3s, transform .3s;
+  padding: 6px;background-clip: content-box;
 }
+.kit-dot.active {background: var(--red);transform: scale(1.2);background-clip: content-box;}
 
-/* Placeholder slot (da sostituire con <img>) */
-.c-ph {
-  width: 100%;
-  aspect-ratio: 16/7;
-  background: rgba(255,255,255,.036);
-  border: 1px dashed rgba(255,255,255,.11);
-  border-radius: 2px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: .8rem;
-  transition: border-color .3s, background .3s;
-  cursor: default;
-  position: relative;
-  overflow: hidden;
+.cal-tabs {display: flex;width: fit-content;border-bottom: 2px solid rgba(255,255,255,.07);margin-bottom: 2.5rem;}
+.cal-tab-btn {
+  font-family: 'Barlow Condensed', sans-serif;font-weight: 800;font-size: clamp(.78rem, 1.7vw, 1rem);letter-spacing: .1em;text-transform: uppercase;
+  color: var(--muted);background: none;border: none;cursor: pointer;padding: .8rem 2rem .9rem;position: relative;transition: color .25s;
 }
-.c-ph:hover { border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.05); }
+.cal-tab-btn::after {content: '';position: absolute;bottom: -2px;left: 0;width: 0;height: 2px;background: var(--red);transition: width .3s ease;}
+.cal-tab-btn.active { color: var(--white); }
+.cal-tab-btn.active::after { width: 100%; }
 
-/* Subtle scanline overlay effect */
-.c-ph::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 3px,
-    rgba(255,255,255,.012) 3px,
-    rgba(255,255,255,.012) 4px
-  );
-  pointer-events: none;
-}
-.c-ph img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  border-radius: 2px;
-}
-.c-ph-icon { font-size: 2rem; opacity: .25; position: relative; z-index: 1; }
-.c-ph-txt {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: .8rem;
-  letter-spacing: .18em; text-transform: uppercase;
-  color: rgba(255,255,255,.26); position: relative; z-index: 1;
-}
-.c-ph-hint {
-  font-size: .68rem; color: rgba(255,255,255,.14);
-  letter-spacing: .05em; position: relative; z-index: 1;
-}
-
-/* Arrows */
-.c-arrows {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 100%; display: flex; justify-content: space-between;
-  pointer-events: none; padding: 0 .6rem; z-index: 10;
-}
-.c-btn {
-  width: 44px; height: 44px;
-  background: rgba(9,9,15,.78);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 2px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: all;
-  color: var(--white); font-size: 1.3rem;
-  backdrop-filter: blur(10px);
-  transition: background .2s, border-color .2s, opacity .2s;
-  line-height: 1;
-}
-.c-btn:hover { background: var(--red); border-color: var(--red); }
-.c-btn:disabled { opacity: .2; pointer-events: none; }
-
-/* Dots */
-.c-dots {
-  display: flex; justify-content: center; gap: .55rem;
-  margin-top: 1.2rem;
-}
-.c-dot {
-  width: 6px; height: 6px;
-  background: rgba(255,255,255,.2);
-  border-radius: 50%; border: none; cursor: pointer;
-  transition: background .25s, transform .25s, width .25s;
-  padding: 0;
-}
-.c-dot.active {
-  background: var(--red);
-  transform: scale(1.2);
-  width: 18px;
-  border-radius: 3px;
-}
-
-/* ════════════════════════════════════════════════════
-   UPGRADE 3 · PLAYER HOVER (EA Sports style)
-════════════════════════════════════════════════════ */
-
-/* Media background (video o GIF) */
-.pc-bg-media {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity .65s ease;
-  pointer-events: none;
-  z-index: 0;
-  filter: blur(1.5px) brightness(.6) saturate(1.3);
-}
-
-/* Gradient overlay che protegge la leggibilità */
-.pc-ea-overlay {
-  position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(
-    165deg,
-    rgba(0,20,70,.6) 0%,
-    rgba(9,9,15,.55) 50%,
-    rgba(90,4,18,.35) 100%
-  );
-  opacity: 0;
-  transition: opacity .5s ease;
-}
-
-/* Glint diagonale (lampo EA Sports) */
-.pc-ea-overlay::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(
-    125deg,
-    transparent 35%,
-    rgba(255,255,255,.055) 50%,
-    transparent 65%
-  );
-  background-size: 250% 250%;
-  opacity: 0;
-  transition: opacity .3s;
-}
-
-/* Testo sempre sopra gli overlay */
-.pc-num, .pc-name, .pc-role { position: relative; z-index: 3; }
-.pc::before                  { z-index: 4 !important; }
-
-/* Attivazione hover + touch (classe .t-hover aggiunta da JS) */
-.pc:hover .pc-bg-media,
-.pc.t-hover .pc-bg-media   { opacity: 1; }
-
-.pc:hover .pc-ea-overlay,
-.pc.t-hover .pc-ea-overlay  { opacity: 1; }
-
-.pc:hover .pc-ea-overlay::after,
-.pc.t-hover .pc-ea-overlay::after {
-  opacity: 1;
-  animation: eaGlint 2.8s ease-in-out infinite;
-}
-
-@keyframes eaGlint {
-  0%   { background-position: -100% -100%; }
-  100% { background-position: 250% 250%; }
-}
-
-/* Effetti sul testo al hover */
-.pc:hover .pc-num,
-.pc.t-hover .pc-num {
-  -webkit-text-stroke-color: rgba(255,255,255,.28);
-  text-shadow: 0 0 22px rgba(200,16,46,.25);
-}
-.pc:hover .pc-name,
-.pc.t-hover .pc-name {
-  text-shadow: 0 1px 10px rgba(255,255,255,.18);
-}
-
-/* Glow sul bordo sinistro al hover */
-.pc:hover::before { box-shadow: 2px 0 14px rgba(200,16,46,.5); }
-
-/* ════════════════════════════════════════════════════
-   UPGRADE 4 · CALENDARIO & STATISTICHE
-════════════════════════════════════════════════════ */
-#calendario {
-  background: var(--off);
-  padding: 7rem clamp(1.5rem,5vw,4.5rem);
-}
-#calendario .sec-label { color: var(--red); }
-#calendario .sec-label::before { background: var(--red); }
-#calendario .sec-title { color: var(--dark); margin-bottom: 2.5rem; }
-
-.cal-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr;
-  gap: 2.5rem;
-  max-width: 1200px;
-  align-items: start;
-}
-
-/* Column headings */
-.cal-col-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800; font-size: 1.1rem;
-  letter-spacing: .06em; text-transform: uppercase;
-  color: var(--dark); margin-bottom: 1rem;
-  padding-bottom: .5rem;
-  border-bottom: 2px solid var(--red);
-  display: flex; align-items: center; gap: 8px;
-}
-
-/* Widget Tuttocampo */
-.widget-box {
-  background: var(--white);
-  border-radius: 2px;
-  overflow: hidden;
-  box-shadow: 0 2px 20px rgba(0,0,0,.07);
-}
-.widget-header {
-  background: linear-gradient(90deg, var(--red) 0%, var(--blue) 100%);
-  padding: .7rem 1.1rem;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.widget-header span {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: .7rem;
-  letter-spacing: .18em; text-transform: uppercase;
-  color: rgba(255,255,255,.85);
-}
-.widget-setup-note {
-  padding: .85rem 1.1rem;
-  font-size: .76rem; color: var(--muted);
-  line-height: 1.65;
-  background: rgba(200,16,46,.04);
-  border-left: 3px solid var(--red);
-}
-.widget-setup-note code {
-  font-family: monospace; font-size: .72rem;
-  background: rgba(0,0,0,.07); padding: 1px 5px;
-  border-radius: 2px; color: var(--red);
-}
-.widget-iframe {
-  display: block; width: 100%; border: none;
-  min-height: 400px;
-}
-
-/* Stats table */
-.stats-box {
-  background: var(--white);
-  border-radius: 2px;
-  overflow: hidden;
-  box-shadow: 0 2px 20px rgba(0,0,0,.07);
-}
-.stats-box-header {
-  background: var(--dark2);
-  padding: .7rem 1.1rem;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: .75rem; flex-wrap: wrap;
-}
-.stats-box-header > span {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: .7rem;
-  letter-spacing: .15em; text-transform: uppercase;
-  color: rgba(255,255,255,.55);
-}
-.stats-sel {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: .7rem;
-  letter-spacing: .08em;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 2px; color: var(--white);
-  padding: 3px 8px; cursor: pointer;
-}
-
-/* Table scroll wrapper for mobile */
-.stats-scroll { overflow-x: auto; }
-
-.stats-tbl {
-  width: 100%; border-collapse: collapse;
-  font-size: .82rem; min-width: 380px;
-}
-.stats-tbl th {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: .66rem;
-  letter-spacing: .15em; text-transform: uppercase;
-  color: var(--muted); padding: .7rem .85rem;
-  border-bottom: 1px solid rgba(0,0,0,.06);
-  text-align: center; cursor: pointer;
-  white-space: nowrap; user-select: none;
-  transition: color .2s; position: relative;
-}
-.stats-tbl th:first-child  { text-align: left; }
-.stats-tbl th:hover        { color: var(--red); }
-.stats-tbl th.s-desc::after { content: ' ↓'; color: var(--red); font-size: .8em; }
-.stats-tbl th.s-asc::after  { content: ' ↑'; color: var(--red); font-size: .8em; }
-
-.stats-tbl td {
-  padding: .58rem .85rem;
-  border-bottom: 1px solid rgba(0,0,0,.04);
-  text-align: center; color: var(--body-c);
-  transition: background .15s;
-}
-.stats-tbl td:first-child { text-align: left; }
-.stats-tbl tr:last-child td { border-bottom: none; }
-.stats-tbl tr:nth-child(even) td { background: rgba(0,0,0,.017); }
-
-/* Top scorer row highlight */
-.stats-tbl tr.is-top td { background: rgba(200,16,46,.055) !important; }
-.stats-tbl tr.is-top td:first-child { border-left: 3px solid var(--red); }
-
-/* Player cell layout */
-.p-cell {
-  display: flex; align-items: center; gap: .55rem;
-  white-space: nowrap;
-}
-.p-avatar {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--blue) 0%, var(--red-dk) 100%);
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800; font-size: .6rem; color: white;
-}
-.p-cell-name { font-weight: 500; }
-.p-num-badge {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: .8rem; color: var(--muted);
-  margin-left: 2px;
-}
-
-/* Stat value formatting */
-.sv        { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1rem; }
-.sv.gol    { color: var(--red); }
-.sv.zero   { color: #C4C4D8; font-weight: 400; font-size: .85rem; }
-.sv.amm-r  { color: #E67E00; }
-
-/* Footer note */
-.stats-footer-note {
-  padding: .65rem 1rem;
-  font-size: .7rem; color: #A0A0B8;
-  border-top: 1px solid rgba(0,0,0,.05);
-  display: flex; align-items: center; gap: 6px;
-}
-.live-dot { width: 6px; height: 6px; background: #4CAF50; border-radius: 50%; flex-shrink: 0; }
-
-/* Responsive */
-@media (max-width: 900px) {
-  .cal-grid { grid-template-columns: 1fr; }
-}
-
+.cal-pane { display: none; }
+.cal-pane.active { display: block; animation: tabIn .4s ease; }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════
-     NAVIGATION
-══════════════════════════════════════════════════ -->
-<nav id="mainNav" aria-label="Navigazione principale">
-  <a href="#hero" class="nav-logo" aria-label="San Biagio Monza 1995 – Homepage">
-
-    <!-- Logo ufficiale Tuttocampo — sostituire URL se cambia -->
-    <img
-      src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1"
-      alt="San Biagio Monza 1995"
-      class="club-logo"
-      width="48" height="48"
-      onerror="this.style.opacity='.4'"
-    >
-
-    <div class="nav-brand">
-      San Biagio Monza
-      <small>Futsal · Dal 1995</small>
-    </div>
+<nav>
+  <a href="#" class="nav-logo">
+    <svg class="logo-ph" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="40" fill="none" stroke="#C8102E" stroke-width="4"/><path d="M30 35 L50 20 L70 35 L70 65 L50 80 L30 65 Z" fill="#003087"/></svg>
+    <div class="nav-brand">San Biagio<small>Monza 1995</small></div>
   </a>
-
-  <ul class="nav-links" role="list">
+  <ul class="nav-links">
     <li><a href="#news">News</a></li>
+    <li><a href="#calendario">Calendario</a></li>
     <li><a href="#squadra">Squadra</a></li>
     <li><a href="#kit">Kit</a></li>
     <li><a href="#sponsor">Sponsor</a></li>
     <li><a href="#contatti">Contatti</a></li>
   </ul>
-
-  <button class="hamburger" id="ham" aria-label="Menu" aria-expanded="false">
+  <button class="hamburger" aria-label="Menu" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
-<!-- Mobile nav overlay -->
-<nav class="mobile-nav" id="mobileNav" aria-label="Menu mobile" aria-hidden="true">
-  <div class="mn-divider"></div>
-  <a href="#news" class="mn-link">News</a>
-  <a href="#squadra" class="mn-link">Squadra</a>
-  <a href="#kit" class="mn-link">Kit</a>
-  <a href="#sponsor" class="mn-link">Sponsor</a>
-  <a href="#contatti" class="mn-link">Contatti</a>
-  <div class="mn-divider"></div>
-</nav>
+<div class="mobile-nav">
+  <a href="#news">News</a><div class="mn-divider"></div>
+  <a href="#calendario">Calendario</a><div class="mn-divider"></div>
+  <a href="#squadra">Squadra</a><div class="mn-divider"></div>
+  <a href="#kit">Kit</a><div class="mn-divider"></div>
+  <a href="#sponsor">Sponsor</a><div class="mn-divider"></div>
+  <a href="#contatti">Contatti</a>
+</div>
 
-
-<!-- ══════════════════════════════════════════════════
-     HERO
-══════════════════════════════════════════════════ -->
 <section id="hero">
-  <div class="hero-panel" aria-hidden="true"></div>
-  <div class="hero-wm" aria-hidden="true">SB</div>
-
-  <div class="hero-content">
-    <p class="eyebrow">Monza · Futsal · Fondati nel 1995</p>
-
-    <h1 class="hero-title">
-      San Biagio<br>Monza<span class="yr"> 1995</span>
-      <span class="outline">Futsal Club</span>
-    </h1>
-
-    <div class="hero-bar" aria-hidden="true"></div>
-
-    <p class="hero-sub">
-      Radici nel quartiere, testa alla promozione.<br>
-      Questa è la nostra stagione più importante.
-    </p>
-
-    <div class="hero-stats" aria-label="Statistiche stagione">
-      <div class="stat">
-        <div class="stat-num"><span class="count" data-to="5">0</span></div>
-        <div class="stat-lbl">Vittorie consecutive</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num"><span class="count" data-to="2">0</span><sup>pts</sup></div>
-        <div class="stat-lbl">Dalla vetta C1</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num"><span class="count" data-to="14">0</span></div>
-        <div class="stat-lbl">Vittorie in stagione</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num"><span class="count" data-to="4">0</span></div>
-        <div class="stat-lbl">Giornate al termine</div>
-      </div>
+  <div class="hero-panel"></div>
+  <div class="hero-wm">SB95</div>
+  <div class="hero-content fi">
+    <div class="eyebrow">Official Web Experience</div>
+    <h1 class="hero-title">Futsal<span class="yr">'95</span><span class="outline">San Biagio Monza</span></h1>
+    <div class="hero-bar"></div>
+    <p class="hero-sub">Passione, tattica e determinazione sul parquet della Brianza. Scopri le sfide, i protagonisti e la cultura del club biancorossoblu.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">C2<sup>cat</sup></span><span class="stat-lbl">Prima Squadra</span></div>
+      <div class="stat"><span class="stat-num">D<sup>cat</sup></span><span class="stat-lbl">Seconda Squadra</span></div>
+      <div class="stat"><span class="stat-num">30<sup>yrs</sup></span><span class="stat-lbl">Storia Attiva</span></div>
     </div>
-
-    <div class="hero-badge">
-      <span class="pdot" aria-hidden="true"></span>
-      C2 Lombardia · Stagione 2025/26 — C1 nel mirino
-    </div>
+    <div class="hero-badge"><span class="pdot"></span>Stagione Corrente In Corso</div>
   </div>
-
-  <div class="hero-scroll" aria-hidden="true">
-    <span>Scorri</span>
-    <div class="scl"></div>
-  </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="scl"></div></div>
 </section>
 
-
-<!-- ══════════════════════════════════════════════════
-     NEWS
-══════════════════════════════════════════════════ -->
-<section id="news" aria-labelledby="news-h">
-  <p class="sec-label">Ultime notizie</p>
-  <h2 class="sec-title" id="news-h">News</h2>
-
+<section id="news" class="sec-pad">
+  <div class="sec-label fi">Ultimi Aggiornamenti</div>
+  <h2 class="sec-title fi">News &<br>Media Hub</h2>
   <div class="news-grid">
-
-    <article class="card featured fi">
+    <div class="card fi">
+      <div class="card-vis"><div class="card-vis-txt">MATCHDAY</div><div class="card-vis-lbl">Media Box</div></div>
       <div class="card-acc"></div>
-      <div class="card-vis" aria-hidden="true">
-        <span class="card-vis-txt">C1</span>
-        <span class="card-vis-lbl">Aggiornamento campionato</span>
-      </div>
       <div class="card-body">
-        <span class="card-tag">Campionato</span>
-        <p class="card-date">12 Giugno 2025</p>
-        <h3 class="card-title">La C1 è a due punti: il San Biagio non si ferma più</h3>
-        <p class="card-excerpt">
-          Cinque vittorie consecutive, un girone di ritorno da manuale e una classifica che, per la prima volta nella storia del club, sorride davvero. Il San Biagio Monza 1995 è la squadra del momento in Serie C2: con quattro giornate ancora da disputare, i rossoblu si trovano a soli due punti dalla promozione diretta in C1 — il traguardo inseguito da tre stagioni.
-        </p>
-        <p class="card-excerpt">
-          "Siamo consapevoli di quello che stiamo costruendo," ha dichiarato il capitano Marco Russo dopo il 5–2 sul Lissone. "Il gruppo è solido, l'ambiente è caldo e nessuno ha intenzione di fermarsi. Sabato 21 a Villasanta sarà una battaglia, ma siamo pronti."
-        </p>
-        <a href="#" class="card-link">Leggi tutto</a>
+        <span class="card-tag">Match Report</span>
+        <div class="card-date">Giovedì 18 Giugno 2026</div>
+        <h3 class="card-title">Battaglia sul parquet casalingo: la Prima Squadra conquista tre punti cruciali</h3>
+        <p class="card-excerpt">Una prestazione maiuscola dei ragazzi blinda il risultato nel secondo tempo grazie ad una solida fase difensiva e ripartenze chirurgiche. La corsa verso i playoff si fa incandescente...</p>
+        <a href="#" class="card-link">Leggi Articolo</a>
       </div>
-    </article>
-
-    <aside class="news-sb">
-      <article class="card mini fi" style="transition-delay:.12s">
+    </div>
+    <div class="news-sb">
+      <div class="card mini fi">
         <div class="card-acc"></div>
         <div class="card-body">
-          <span class="card-tag">Risultato</span>
-          <p class="card-date">8 Giugno 2025</p>
-          <h3 class="card-title">San Biagio 5–2 Lissone</h3>
-          <p class="card-excerpt">Quinta vittoria di fila. Doppietta di Conti, reti di Gallo, Romano e Martini. Domenica al PalaMonza da tutto esaurito.</p>
-          <a href="#" class="card-link">Leggi tutto</a>
+          <span class="card-tag" style="background:var(--blue);">Società</span>
+          <div class="card-date">Lunedì 15 Giugno 2026</div>
+          <h3 class="card-title">Aperte le iscrizioni per il Summer Camp Futsal giovanile</h3>
+          <p class="card-excerpt">Al via il programma estivo dedicato dei giovani talenti che vogliono imparare i segreti del calcio a 5...</p>
+          <a href="#" class="card-link">Scopri</a>
         </div>
-      </article>
-
-      <article class="card mini fi" style="transition-delay:.24s">
+      </div>
+      <div class="card mini fi">
         <div class="card-acc"></div>
         <div class="card-body">
-          <span class="card-tag">Kit Ufficiale</span>
-          <p class="card-date">3 Giugno 2025</p>
-          <h3 class="card-title">Svelate le nuove divise 2025/26</h3>
-          <p class="card-excerpt">Presentato il nuovo kit ufficiale progettato da Amos Arena e prodotto da Erreà Sport. Design che richiama l'identità storica del quartiere.</p>
-          <a href="#kit" class="card-link">Scopri il Kit</a>
+          <span class="card-tag" style="background:var(--dark);">Style</span>
+          <div class="card-date">Venerdì 12 Giugno 2026</div>
+          <h3 class="card-title">Disponibile la nuova linea Merchandising per i tifosi</h3>
+          <p class="card-excerpt">Felpe, sciarpe e accessori ufficiali acquistabili direttamente al palazzetto durante i giorni di gara...</p>
+          <a href="#" class="card-link">Guarda Linea</a>
         </div>
-      </article>
-
-      <article class="card mini fi" style="transition-delay:.36s">
-        <div class="card-acc"></div>
-        <div class="card-body">
-          <span class="card-tag">Settore Giovanile</span>
-          <p class="card-date">25 Maggio 2025</p>
-          <h3 class="card-title">Under 17 ai quarti regionali</h3>
-          <p class="card-excerpt">Il vivaio cresce. La Seconda Squadra e l'Under 17 staccano il biglietto per i quarti del Campionato Regionale Lombardo.</p>
-          <a href="#" class="card-link">Leggi tutto</a>
-        </div>
-      </article>
-    </aside>
-
+      </div>
+    </div>
   </div>
 </section>
 
-
-<!-- ══════════════════════════════════════════════════
-     SQUADRA
-══════════════════════════════════════════════════ -->
-<section id="squadra" aria-labelledby="squadra-h">
-  <p class="sec-label">Rosa 2024/25</p>
-  <h2 class="sec-title" id="squadra-h">Squadra</h2>
-
-  <div class="squad-tabs" role="tablist" aria-label="Scegli la squadra">
-    <button class="tab-btn active" role="tab" aria-selected="true"
-            aria-controls="panel-prima" id="tab-prima">
-      Prima Squadra <span style="font-weight:600;opacity:.6;font-size:.8em;margin-left:5px;">C2</span>
-    </button>
-    <button class="tab-btn" role="tab" aria-selected="false"
-            aria-controls="panel-seconda" id="tab-seconda">
-      Seconda Squadra <span style="font-weight:600;opacity:.6;font-size:.8em;margin-left:5px;">Serie D</span>
-    </button>
-  </div>
-
-  <!-- Panel: Prima Squadra -->
-  <div class="tab-panel active" id="panel-prima" role="tabpanel" aria-labelledby="tab-prima">
-
-    <div class="role-leg">
-      <span class="rdot portiere">Portiere</span>
-      <span class="rdot centrale">Centrale</span>
-      <span class="rdot laterale">Laterale</span>
-      <span class="rdot pivot">Pivot</span>
-      <span class="rdot staff">Staff</span>
-    </div>
-
-    <div class="squad-grid">
-      <!-- STAFF -->
-      <div class="pc pc-staff fi" style="transition-delay:.00s">
-        <div class="pc-num">PRES</div>
-        <div class="pc-name">Federico Morrone</div>
-        <div class="pc-role staff">Presidente</div>
-      </div>
-      <div class="pc pc-staff fi" style="transition-delay:.04s">
-        <div class="pc-num">MIST</div>
-        <div class="pc-name">Marcello Galbiati</div>
-        <div class="pc-role staff">Mister</div>
-      </div>
-      <div class="pc pc-staff fi" style="transition-delay:.08s">
-        <div class="pc-num">P.P</div>
-        <div class="pc-name">Emanuele Marchetti</div>
-        <div class="pc-role staff">Prep. Portieri</div>
-      </div>
-      <!-- PORTIERI -->
-      <div class="pc fi" style="transition-delay:.12s">
-        <div class="pc-num">01</div>
-        <div class="pc-name">Niccolò Renna</div>
-        <div class="pc-role portiere">Portiere · Cap.</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.16s">
-        <div class="pc-num">12</div>
-        <div class="pc-name">Amos Arena</div>
-        <div class="pc-role portiere">Portiere</div>
-      </div>
-      <!-- CENTRALI -->
-      <div class="pc fi" style="transition-delay:.20s">
-        <div class="pc-num">03</div>
-        <div class="pc-name">Alessandro Porta</div>
-        <div class="pc-role centrale">Centrale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.24s">
-        <div class="pc-num">04</div>
-        <div class="pc-name">Roberto Martini</div>
-        <div class="pc-role centrale">Centrale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.28s">
-        <div class="pc-num">05</div>
-        <div class="pc-name">Luca Ferrari</div>
-        <div class="pc-role centrale">Centrale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.32s">
-        <div class="pc-num">07</div>
-        <div class="pc-name">Andrea Colombo</div>
-        <div class="pc-role centrale">Centrale</div>
-      </div>
-      <!-- LATERALI -->
-      <div class="pc fi" style="transition-delay:.36s">
-        <div class="pc-num">08</div>
-        <div class="pc-name">Federico Gallo</div>
-        <div class="pc-role laterale">Laterale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.40s">
-        <div class="pc-num">09</div>
-        <div class="pc-name">Davide Conti</div>
-        <div class="pc-role laterale">Laterale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.44s">
-        <div class="pc-num">11</div>
-        <div class="pc-name">Matteo Romano</div>
-        <div class="pc-role laterale">Laterale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.48s">
-        <div class="pc-num">14</div>
-        <div class="pc-name">Simone Villa</div>
-        <div class="pc-role laterale">Laterale</div>
-      </div>
-      <!-- PIVOT -->
-      <div class="pc fi" style="transition-delay:.52s">
-        <div class="pc-num">06</div>
-        <div class="pc-name">Alessandro Bruno</div>
-        <div class="pc-role pivot">Pivot</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.56s">
-        <div class="pc-num">10</div>
-        <div class="pc-name">Simone Ricci</div>
-        <div class="pc-role pivot">Pivot · V.Cap.</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.60s">
-        <div class="pc-num">12</div>
-        <div class="pc-name">Thomas Greco</div>
-        <div class="pc-role pivot">Pivot</div>
-      </div>
-    </div>
-  </div><!-- /panel-prima -->
-
-  <!-- Panel: Seconda Squadra -->
-  <div class="tab-panel" id="panel-seconda" role="tabpanel" aria-labelledby="tab-seconda">
-
-    <div class="role-leg">
-      <span class="rdot portiere">Portiere</span>
-      <span class="rdot centrale">Centrale</span>
-      <span class="rdot laterale">Laterale</span>
-      <span class="rdot pivot">Pivot</span>
-      <span class="rdot staff">Staff</span>
-    </div>
-
-    <div class="squad-grid">
-      <!-- STAFF -->
-      <div class="pc pc-staff fi" style="transition-delay:.00s">
-        <div class="pc-num">MIST</div>
-        <div class="pc-name">Antonio Sala</div>
-        <div class="pc-role staff">Mister</div>
-      </div>
-      <div class="pc pc-staff fi" style="transition-delay:.04s">
-        <div class="pc-num">P.P</div>
-        <div class="pc-name">Marco Neri</div>
-        <div class="pc-role staff">Prep. Portieri</div>
-      </div>
-      <!-- PORTIERI -->
-      <div class="pc fi" style="transition-delay:.08s">
-        <div class="pc-num">01</div>
-        <div class="pc-name">Gabriele Neri</div>
-        <div class="pc-role portiere">Portiere · Cap.</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.12s">
-        <div class="pc-num">16</div>
-        <div class="pc-name">Diego Fusi</div>
-        <div class="pc-role portiere">Portiere</div>
-      </div>
-      <!-- CENTRALI -->
-      <div class="pc fi" style="transition-delay:.16s">
-        <div class="pc-num">03</div>
-        <div class="pc-name">Alberto Conti</div>
-        <div class="pc-role centrale">Centrale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.20s">
-        <div class="pc-num">04</div>
-        <div class="pc-name">Marco Sanna</div>
-        <div class="pc-role centrale">Centrale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.24s">
-        <div class="pc-num">05</div>
-        <div class="pc-name">Paolo Rizzo</div>
-        <div class="pc-role centrale">Centrale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.28s">
-        <div class="pc-num">07</div>
-        <div class="pc-name">Cristian Moreno</div>
-        <div class="pc-role centrale">Centrale</div>
-      </div>
-      <!-- LATERALI -->
-      <div class="pc fi" style="transition-delay:.32s">
-        <div class="pc-num">08</div>
-        <div class="pc-name">Lorenzo Ricci</div>
-        <div class="pc-role laterale">Laterale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.36s">
-        <div class="pc-num">09</div>
-        <div class="pc-name">Mattia Greco</div>
-        <div class="pc-role laterale">Laterale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.40s">
-        <div class="pc-num">11</div>
-        <div class="pc-name">Giovanni Ferrari</div>
-        <div class="pc-role laterale">Laterale</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.44s">
-        <div class="pc-num">14</div>
-        <div class="pc-name">Filippo Bruno</div>
-        <div class="pc-role laterale">Laterale</div>
-      </div>
-      <!-- PIVOT -->
-      <div class="pc fi" style="transition-delay:.48s">
-        <div class="pc-num">06</div>
-        <div class="pc-name">Kevin Sala</div>
-        <div class="pc-role pivot">Pivot</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.52s">
-        <div class="pc-num">10</div>
-        <div class="pc-name">Jacopo Arena</div>
-        <div class="pc-role pivot">Pivot · V.Cap.</div>
-      </div>
-      <div class="pc fi" style="transition-delay:.56s">
-        <div class="pc-num">12</div>
-        <div class="pc-name">Edoardo Neri</div>
-        <div class="pc-role pivot">Pivot</div>
-      </div>
-    </div>
-  </div><!-- /panel-seconda -->
-
-</section>
-
-
-<!-- ══════════════════════════════════════════════════
-     KIT & DESIGN
-══════════════════════════════════════════════════ -->
-<section id="kit" aria-labelledby="kit-h">
-  <p class="sec-label">Divise ufficiali 2026/27</p>
-  <h2 class="sec-title" id="kit-h">Kit & Design</h2>
-
-  <!-- Credit bar -->
-  <div class="kit-credit-bar fi">
-    <div class="kc-item">
-      <span class="kc-lbl">Grafica ideata da</span>
-      <span class="kc-val designer">Amos Arena</span>
-    </div>
-    <div class="kc-item">
-      <span class="kc-lbl">Produzione</span>
-      <span class="kc-val maker">Erreà Sport</span>
-    </div>
-    <div class="kc-item">
-      <span class="kc-lbl">Stagione</span>
-      <span class="kc-val maker">2026 / 27</span>
-    </div>
-  </div>
-
-  <div class="kit-grid">
-
-    <!-- ── PRIMA DIVISA (Home) ── -->
-    <div class="kit-card fi" style="transition-delay:.1s">
-      <div class="kit-wrap">
-        <img src="divisa_home_sanbiagio_web.png" alt="Prima Divisa – Rossa" class="kit-svg">
-      </div>
-      <div class="kit-info">
-        <div class="kit-name">Prima Divisa</div>
-        <div class="kit-sub">Gara Casa · Rosso/Blu</div>
-      </div>
-    </div>
-
-    <!-- ── SECONDA DIVISA (Away) ── -->
-    <div class="kit-card fi" style="transition-delay:.2s">
-      <div class="kit-wrap">
-        <img src="divisa_away_sanbiagio_web.png" alt="Seconda Divisa – Blu" class="kit-svg">
-      </div>
-      <div class="kit-info">
-        <div class="kit-name">Seconda Divisa</div>
-        <div class="kit-sub">Gara Trasferta · Blu/Rosso</div>
-      </div>
-    </div>
-
-    <!-- ── TERZA DIVISA (Third) ── -->
-    <div class="kit-card fi" style="transition-delay:.3s">
-      <div class="kit-wrap">
-        <img src="divisa_third_sanbiagio_web.png" alt="Terza Divisa – Nera" class="kit-svg">
-      </div>
-      <div class="kit-info">
-        <div class="kit-name">Terza Divisa</div>
-        <div class="kit-sub">Terzo Kit Ufficiale · Nero</div>
-      </div>
-    </div>
-
-  </div><!-- /kit-grid -->
-
-  <!-- ── MOCKUP CONCEPT CAROUSEL ───────────────────────────── -->
-  <div class="mockup-section fi" style="transition-delay:.15s">
-    <p class="mockup-eyebrow">Mockup Ambientati — Concept Completo</p>
-
-    <div class="c-viewport" id="kitCarousel">
-      <div class="c-track" id="kitTrack">
-
-        <!-- SLIDE 1 ─ Home Mockup -->
-        <div class="c-slide">
-          <div class="c-ph">
-            <img src="mockup-home.webp" alt="Mockup Ambientato Prima Divisa" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-        </div>
-
-        <!-- SLIDE 2 ─ Away Mockup -->
-        <div class="c-slide">
-          <div class="c-ph">
-            <img src="mockup-away.webp" alt="Mockup Ambientato Seconda Divisa" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-        </div>
-
-        <!-- SLIDE 3 ─ Prepartita Mockup -->
-        <div class="c-slide">
-          <div class="c-ph">
-            <img src="mockup-prepartita.webp" alt="Mockup Ambientato Terza Divisa" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-        </div>
-
-        <!-- SLIDE 4 ─ Detail Mockup -->
-        <div class="c-slide">
-          <div class="c-ph">
-            <img src="mockup-detail.webp" alt="Dettaglio Grafico Concept Design" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-        </div>
-
-      </div><!-- /c-track -->
-
-      <!-- Frecce navigazione -->
-      <div class="c-arrows" aria-hidden="true">
-        <button class="c-btn" id="cPrev" aria-label="Slide precedente" disabled>&#8249;</button>
-        <button class="c-btn" id="cNext" aria-label="Slide successiva">&#8250;</button>
-      </div>
-    </div><!-- /c-viewport -->
-
-    <!-- Dots -->
-    <div class="c-dots" id="cDots" role="tablist" aria-label="Naviga carousel">
-      <button class="c-dot active" role="tab" aria-label="Slide 1" aria-selected="true"></button>
-      <button class="c-dot"        role="tab" aria-label="Slide 2" aria-selected="false"></button>
-      <button class="c-dot"        role="tab" aria-label="Slide 3" aria-selected="false"></button>
-      <button class="c-dot"        role="tab" aria-label="Slide 4" aria-selected="false"></button>
-    </div>
-
-  </div><!-- /mockup-section -->
-</section>
-
-<!-- ══════════════════════════════════════════════════
-     CALENDARIO & STATISTICHE
-══════════════════════════════════════════════════ -->
-<style>
-/* Griglia responsiva per Ultima e Prossima partita */
-.match-focus-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-bottom: 25px;
-}
-@media (max-width: 768px) {
-  .match-focus-grid {
-    grid-template-columns: 1fr; /* Su iPhone si mettono uno sotto l'altro */
-  }
-}
-
-/* Stile dei box che contengono gli iframe */
-.iframe-wrapper-focus, .iframe-wrapper-main {
-  width: 100%;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #eaeaea;
-}
-.iframe-wrapper-focus { height: 350px; }
-.h-classifica { height: 800px; }
-.h-risultati { height: 600px; }
-.h-marcatori { height: 700px; }
-
-.iframe-wrapper-focus iframe, .iframe-wrapper-main iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-}
-
-/* Stile dei bottoni delle schede */
-.tabs-nav {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #eaeaea;
-  padding-bottom: 8px;
-}
-.tab-btn {
-  background: none;
-  border: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 5px 10px;
-  color: #666;
-  transition: all 0.2s ease;
-}
-.tab-btn.active {
-  color: #000;
-  border-bottom: 2px solid #000;
-  margin-bottom: -10px;
-}
-.tab-content {
-  display: none;
-}
-.tab-content.active {
-  display: block;
-}
-</style>
-
-<!-- ── NUOVA COLONNA SX: Widget Tuttocampo Organizzati ── -->
-<div class="widget-col fi" style="flex: 1.3;">
+<section id="calendario" class="sec-pad" style="background:var(--dark); color:var(--white);">
+  <div class="sec-label fi" style="color:var(--red);">Match & Ranking</div>
+  <h2 class="sec-title fi">Risultati &<br>Classifiche</h2>
   
-  <!-- Focus Match (Ultima & Prossima Partita Affiancate) -->
-  <div class="match-focus-grid">
-    <div class="iframe-wrapper-focus">
-      <iframe src='https://www.tuttocampo.it/WidgetV2/Partita/d41c0700-615d-42f3-87cb-681f333839cf' width='500' height='350' scrolling='no' frameborder='0' loading='lazy'></iframe>
-    </div>
-    <div class="iframe-wrapper-focus">
-      <iframe src='https://www.tuttocampo.it/WidgetV2/ProssimaPartita/d41c0700-615d-42f3-87cb-681f333839cf' width='500' height='350' scrolling='no' frameborder='0' loading='lazy'></iframe>
-    </div>
+  <div class="cal-tabs fi">
+    <button class="cal-tab-btn active" onclick="switchTab('classifica', this)">Classifica</button>
+    <button class="cal-tab-btn" onclick="switchTab('risultati', this)">Risultati</button>
+    <button class="cal-tab-btn" onclick="switchTab('marcatori', this)">Marcatori</button>
   </div>
 
-  <!-- Navigazione a Schede (Classifica, Risultati, Marcatori) -->
-  <div class="tabs-container">
-    <div class="tabs-nav">
-      <button class="tab-btn active" onclick="switchTab(event, 'tab-classifica')">Classifica</button>
-      <button class="tab-btn" onclick="switchTab(event, 'tab-risultati')">Risultati</button>
-      <button class="tab-btn" onclick="switchTab(event, 'tab-marcatori-lega')">Marcatori Campionato</button>
-    </div>
-
-    <!-- Contenuto Scheda: Classifica -->
-    <div id="tab-classifica" class="tab-content active">
-      <div class="iframe-wrapper-main h-classifica">
-        <iframe src='https://www.tuttocampo.it/WidgetV2/Classifica/d41c0700-615d-42f3-87cb-681f333839cf' width='500' height='800' scrolling='no' frameborder='0' loading='lazy'></iframe>
+  <div id="classifica" class="cal-pane active">
+    <div class="cal-grid">
+      <div class="cal-main fi">
+        <div class="sp-row-lbl" style="color:rgba(255,255,255,.4);">Serie C2 - Girone A</div>
+        <iframe src="https://www.tuttocampo.it/WidgetV2/Classifica/97b39923-d64e-4f10-9087-ceaf9e1d8985" width="100%" height="580" frameborder="0" scrolling="no"></iframe>
       </div>
-    </div>
-
-    <!-- Contenuto Scheda: Risultati -->
-    <div id="tab-risultati" class="tab-content">
-      <div class="iframe-wrapper-main h-risultati">
-        <iframe src='https://www.tuttocampo.it/WidgetV2/Marcatori/d41c0700-615d-42f3-87cb-681f333839cf' width='500' height='700' scrolling='no' frameborder='0' loading='lazy'></iframe>
-      </div>
-    </div>
-
-    <!-- Contenuto Scheda: Marcatori -->
-    <div id="tab-marcatori-lega" class="tab-content">
-      <div class="iframe-wrapper-main h-marcatori">
-        <iframe src='https://www.tuttocampo.it/WidgetV2/Marcatori/4a1d8ca0-be13-41f4-b448-17905479c6e0' scrolling='no' frameborder='0' loading='lazy'></iframe>
+      <div class="cal-side fi">
+        <div class="sp-row-lbl" style="color:rgba(255,255,255,.4);">Serie D - Monza</div>
+        <iframe src="https://www.tuttocampo.it/WidgetV2/Classifica/4462cb38-51e8-468a-b851-9310bb4eeaa4" width="100%" height="580" frameborder="0" scrolling="no"></iframe>
       </div>
     </div>
   </div>
 
-</div><!-- / fine nuova colonna sx -->
-
-    <!-- ── COLONNA DX: Statistiche giocatori ─────────── -->
-    <div class="stats-col fi" style="transition-delay:.14s">
-      <p class="cal-col-title">📊 Statistiche Giocatori</p>
-
-      <!--
-      ╔══════════════════════════════════════════════════════════════════╗
-      ║  COLLEGAMENTO GOOGLE SHEETS — 3 OPZIONI                          ║
-      ║                                                                  ║
-      ║  OPZIONE A — Tabella manuale (attuale)                           ║
-      ║  Aggiorna direttamente il JS, array "statsData", in Blocco 5.   ║
-      ║                                                                  ║
-      ║  OPZIONE B — Google Sheets Embed (nessun codice extra)           ║
-      ║  1. Crea un Google Sheet con colonne:                            ║
-      ║     numero | nome | ruolo | presenze | gol | assist | amm       ║
-      ║  2. File → Condividi → Pubblica sul web → Pagina web (.html)     ║
-      ║  3. Sostituisci il tag <table> e tutto il suo contenuto con:     ║
-      ║     <iframe src="URL_COPIATO" width="100%" height="480"          ║
-      ║       frameborder="0" style="border:none;"></iframe>             ║
-      ║                                                                  ║
-      ║  OPZIONE C — Google Sheets API (aggiornamento live)              ║
-      ║  Nel Blocco 5, trova loadStatsFromSheets() e decommentala.       ║
-      ║  Serve una API Key gratuita su console.cloud.google.com          ║
-      ║  e l'ID del tuo foglio (dalla URL di Sheets).                    ║
-      ╚══════════════════════════════════════════════════════════════════╝
-      -->
-
-      <div class="stats-box">
-        <div class="stats-box-header">
-          <span>⚽ Stagione 2024/25</span>
-          <select class="stats-sel" id="statsTeamSel" aria-label="Seleziona squadra">
-            <option value="prima">Prima Squadra – C2</option>
-            <option value="seconda">Seconda Squadra – Serie D</option>
-          </select>
-        </div>
-
-        <div class="stats-scroll">
-          <table class="stats-tbl" id="statsTbl" aria-label="Statistiche giocatori">
-            <thead>
-              <tr>
-                <th data-idx="1" style="min-width:155px">Giocatore</th>
-                <th data-idx="3">Pres.</th>
-                <th data-idx="4">Gol</th>
-                <th data-idx="5">Assist</th>
-                <th data-idx="6">Amm.</th>
-              </tr>
-            </thead>
-            <tbody id="statsTbody">
-              <!-- Populate via JS in Blocco 5 -->
-            </tbody>
-          </table>
-        </div>
-
-        <div class="stats-footer-note">
-          <span class="live-dot" aria-hidden="true"></span>
-          Dati aggiornati manualmente · Vedi commento nel codice per collegamento automatico
-        </div>
+  <div id="risultati" class="cal-pane">
+    <div class="cal-grid">
+      <div class="cal-main">
+        <div class="sp-row-lbl" style="color:rgba(255,255,255,.4);">Prossimo Turno C2</div>
+        <iframe src="https://www.tuttocampo.it/WidgetV2/ProssimoTurno/97b39923-d64e-4f10-9087-ceaf9e1d8985" width="100%" height="550" frameborder="0" scrolling="no"></iframe>
       </div>
-    </div><!-- /stats-col -->
+      <div class="cal-side">
+        <div class="sp-row-lbl" style="color:rgba(255,255,255,.4);">Ultimi Risultati C2</div>
+        <iframe src="https://www.tuttocampo.it/WidgetV2/Risultati/97b39923-d64e-4f10-9087-ceaf9e1d8985" width="100%" height="550" frameborder="0" scrolling="no"></iframe>
+      </div>
+    </div>
+  </div>
 
-  </div><!-- /cal-grid -->
+  <div id="marcatori" class="cal-pane">
+    <div class="cal-grid">
+      <div class="cal-main">
+        <div class="sp-row-lbl" style="color:rgba(255,255,255,.4);">Top Marcatori C2</div>
+        <iframe src="https://www.tuttocampo.it/WidgetV2/Marcatori/97b39923-d64e-4f10-9087-ceaf9e1d8985" width="100%" height="580" frameborder="0" scrolling="no"></iframe>
+      </div>
+      <div class="cal-side">
+        <div class="sp-row-lbl" style="color:rgba(255,255,255,.4);">Marcatori Serie D</div>
+        <iframe src="https://www.tuttocampo.it/WidgetV2/Marcatori/4462cb38-51e8-468a-b851-9310bb4eeaa4" width="100%" height="580" frameborder="0" scrolling="no"></iframe>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════
-     SPONSOR
-══════════════════════════════════════════════════ -->
-<section id="sponsor" aria-labelledby="sponsor-h">
-  <p class="sec-label">I nostri partner</p>
-  <h2 class="sec-title" id="sponsor-h">Sponsor</h2>
-  <p class="sponsor-intro">
-    Grazie a chi crede in noi ogni stagione. Sei interessato a diventare sponsor del San Biagio Monza 1995?
-    Contattaci per ricevere il media kit.
-  </p>
+<section id="squadra">
+  <div class="sec-label fi">Roster Ufficiale</div>
+  <h2 class="sec-title fi">Prima Squadra &<br>Staff Tecnico</h2>
+  
+  <div class="squad-tabs fi">
+    <button class="tab-btn active" onclick="switchSquadTab('giocatori', this)">Giocatori</button>
+    <button class="tab-btn" onclick="switchSquadTab('staff', this)">Staff Tecnico</button>
+    <button class="tab-btn" onclick="switchSquadTab('statistiche', this)">Statistiche</button>
+  </div>
 
-  <p class="sp-row-lbl">Sponsor Principale</p>
-  <a href="#contatti" class="sp-main fi" aria-label="Spazio sponsor principale disponibile">
+  <div id="giocatori" class="tab-panel active">
+    <div class="role-leg">
+      <span class="rdot portiere">Portieri</span>
+      <span class="rdot centrale">Centrali</span>
+      <span class="rdot laterale">Laterali</span>
+      <span class="rdot pivot">Pivot</span>
+    </div>
+    <div class="squad-grid">
+      <div class="pc fi"><div class="pc-num">10</div><div class="pc-name">A. Arena</div><div class="pc-role laterale">Laterale</div></div>
+      <div class="pc fi"><div class="pc-num">01</div><div class="pc-name">M. Rossi</div><div class="pc-role portiere">Portiere</div></div>
+      <div class="pc fi"><div class="pc-num">04</div><div class="pc-name">L. Bianchi</div><div class="pc-role centrale">Centrale</div></div>
+      <div class="pc fi"><div class="pc-num">09</div><div class="pc-name">G. Verdi</div><div class="pc-role pivot">Pivot</div></div>
+      <div class="pc fi"><div class="pc-num">07</div><div class="pc-name">F. Neri</div><div class="pc-role laterale">Laterale</div></div>
+    </div>
+  </div>
+
+  <div id="staff" class="tab-panel">
+    <div class="role-leg"><span class="rdot staff">Dirigenza & Tecnici</span></div>
+    <div class="squad-grid">
+      <div class="pc pc-staff"><div class="pc-num">ALL</div><div class="pc-name">M. Brambilla</div><div class="pc-role staff">Allenatore</div></div>
+      <div class="pc pc-staff"><div class="pc-num">DIR</div><div class="pc-name">R. Colombo</div><div class="pc-role staff">Direttore Sportivo</div></div>
+    </div>
+  </div>
+
+  <div id="statistiche" class="tab-panel">
+    <div class="stats-ctrl">
+      <div class="sp-row-lbl" style="margin-bottom:0; color:rgba(255,255,255,.5);">Rendimento Atleti Stagione Regular</div>
+      <select class="stats-select" id="statsTeamSel">
+        <option value="c2">Prima Squadra (Serie C2)</option>
+        <option value="d">Seconda Squadra (Serie D)</option>
+      </select>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="stats-tbl">
+        <thead>
+          <tr>
+            <th data-idx="0">Giocatore</th>
+            <th data-idx="1">Presenze</th>
+            <th data-idx="2">Gol</th>
+            <th data-idx="3">Assist</th>
+            <th data-idx="4">Amm_R</th>
+          </tr>
+        </thead>
+        <tbody id="statsTableBody">
+          </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="kit">
+  <div class="sec-label fi">Identity & Design</div>
+  <h2 class="sec-title fi">I Kit Ufficiali<br>Stagione 25/26</h2>
+  <div class="kit-credit-bar fi">
+    <div class="kc-item"><span class="kc-lbl">Kit Design by:</span><span class="kc-val designer">Amos Arena Art</span></div>
+    <div class="kc-item"><span class="kc-lbl">Technical Maker:</span><span class="kc-val maker">Acerbis</span></div>
+  </div>
+  
+  <div class="kit-carousel-container fi">
+    <div class="kit-grid" id="kitGrid">
+      <div class="kit-card">
+        <div class="kit-wrap">
+          <span class="kit-ph">Home</span>
+          <svg class="kit-svg" viewBox="0 0 100 120"><path d="M20 20 L35 10 L50 20 L65 10 L80 20 L85 50 L75 55 L75 110 L25 110 L25 55 L15 50 Z" fill="#C8102E" stroke="#ffffff" stroke-width="2"/><rect x="42" y="20" width="16" height="90" fill="#003087"/><circle cx="50" cy="40" r="8" fill="#ffffff" opacity="0.2"/></svg>
+        </div>
+        <div class="kit-info"><h3 class="kit-name">1st Kit – Home</h3><span class="kit-sub">Blucerchiato Classico / Red Core</span></div>
+      </div>
+      <div class="kit-card">
+        <div class="kit-wrap">
+          <span class="kit-ph">Away</span>
+          <svg class="kit-svg" viewBox="0 0 100 120"><path d="M20 20 L35 10 L50 20 L65 10 L80 20 L85 50 L75 55 L75 110 L25 110 L25 55 L15 50 Z" fill="#F0F0F6" stroke="#C8102E" stroke-width="2"/><path d="M25 45 L75 55 L75 65 L25 55 Z" fill="#003087"/></svg>
+        </div>
+        <div class="kit-info"><h3 class="kit-name">2nd Kit – Away</h3><span class="kit-sub">Off-White Minimal / Royal Sash</span></div>
+      </div>
+      <div class="kit-card">
+        <div class="kit-wrap">
+          <span class="kit-ph">Third</span>
+          <svg class="kit-svg" viewBox="0 0 100 120"><path d="M20 20 L35 10 L50 20 L65 10 L80 20 L85 50 L75 55 L75 110 L25 110 L25 55 L15 50 Z" fill="#09090F" stroke="#0050CC" stroke-width="2"/><rect x="25" y="20" width="50" height="90" fill="none" stroke="#C8102E" stroke-width="1" stroke-dasharray="4,4"/></svg>
+        </div>
+        <div class="kit-info"><h3 class="kit-name">3rd Kit – Dark</h3><span class="kit-sub">Midnight Black / Neon Cyan Edge</span></div>
+      </div>
+    </div>
+    <div class="kit-carousel-dots" id="kitDots"></div>
+  </div>
+</section>
+
+<section id="sponsor">
+  <div class="sec-label fi">Partnership & Support</div>
+  <h2 class="sec-title fi">Official<br>Sponsors</h2>
+  <p class="sponsor-intro fi">Le realtà commerciali del territorio che sostengono attivamente il nostro cammino sportivo e sposano i valori del club.</p>
+  
+  <div class="sp-row-lbl fi">Main Sponsor</div>
+  <a href="#" class="sp-main fi">
     <div class="sp-slot-inner">
-      <div class="sp-slot-txt">Sponsor Principale</div>
-      <span class="sp-slot-hint">Spazio disponibile · Contattaci per info</span>
+      <span class="sp-slot-txt">Main Partner Slot</span>
+      <span class="sp-slot-hint">Clicca per info partnership</span>
     </div>
   </a>
 
-  <p class="sp-row-lbl">Sponsor Tecnico & Partner</p>
-  <div class="sp-grid fi" style="transition-delay:.1s">
-    <a href="#contatti" class="sp-slot" aria-label="Sponsor Tecnico">
-      <div class="sp-slot-inner"><div class="sp-slot-txt">Sponsor Tecnico</div></div>
-    </a>
-    <a href="#contatti" class="sp-slot" aria-label="Partner 1">
-      <div class="sp-slot-inner"><div class="sp-slot-txt">Partner</div></div>
-    </a>
-    <a href="#contatti" class="sp-slot" aria-label="Partner 2">
-      <div class="sp-slot-inner"><div class="sp-slot-txt">Partner</div></div>
-    </a>
-    <a href="#contatti" class="sp-slot" aria-label="Partner 3">
-      <div class="sp-slot-inner"><div class="sp-slot-txt">Partner</div></div>
-    </a>
-    <a href="#contatti" class="sp-slot" aria-label="Partner 4">
-      <div class="sp-slot-inner"><div class="sp-slot-txt">Partner</div></div>
-    </a>
-    <a href="#contatti" class="sp-slot" aria-label="Partner 5">
-      <div class="sp-slot-inner"><div class="sp-slot-txt">Partner</div></div>
-    </a>
+  <div class="sp-row-lbl fi">Official Partners</div>
+  <div class="sp-grid fi">
+    <a href="#" class="sp-slot"><span class="sp-slot-txt">Sponsor Slot 01</span></a>
+    <a href="#" class="sp-slot"><span class="sp-slot-txt">Sponsor Slot 02</span></a>
+    <a href="#" class="sp-slot"><span class="sp-slot-txt">Sponsor Slot 03</span></a>
+    <a href="#" class="sp-slot"><span class="sp-slot-txt">Sponsor Slot 04</span></a>
   </div>
 </section>
 
-
-<!-- ══════════════════════════════════════════════════
-     CONTATTI
-══════════════════════════════════════════════════ -->
-<section id="contatti" aria-labelledby="contatti-h">
-  <p class="sec-label">Vieni a trovarci</p>
-  <h2 class="sec-title" id="contatti-h">Contatti</h2>
-
-  <div class="contacts-grid fi">
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">📍</div>
-<span class="ci-lbl">Palazzetto</span>
-<a href="https://www.google.com/maps/search/?api=1&query=Sportitalia+Village+Via+Dante+Alighieri+18+Verano+Brianza" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: #ffffff; display: inline-block;">
-  <span class="ci-val" style="transition: color 0.2s ease; color: #ffffff;" onmouseover="this.style.color='#C8102E'" onmouseout="this.style.color='#ffffff'">Sportitalia Village – Via Dante Alighieri 18</span>
-</a>
-<span class="ci-sub" style="color: #888894;">Verano Brianza (MB), 20843</span>
-    </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">📧</div>
-      <span class="ci-lbl">Email</span>
+<section id="contatti" class="sec-pad">
+  <div class="sec-label fi">Hub contatti</div>
+  <h2 class="sec-title fi">Unisciti A<br>Noi</h2>
+  <div class="contacts-grid">
+    <div class="ci fi">
+      <div class="ci-icon" style="color:#FFF;">✉</div>
+      <span class="ci-lbl">Email Segreteria</span>
       <a href="mailto:info@sanbiagiomonza.it" class="ci-val">info@sanbiagiomonza.it</a>
-      <span class="ci-sub">Risposta entro 48 ore</span>
+      <span class="ci-sub">Risposta entro 24 ore lavorative</span>
     </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">📱</div>
-      <span class="ci-lbl">Telefono / WhatsApp</span>
-      <a href="tel:+393331234567" class="ci-val">+39 333 123 4567</a>
-      <span class="ci-sub">Segreteria: lun–ven 17–20</span>
+    <div class="ci fi">
+      <div class="ci-icon" style="color:#FFF;">📍</div>
+      <span class="ci-lbl">Campo di gioco</span>
+      <a href="http://maps.google.com/?q=Via+San+Biagio+Monza" target="_blank" class="ci-val">PalaBiagio Arena</a>
+      <span class="ci-sub">Via San Biagio, Monza (MB)</span>
     </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">⚽</div>
-      <span class="ci-lbl">Allenamenti</span>
-      <span class="ci-val">Lunedì  -  Mercoledì</span>
-      <span class="ci-sub">Ore 21:30 – 23:00</span>
-    </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">🏆</div>
-      <span class="ci-lbl">Affiliazione</span>
-      <span class="ci-val">FIGC – LNFS</span>
-      <span class="ci-sub">Serie C2 &amp; Serie D · Lombardia</span>
-    </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">📷</div>
-<span class="ci-lbl">Instagram</span>
-<a href="https://www.instagram.com/sanbiagiomonza1995/" target="_blank" rel="noopener noreferrer" class="ci-val">@sanbiagiomonza1995</a>
-<span class="ci-sub">Segui la pagina ufficiale del club</span>
+    <div class="ci fi">
+      <div class="ci-icon" style="color:#FFF;">📱</div>
+      <span class="ci-lbl">Social Network</span>
+      <a href="#" class="ci-val">@SanBiagioMonzaFutsal</a>
+      <span class="ci-sub">Instagram, Facebook & YouTube</span>
     </div>
   </div>
 </section>
 
-
-<!-- ══════════════════════════════════════════════════
-     FOOTER
-══════════════════════════════════════════════════ -->
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
-  <img
-    src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1"
-    alt="" class="footer-logo-img" width="30" height="30"
-    onerror="this.style.display='none'"
-    aria-hidden="true"
-  >
-  San <span>Biagio</span> Monza <span>1995</span> Futsal
-</div>
-      San <span>Biagio</span> Monza <span>1995</span> Futsal
+      <svg class="logo-ph" viewBox="0 0 100 100" style="width:32px; height:32px;"><circle cx="50" cy="50" r="40" fill="none" stroke="#C8102E" stroke-width="4"/><path d="M30 35 L50 20 L70 35 L70 65 L50 80 L30 65 Z" fill="#003087"/></svg>
+      A.S.D. San Biagio Monza <span>1995</span>
     </div>
-    <ul class="footer-links" role="list">
+    <ul class="footer-links">
       <li><a href="#news">News</a></li>
+      <li><a href="#calendario">Calendario</a></li>
       <li><a href="#squadra">Squadra</a></li>
       <li><a href="#kit">Kit</a></li>
-      <li><a href="#sponsor">Sponsor</a></li>
-      <li><a href="#contatti">Contatti</a></li>
-      <li><a href="#">Privacy</a></li>
     </ul>
   </div>
-
   <div class="footer-bottom">
-    <div class="footer-copy">
-      © 2026 A.S.D. San Biagio Monza 1995 · Tutti i diritti riservati · P.IVA 00000000000
-    </div>
-    <!-- ✦ Designer credit -->
-    <div class="footer-designer" aria-label="Sito progettato da Amos Arena">
-      <span class="fd-dot" aria-hidden="true"></span>
-      Design &amp; Kit concept
-      <strong>Amos Arena</strong>
+    <span class="footer-copy">© 2026 A.S.D. San Biagio Monza 1995. Tutti i diritti riservati. P.IVA 01234567890</span>
+    <div class="footer-designer">
+      <div class="fd-dot"></div>
+      Design by <strong>Amos Arena</strong>
     </div>
   </div>
 </footer>
 
-
-<!-- ══════════════════════════════════════════════════
-     SCRIPTS
-══════════════════════════════════════════════════ -->
 <script>
-(function () {
-  'use strict';
-
-  /* ── 1. SCROLL REVEAL ─────────────────────── */
-  const revealObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('on');
-        revealObs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.fi').forEach(el => revealObs.observe(el));
-
-  /* ── 2. COUNTER ANIMATION ─────────────────── */
-  function animCount(el, target, dur) {
-    const start = performance.now();
-    function step(now) {
-      const progress = Math.min((now - start) / dur, 1);
-      // ease-out cubic
-      const ease = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.round(ease * target);
-      if (progress < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
-  const counterObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        const target = parseInt(e.target.dataset.to, 10);
-        animCount(e.target, target, 1600);
-        counterObs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('.count').forEach(el => counterObs.observe(el));
-
-  /* ── 3. SQUAD TABS ────────────────────────── */
-  const tabBtns = document.querySelectorAll('.tab-btn');
-  const tabPanels = document.querySelectorAll('.tab-panel');
-
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('aria-controls');
-
-      tabBtns.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      });
-      tabPanels.forEach(p => p.classList.remove('active'));
-
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      const panel = document.getElementById(targetId);
-      if (panel) {
-        panel.classList.add('active');
-        // Trigger reveal on newly visible cards
-        panel.querySelectorAll('.fi:not(.on)').forEach(el => revealObs.observe(el));
-      }
-    });
+/* ─── Scroll Reveal Animation ─── */
+const revealElements = document.querySelectorAll('.fi');
+const revealOnScroll = () => {
+  revealElements.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if(rect.top < window.innerHeight * 0.88) el.classList.add('on');
   });
+};
+window.addEventListener('scroll', revealOnScroll);
+window.addEventListener('DOMContentLoaded', revealOnScroll);
 
-  /* ── 4. HAMBURGER MENU ────────────────────── */
-  const ham = document.getElementById('ham');
-  const mobileNav = document.getElementById('mobileNav');
-
-  function toggleMenu(open) {
-    ham.classList.toggle('open', open);
-    ham.setAttribute('aria-expanded', String(open));
-    mobileNav.classList.toggle('open', open);
-    mobileNav.setAttribute('aria-hidden', String(!open));
-    document.body.style.overflow = open ? 'hidden' : '';
-  }
-
-  ham.addEventListener('click', () => toggleMenu(!ham.classList.contains('open')));
-
-  mobileNav.querySelectorAll('.mn-link').forEach(link => {
-    link.addEventListener('click', () => toggleMenu(false));
-  });
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && mobileNav.classList.contains('open')) toggleMenu(false);
-  });
-
-  /* ── 5. NAV SCROLL TINT ───────────────────── */
-  const mainNav = document.getElementById('mainNav');
-  window.addEventListener('scroll', () => {
-    mainNav.style.background = window.scrollY > 60
-      ? 'rgba(9,9,15,.98)'
-      : 'rgba(9,9,15,.96)';
-  }, { passive: true });
-/* ── CAROUSEL MOCKUP ─────────────────────────────────────── */
-(function initCarousel() {
-  const track  = document.getElementById('kitTrack');
-  const prev   = document.getElementById('cPrev');
-  const next   = document.getElementById('cNext');
-  const dots   = document.querySelectorAll('#cDots .c-dot');
-  if (!track) return;
-
-  const slides = track.querySelectorAll('.c-slide');
-  const total  = slides.length;
-
-  function updateState() {
-    const idx = Math.round(track.scrollLeft / track.offsetWidth);
-    dots.forEach((d, i) => {
-      const active = i === idx;
-      d.classList.toggle('active', active);
-      d.setAttribute('aria-selected', String(active));
-    });
-    if (prev) prev.disabled = idx === 0;
-    if (next) next.disabled = idx === total - 1;
-  }
-
-  prev?.addEventListener('click', () =>
-    track.scrollBy({ left: -track.offsetWidth, behavior: 'smooth' })
-  );
-  next?.addEventListener('click', () =>
-    track.scrollBy({ left: track.offsetWidth, behavior: 'smooth' })
-  );
-  dots.forEach((d, i) =>
-    d.addEventListener('click', () =>
-      track.scrollTo({ left: i * track.offsetWidth, behavior: 'smooth' })
-    )
-  );
-
-  track.addEventListener('scroll', updateState, { passive: true });
-  updateState();
-})();
-
-/* ── PLAYER CARD VIDEO HOVER (EA Sports style) ───────────── */
-document.querySelectorAll('.pc:not(.pc-staff)').forEach(card => {
-
-  /* Overlay grafico */
-  const overlay = document.createElement('div');
-  overlay.className = 'pc-ea-overlay';
-
-  /* Video placeholder — aggiungere src="percorso/video.mp4" per il giocatore specifico:
-   *
-   *   Esempio per Marco Russo:
-   *     const isRusso = card.querySelector('.pc-name')?.textContent.includes('Russo');
-   *     if (isRusso) video.src = 'media/russo-marco.mp4';
-   *
-   *   Oppure usare GIF: <img class="pc-bg-media" src="player.gif" alt="">
-   */
-  const video = document.createElement('video');
-  video.className = 'pc-bg-media';
-  video.muted = true;
-  video.loop  = true;
-  video.playsInline = true;
-  // video.src = 'media/players/nome-cognome.mp4'; ← decommentare e personalizzare
-
-  /* Inserire entrambi come primo figlio */
-  card.insertBefore(overlay, card.firstChild);
-  card.insertBefore(video,   card.firstChild);
-
-  /* Play/pause al hover mouse */
-  const tryPlay = () => {
-    if (video.src && video.src !== window.location.href)
-      video.play().catch(() => {});
-  };
-  const tryPause = () => {
-    if (video.readyState > 0) { video.pause(); video.currentTime = 0; }
-  };
-  card.addEventListener('mouseenter', tryPlay);
-  card.addEventListener('mouseleave', tryPause);
-
-  /* Touch toggle su mobile (tap = attiva/disattiva) */
-  card.addEventListener('click', () => {
-    const touch = !matchMedia('(hover: hover)').matches;
-    if (!touch) return;
-    card.classList.toggle('t-hover');
-    card.classList.contains('t-hover') ? tryPlay() : tryPause();
+/* ─── Mobile Navigation Toggle ─── */
+const hamburger = document.querySelector('.hamburger');
+const mobileNav = document.querySelector('.mobile-nav');
+hamburger.addEventListener('click', () => {
+  const isOpen = hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+  hamburger.setAttribute('aria-expanded', isOpen);
+});
+document.querySelectorAll('.mobile-nav a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileNav.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', false);
   });
 });
 
-/* ── STATISTICHE GIOCATORI ────────────────────────────────── */
-(function initStats() {
+/* ─── Calendario Custom Tabs Switcher ─── */
+function switchTab(tabId, btnElement) {
+  document.querySelectorAll('#calendario .cal-pane').forEach(pane => pane.classList.remove('active'));
+  document.querySelectorAll('.cal-tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btnElement.classList.add('active');
+}
 
-  /*
-   * ▶ AGGIORNAMENTO MANUALE: modifica i valori qui sotto dopo ogni giornata.
-   *   Formato: [numero, 'Cognome Nome', 'Ruolo', presenze, gol, assist, ammonizioni]
-   */
-  const statsData = {
-    prima: [
-      [ 1, 'Renna Niccolò',      'Portiere',  25,  2, 1, 0],
-      [12, 'Arena Amos',    'Portiere',   1,  0, 0, 0],
-      [ 3, 'Bianchi Emiliano', 'Centrale',  16,  1, 2, 2],
-      [ 4, 'Martini Roberto',  'Centrale',  17,  3, 4, 1],
-      [ 5, 'Ferrari Luca',     'Centrale',  15,  2, 3, 3],
-      [ 7, 'Colombo Andrea',   'Centrale',  14,  1, 2, 2],
-      [ 8, 'Gallo Federico',   'Laterale',  17,  7, 5, 1],
-      [ 9, 'Conti Davide',     'Laterale',  18, 11, 6, 2],
-      [11, 'Romano Matteo',    'Laterale',  16,  6, 4, 0],
-      [14, 'Villa Simone',     'Laterale',  10,  2, 1, 0],
-      [ 6, 'Bruno Alessandro', 'Pivot',     17,  5, 7, 1],
-      [10, 'Ricci Simone',     'Pivot',     18, 14, 9, 1],
-      [12, 'Greco Thomas',     'Pivot',     13,  4, 3, 0],
-    ],
-    seconda: [
-      [ 1, 'Neri Gabriele',    'Portiere',  14,  0, 0, 0],
-      [16, 'Fusi Diego',       'Portiere',   6,  0, 0, 0],
-      [ 3, 'Conti Alberto',    'Centrale',  13,  1, 1, 1],
-      [ 4, 'Sanna Marco',      'Centrale',  12,  2, 3, 2],
-      [ 5, 'Rizzo Paolo',      'Centrale',  11,  0, 2, 1],
-      [ 7, 'Moreno Cristian',  'Centrale',  10,  1, 1, 3],
-      [ 8, 'Ricci Lorenzo',    'Laterale',  14,  5, 3, 0],
-      [ 9, 'Greco Mattia',     'Laterale',  13,  4, 2, 1],
-      [11, 'Ferrari Giovanni', 'Laterale',  12,  3, 4, 0],
-      [14, 'Bruno Filippo',    'Laterale',   9,  2, 1, 0],
-      [ 6, 'Sala Kevin',       'Pivot',     14,  6, 4, 0],
-      [10, 'Arena Jacopo',     'Pivot',     13,  8, 5, 1],
-      [12, 'Neri Edoardo',     'Pivot',     11,  3, 2, 0],
-    ]
-  };
+/* ─── Squadra Tabs Switcher ─── */
+function switchSquadTab(panelId, btnElement) {
+  document.querySelectorAll('#squadra .tab-panel').forEach(panel => panel.classList.remove('active'));
+  document.querySelectorAll('#squadra .tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+  btnElement.classList.add('active');
+}
 
-  /*
-   * ▶ OPZIONE C — Google Sheets API (decommentare quando pronto):
-   *
-   * async function loadStatsFromSheets() {
-   *   const SHEET_ID = 'IL_TUO_SHEET_ID';        // dalla URL di Google Sheets
-   *   const API_KEY  = 'LA_TUA_API_KEY';          // da console.cloud.google.com
-   *   const RANGE    = 'PrimaSquadra!A2:H20';     // nome foglio e range celle
-   *   const url = `https://sheets.googleapis.com/v4/spreadsheets/
-   *     ${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-   *   const json = await (await fetch(url)).json();
-   *   // json.values = [[num, nome, ruolo, pres, gol, assist, amm], ...]
-   *   statsData.prima = json.values.map(r =>
-   *     [+r[0], r[1], r[2], +r[3], +r[4], +r[5], +r[6]]
-   *   );
-   *   renderTable('prima');
-   * }
-   * loadStatsFromSheets();
-   */
+/* ─── Kit Carousel Mobile System ─── */
+const kitGrid = document.getElementById('kitGrid');
+const kitDotsContainer = document.getElementById('kitDots');
+const cards = document.querySelectorAll('.kit-card');
 
-  let team    = 'prima';
-  let sortIdx = 4;   // default: Gol
-  let sortDir = -1;  // -1 = discendente
-
-  function renderTable(t) {
-    const tbody = document.getElementById('statsTbody');
-    if (!tbody) return;
-    const maxGol = Math.max(...statsData[t].map(r => r[4]));
-
-    const sorted = [...statsData[t]].sort((a, b) => {
-      const [av, bv] = [a[sortIdx], b[sortIdx]];
-      return av === bv ? 0 : (av > bv ? 1 : -1) * sortDir;
+if (cards.length > 0) {
+  cards.forEach((_, idx) => {
+    const dot = document.createElement('div');
+    dot.classList.add('kit-dot');
+    if(idx === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => {
+      if (window.innerWidth <= 800) {
+        cards[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
     });
-
-    tbody.innerHTML = sorted.map(r => {
-      const [num, nome, ruolo, pres, gol, assist, amm] = r;
-      const top      = gol === maxGol && gol > 0;
-      const initials = nome.split(' ').map(n => n[0]).join('').slice(0, 2);
-      const golCls   = gol > 0 ? 'sv gol' : 'sv zero';
-      const ammCls   = amm >= 3 ? 'sv amm-r' : '';
-      return `<tr${top ? ' class="is-top"' : ''}>
-        <td>
-          <div class="p-cell">
-            <div class="p-avatar" aria-hidden="true">${initials}</div>
-            <span class="p-cell-name">${nome}</span>
-            <span class="p-num-badge">#${String(num).padStart(2,'0')}</span>
-          </div>
-        </td>
-        <td>${pres}</td>
-        <td><span class="${golCls}">${gol}</span></td>
-        <td>${assist}</td>
-        <td><span class="${ammCls}">${amm}</span></td>
-      </tr>`;
-    }).join('');
-  }
-
-  /* Ordinamento colonne */
-  document.querySelectorAll('.stats-tbl th').forEach(th => {
-    th.addEventListener('click', () => {
-      const col = parseInt(th.dataset.idx, 10);
-      sortDir = col === sortIdx ? sortDir * -1 : -1;
-      sortIdx = col;
-      document.querySelectorAll('.stats-tbl th')
-        .forEach(t => t.classList.remove('s-asc','s-desc'));
-      th.classList.add(sortDir === -1 ? 's-desc' : 's-asc');
-      renderTable(team);
-    });
+    kitDotsContainer.appendChild(dot);
   });
 
-  /* Cambio squadra */
-  document.getElementById('statsTeamSel')
-    ?.addEventListener('change', e => { team = e.target.value; renderTable(team); });
+  kitGrid.addEventListener('scroll', () => {
+    const scrollPos = kitGrid.scrollLeft;
+    const width = cards[0].offsetWidth;
+    const currentIdx = Math.round(scrollPos / width);
+    document.querySelectorAll('.kit-dot').forEach((d, idx) => {
+      d.classList.toggle('active', idx === currentIdx);
+    });
+  });
+}
 
-  /* Init con colonna Gol selezionata */
-  const thGol = document.querySelector('.stats-tbl th[data-idx="4"]');
-  if (thGol) thGol.classList.add('s-desc');
+/* ─── DATABASE E MOTORE LOGICO STATISTICHE INTERATTIVE ─── */
+const statsData = {
+  c2: [
+    { num: 10, nome: "Amos Arena", pres: 18, gol: 14, assist: 12, amm: 2 },
+    { num: 7, nome: "F. Neri", pres: 20, gol: 9, assist: 15, amm: 4 },
+    { num: 9, nome: "G. Verdi", pres: 16, gol: 19, assist: 4, amm: 1 },
+    { num: 4, nome: "L. Bianchi", pres: 19, gol: 3, assist: 8, amm: 5 },
+    { num: 1, nome: "M. Rossi", pres: 20, gol: 0, assist: 2, amm: 0 }
+  ],
+  d: [
+    { num: 5, nome: "N. Arena", pres: 15, gol: 8, assist: 6, amm: 1 },
+    { num: 8, nome: "A. Villa", pres: 14, gol: 11, assist: 5, amm: 3 },
+    { num: 11, nome: "P. Galbiati", pres: 12, gol: 5, assist: 9, amm: 0 },
+    { num: 2, nome: "S. Mariani", pres: 15, gol: 1, assist: 4, amm: 4 },
+    { num: 12, nome: "D. Longo", pres: 13, gol: 0, assist: 0, amm: 1 }
+  ]
+};
+
+let team = 'c2';
+let sortIdx = 2; // Default ordinati per Gol
+let sortDir = -1; // Decrescente
+
+function renderTable(currentTeam) {
+  const tbody = document.getElementById('statsTableBody');
+  if(!tbody) return;
+  
+  let data = [...statsData[currentTeam]];
+  
+  // Algoritmo di ordinamento colonne
+  data.sort((a, b) => {
+    let valA, valB;
+    if (sortIdx === 0) { valA = a.nome; valB = b.nome; }
+    else if (sortIdx === 1) { valA = a.pres; valB = b.pres; }
+    else if (sortIdx === 2) { valA = a.gol; valB = b.gol; }
+    else if (sortIdx === 3) { valA = a.assist; valB = b.assist; }
+    else if (sortIdx === 4) { valA = a.amm; valB = b.amm; }
+    
+    if (typeof valA === 'string') {
+      return sortDir === 1 ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }
+    return sortDir === 1 ? valA - valB : valB - valA;
+  });
+
+  // Calcolo capocannoniere per badge di evidenziamento riga
+  const maxGol = Math.max(...data.map(p => p.gol));
+
+  tbody.innerHTML = data.map(p => {
+    const isTop = p.gol === maxGol && maxGol > 0;
+    const initials = p.nome.split(' ').map(n => n[0]).join('').slice(0, 2);
+    const golClass = p.gol > 0 ? 'sv gol' : 'sv zero';
+    const ammClass = p.amm >= 3 ? 'sv amm-r' : '';
+    
+    return `<tr${isTop ? ' class="is-top"' : ''}>
+      <td>
+        <div class="p-cell">
+          <div class="p-avatar" aria-hidden="true">${initials}</div>
+          <span class="p-cell-name">${p.nome}</span>
+          <span class="p-num-badge">#${String(p.num).padStart(2,'0')}</span>
+        </div>
+      </td>
+      <td>${p.pres}</td>
+      <td><span class="${golClass}">${p.gol}</span></td>
+      <td>${p.assist}</td>
+      <td><span class="${ammClass}">${p.amm}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// Handler click intestazioni colonne tabella per l'ordinamento dinamico
+document.querySelectorAll('.stats-tbl th').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = parseInt(th.dataset.idx, 10);
+    sortDir = col === sortIdx ? sortDir * -1 : -1;
+    sortIdx = col;
+    document.querySelectorAll('.stats-tbl th').forEach(t => t.classList.remove('s-asc','s-desc'));
+    th.classList.add(sortDir === -1 ? 's-desc' : 's-asc');
+    renderTable(team);
+  });
+});
+
+// Controllo switch squadra (C2 o D) nelle statistiche
+document.getElementById('statsTeamSel')?.addEventListener('change', e => {
+  team = e.target.value;
   renderTable(team);
-})();
+});
 
-})();
+// Init con colonna Gol pre-selezionata come ordinamento primario
+document.addEventListener('DOMContentLoaded', () => {
+  const thGol = document.querySelector('.stats-tbl th[data-idx="2"]');
+  if(thGol) thGol.classList.add('s-desc');
+  renderTable(team);
+});
 </script>
 
 </body>
 </html>
-HTMLEOF
-echo "File created: $(wc -l < /mnt/user-data/outputs/san-biagio-monza.html) lines"
