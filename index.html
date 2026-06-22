@@ -1121,32 +1121,39 @@ display: flex; align-items: center; gap: 6px;
 ════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
 
-  /* .kit-grid mantiene lo zoom controllato */
+  /* 1. Spaziamo pesantemente la sezione dei mockup ambientati */
+  .mockup-section {
+    margin-top: 25vh !important; /* Diamo un quarto di altezza schermo di spazio vuoto sopra */
+    margin-bottom: 10vh !important;
+    position: relative;
+    z-index: 10; /* Sopra allo sfondo del sito */
+  }
+
+  /* 2. Blocchiamo il carosello grande sul fondo */
+  .c-viewport {
+    will-change: transform;
+    transform-origin: center bottom !important; /* Ancoraggio totale e forzato sul bordo basso */
+    position: relative;
+    z-index: 11; /* Leggermente sopra il suo contenitore */
+  }
+
+  /* 3. Gestiamo la griglia delle magliette sopra */
   .kit-grid {
     will-change: transform;
     transform-origin: center center;
     position: relative;
-    z-index: 2;
-  }
-  
-  /* Lo slider grande rimane piantato e non vola sopra al resto */
-  .c-viewport {
-    will-change: transform;
-    transform-origin: center bottom !important; /* Forza l'ancoraggio assoluto sul fondo */
-    position: relative;
-    z-index: 1;
+    z-index: 5; /* Livello inferiore rispetto al mockup grande che zoomma */
+    margin-bottom: 5vh; /* Spazio sotto le magliette */
   }
 
-  /* Inverte l'ordine delle scritte della rosa/divise */
+  /* Inversione titoli rosa (Prima/Seconda Divisa) */
   .kit-card {
     display: flex;
     flex-direction: column-reverse;
   }
-
   .kit-info {
     margin-bottom: 15px;
   }
-
 }
 </style>
 </head>
@@ -2273,10 +2280,7 @@ renderTable(team);
 ─────────────────────────────────────────────────────────────── */
 (function kitScrollZoom() {
 
-  /* Guard 1: non mobile → esci, desktop invariato */
   if (window.innerWidth > 767) return;
-
-  /* Guard 2: utente preferisce riduzione del movimento */
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   var elements = document.querySelectorAll('.kit-grid, .c-viewport');
@@ -2295,25 +2299,25 @@ renderTable(team);
 
     elements.forEach(function(el, index) {
       var rect = el.getBoundingClientRect();
+      var isViewport = el.classList.contains('c-viewport');
       
-      // Calcolo differenziato del centro per tenere il carosello ancorato sul fondo
-      var elCenterY = el.classList.contains('c-viewport') ? rect.bottom : (rect.top + rect.height * 0.5);
+      // Calcolo differenziato dell'origine dello scroll
+      var triggerPoint = isViewport ? rect.bottom : (rect.top + rect.height * 0.5);
 
       var progress;
-      if (elCenterY >= vh) {
+      if (triggerPoint >= vh) {
         progress = 0;
-      } else if (elCenterY <= vh * 0.5) {
+      } else if (triggerPoint <= vh * 0.5) {
         progress = 1;
       } else {
-        var raw = 1 - (elCenterY - vh * 0.5) / (vh * 0.5);
-        progress = 1 - (1 - raw) * (1 - raw);
+        var raw = 1 - (triggerPoint - vh * 0.5) / (vh * 0.5);
+        progress = 1 - (1 - raw) * (1 - raw); // ease-out quadratico
       }
 
-      /* ── CONFIGURAZIONE E LIVELLO DI ZOOM ── */
+      /* ── LIVELLO DI ZOOM ── */
       var SCALE_MAX;
-      if (el.classList.contains('c-viewport')) {
-        // PUOI CAMBIARE QUESTO NUMERO: Alza a 1.90 o 2.00 se lo vuoi ancora più gigante
-        SCALE_MAX = 1.75; 
+      if (isViewport) {
+        SCALE_MAX = 2.00; // Zoom enorme e imponente bloccato sul fondo
       } else {
         SCALE_MAX = Math.min(1.25, (window.innerWidth - 8) / (el.offsetWidth || 300));
       }
@@ -2322,6 +2326,7 @@ renderTable(team);
       var scR = Math.round(sc * 10000) / 10000;
 
       if (scR !== lastStates[index]) {
+        // Applichiamo lo zoom. L'ancoraggio 'center bottom' via CSS farà il resto
         el.style.transform = (scR === 1) ? '' : ('scale(' + scR + ')');
         lastStates[index] = scR;
       }
