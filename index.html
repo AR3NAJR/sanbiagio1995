@@ -1126,7 +1126,7 @@ display: flex; align-items: center; gap: 6px;
      Nessuna transition CSS volutamente — le animazioni
      guidate dallo scroll devono rispondere istantaneamente
      al dito, senza il delay tipico di transition. */
-  .kit-grid {
+  .kit-grid, .c-viewport {
     will-change: transform;
     transform-origin: center center;
   }
@@ -2264,92 +2264,69 @@ renderTable(team);
   /* Guard 2: utente preferisce riduzione del movimento */
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  var kitGrid = document.querySelector('.kit-grid');
-  if (!kitGrid) return;
+  // Selezioniamo sia la griglia delle magliette sia il rettangolo dello slider
+  var elements = document.querySelectorAll('.kit-grid, .c-viewport');
+  if (!elements.length) return;
 
-  /* Scale massima: calcolata in modo che il kit-grid non
-     esca mai dal viewport in orizzontale (4px di margine
-     per lato). Su un telefono da 390px con kit-grid 300px
-     → maxSafe ≈ 1.27. Su telefoni più stretti si riduce
-     automaticamente. Non hardcoded = zero overflow-x su
-     qualsiasi dispositivo. */
-  var SCALE_MAX = Math.min(
-    1.30,
-    (window.innerWidth - 8) / (kitGrid.offsetWidth || 300)
-  );
+  var rafId = null;   /* id del requestAnimationFrame pendente */
+  var lastStates = []; /* tiene traccia delle ultime scale per ciascun elemento */
 
-  var rafId   = null; /* id del requestAnimationFrame pendente */
-  var lastSc  = -1;   /* ultima scala applicata (evita DOM write inutili) */
+  // Inizializziamo lo stato per ogni elemento trovato
+  elements.forEach(function(el, index) {
+    lastStates[index] = -1;
+  });
 
   function update() {
     rafId = null;
+    var vh = window.innerHeight;
 
-    var rect      = kitGrid.getBoundingClientRect();
-    var vh        = window.innerHeight;
-    var elCenterY = rect.top + rect.height * 0.5;
+    elements.forEach(function(el, index) {
+      var rect = el.getBoundingClientRect();
+      var elCenterY = rect.top + rect.height * 0.5;
 
-    /* ── Calcolo progress ──────────────────────────────
-       0  → centro elemento al bordo inferiore del viewport
-            (appena entrato, o ancora fuori)
-       1  → centro elemento esattamente al centro del viewport
-       >1 → elemento oltre il centro (clamp a 1 → zoom max)
-            → l'utente può continuare a scorrere normalmente
-    ─────────────────────────────────────────────────── */
-    var progress;
-    if (elCenterY >= vh) {
-      /* elemento non ancora visibile */
-      progress = 0;
-    } else if (elCenterY <= vh * 0.5) {
-      /* centro sopra (o al) centro del viewport → massimo */
-      progress = 1;
-    } else {
-      /* zona di transizione: elCenterY scende da vh a vh/2 */
-      var raw = 1 - (elCenterY - vh * 0.5) / (vh * 0.5);
-      /* ease-out quadratico: più reattivo all'inizio,
-         poi si assesta dolcemente al valore massimo */
-      progress = 1 - (1 - raw) * (1 - raw);
-    }
+      /* Calcolo progress per il singolo elemento */
+      var progress;
+      if (elCenterY >= vh) {
+        progress = 0;
+      } else if (elCenterY <= vh * 0.5) {
+        progress = 1;
+      } else {
+        var raw = 1 - (elCenterY - vh * 0.5) / (vh * 0.5);
+        progress = 1 - (1 - raw) * (1 - raw); // ease-out quadratico
+      }
 
-    /* ── Scala risultante ──────────────────────────────
-       progress 0 → scale 1.00 (dimensione naturale)
-       progress 1 → scale SCALE_MAX (quasi a tutto schermo)
-    ─────────────────────────────────────────────────── */
-    var sc = 1 + (SCALE_MAX - 1) * progress;
+      /* Calcolo scala massima sicura specifica per la larghezza di questo elemento */
+      var SCALE_MAX = Math.min(
+        1.25, 
+        (window.innerWidth - 8) / (el.offsetWidth || 300)
+      );
 
-    /* Arrotonda a 4 decimali per evitare micro-variazioni
-       che innescherebbero un DOM write inutile */
-    var scR = Math.round(sc * 10000) / 10000;
+      var sc = 1 + (SCALE_MAX - 1) * progress;
+      var scR = Math.round(sc * 10000) / 10000;
 
-    if (scR !== lastSc) {
-      /* Quando la scala torna a 1.0 esatto, rimuovi del tutto
-         il transform inline: nessun CSS residuo nell'elemento */
-      kitGrid.style.transform = (scR === 1) ? '' : ('scale(' + scR + ')');
-      lastSc = scR;
-    }
+      /* Aggiorna il DOM solo se la scala è cambiata rispetto all'ultimo scroll */
+      if (scR !== lastStates[index]) {
+        el.style.transform = (scR === 1) ? '' : ('scale(' + scR + ')');
+        lastStates[index] = scR;
+      }
+    });
   }
 
-  /* ── Listener scroll con rAF batching ──────────────
-     Molti eventi scroll possono arrivare in un singolo
-     frame. Raggruppiamo: al massimo 1 update per frame. */
   function onScroll() {
     if (!rafId) rafId = window.requestAnimationFrame(update);
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  /* Calcolo iniziale: gestisce il caso in cui la pagina
-     venga aperta direttamente con #kit in viewport (link
-     diretto, reload a metà pagina, ecc.) */
+  /* Calcolo iniziale */
   update();
 
-  /* ── Cleanup su resize / rotazione ─────────────────
-     Se l'utente ruota in landscape o allarga la finestra
-     oltre 767px, ripristiniamo il comportamento desktop:
-     rimuoviamo il transform inline e i listener. */
+  /* Cleanup su resize / rotazione */
   function onResize() {
     if (window.innerWidth > 767) {
-      kitGrid.style.transform = '';
-      lastSc = -1;
+      elements.forEach(function(el) {
+        el.style.transform = '';
+      });
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
     }
