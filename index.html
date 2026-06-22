@@ -1121,24 +1121,28 @@ display: flex; align-items: center; gap: 6px;
 ════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
 
-  /* .kit-grid mantiene lo zoom centrale, .c-viewport rimane ancorato sul fondo */
+  /* .kit-grid mantiene lo zoom controllato */
   .kit-grid {
     will-change: transform;
     transform-origin: center center;
+    position: relative;
+    z-index: 2;
   }
   
+  /* Lo slider grande rimane piantato e non vola sopra al resto */
   .c-viewport {
     will-change: transform;
-    transform-origin: center bottom; /* Resta appoggiato sulla base dello schermo */
+    transform-origin: center bottom !important; /* Forza l'ancoraggio assoluto sul fondo */
+    position: relative;
+    z-index: 1;
   }
 
-  /* Inverte l'ordine: scritte sopra e immagine sotto */
+  /* Inverte l'ordine delle scritte della rosa/divise */
   .kit-card {
     display: flex;
     flex-direction: column-reverse;
   }
 
-  /* Distanzia le scritte dalla maglietta quando vanno sopra */
   .kit-info {
     margin-bottom: 15px;
   }
@@ -2291,7 +2295,9 @@ renderTable(team);
 
     elements.forEach(function(el, index) {
       var rect = el.getBoundingClientRect();
-      var elCenterY = rect.top + rect.height * 0.5;
+      
+      // Calcolo differenziato del centro per tenere il carosello ancorato sul fondo
+      var elCenterY = el.classList.contains('c-viewport') ? rect.bottom : (rect.top + rect.height * 0.5);
 
       var progress;
       if (elCenterY >= vh) {
@@ -2303,10 +2309,11 @@ renderTable(team);
         progress = 1 - (1 - raw) * (1 - raw);
       }
 
-      /* ── CONFIGURAZIONE ZOOM POTENZIATO ── */
+      /* ── CONFIGURAZIONE E LIVELLO DI ZOOM ── */
       var SCALE_MAX;
       if (el.classList.contains('c-viewport')) {
-        SCALE_MAX = 1.60; // Lo slider grande zoomma molto di più!
+        // PUOI CAMBIARE QUESTO NUMERO: Alza a 1.90 o 2.00 se lo vuoi ancora più gigante
+        SCALE_MAX = 1.75; 
       } else {
         SCALE_MAX = Math.min(1.25, (window.innerWidth - 8) / (el.offsetWidth || 300));
       }
