@@ -460,6 +460,92 @@ nav{
 #kit .sec-label::before{background:var(--red);}
 #kit .sec-title{color:var(--white);margin-bottom:.8rem;}
 
+#kit::before{
+  content:'KIT';position:absolute;right:-.03em;bottom:-.08em;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28vw;
+  line-height:.88;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.023);
+  user-select:none;pointer-events:none;
+}
+#kit .sec-label{color:var(--red);}
+#kit .sec-label::before{background:var(--red);}
+#kit .sec-title{color:var(--white);margin-bottom:.8rem;}
+
+/* ─── EFFETTO ZOOM MOCKUP STILE APPLE ─── */
+.kit-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 9, 15, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 20px;
+}
+.kit-lightbox.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.kit-lightbox-content {
+  width: 90%;
+  max-width: 700px;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 30px;
+  transform: scale(0.85) translateY(30px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.kit-lightbox.active .kit-lightbox-content {
+  transform: scale(1) translateY(0);
+}
+.kit-lightbox-content svg, .kit-lightbox-content img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 35px rgba(0,0,0,0.6));
+}
+.kit-lightbox-close {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.kit-lightbox-close:hover { background: var(--red); }
+.kit-lightbox-hint {
+  position: absolute;
+  bottom: 25px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+@media (max-width: 800px) {
+  .kit-wrap { cursor: zoom-in; }
+}
+
+/* Credit block */
+.kit-credit-bar{
+   
 /* Credit block */
 .kit-credit-bar{
   display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 0;
@@ -1923,6 +2009,13 @@ footer{
   </div>
 </footer>
 
+   <div class="kit-lightbox" id="kitLightbox">
+  <button class="kit-lightbox-close" id="closeLightbox">Chiudi ✕</button>
+  <div class="kit-lightbox-content" id="lightboxContent">
+    </div>
+  <div class="kit-lightbox-hint">Tocca ovunque per uscire o continua a scorrere</div>
+</div>
+
 
 <!-- ══════════════════════════════════════════════════
      SCRIPTS
@@ -2223,6 +2316,40 @@ document.querySelectorAll('.pc:not(.pc-staff)').forEach(card => {
 })();
 
 })();
+/* ─── LOGICA DI INTERAZIONE ZOOM MOCKUP STILE APPLE ─── */
+const lightbox = document.getElementById('kitLightbox');
+const lightboxContent = document.getElementById('lightboxContent');
+const closeLightbox = document.getElementById('closeLightbox');
+
+document.querySelectorAll('.kit-wrap').forEach(wrap => {
+  wrap.addEventListener('click', () => {
+    const mockup = wrap.querySelector('.kit-svg') || wrap.querySelector('img');
+    if (!mockup) return;
+    
+    const clonedMockup = mockup.cloneNode(true);
+    lightboxContent.innerHTML = '';
+    lightboxContent.appendChild(clonedMockup);
+    
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+function exitZoom() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+closeLightbox.addEventListener('click', exitZoom);
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox || e.target === lightboxContent) exitZoom();
+});
+window.addEventListener('wheel', exitZoom);
+window.addEventListener('touchmove', (e) => {
+  if(lightbox.classList.contains('active')) {
+    exitZoom();
+  }
+}, {passive: true});
 </script>
 
 </body>
