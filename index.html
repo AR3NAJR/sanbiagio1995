@@ -1121,21 +1121,32 @@ display: flex; align-items: center; gap: 6px;
 ════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
 
-  /* will-change: transform → Chrome/Safari usano il
-     compositor thread (GPU): zero repaints sul main thread.
-     Nessuna transition CSS volutamente — le animazioni
-     guidate dallo scroll devono rispondere istantaneamente
-     al dito, senza il delay tipico di transition. */
-  .kit-grid, .c-viewport {
+  /* .kit-grid mantiene lo zoom centrale, .c-viewport rimane ancorato sul fondo */
+  .kit-grid {
     will-change: transform;
     transform-origin: center center;
+  }
+  
+  .c-viewport {
+    will-change: transform;
+    transform-origin: center bottom; /* Resta appoggiato sulla base dello schermo */
+  }
+
+  /* Inverte l'ordine: scritte sopra e immagine sotto */
+  .kit-card {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  /* Distanzia le scritte dalla maglietta quando vanno sopra */
+  .kit-info {
+    margin-bottom: 15px;
   }
 
 }
 </style>
 </head>
 <body>
-
 <!-- ══════════════════════════════════════════════════
     NAVIGATION
 ══════════════════════════════════════════════════ -->
@@ -1554,7 +1565,7 @@ Seconda Squadra <span style="font-weight:600;opacity:.6;font-size:.8em;margin-le
 </div>
 <div class="kit-info">
 <div class="kit-name">Prima Divisa</div>
-<div class="kit-sub">Gara Casa · Rosso/Blu</div>
+<div class="kit-sub">Gara Casa · Rosso/Bianco</div>
 </div>
 </div>
 
@@ -1565,7 +1576,7 @@ Seconda Squadra <span style="font-weight:600;opacity:.6;font-size:.8em;margin-le
 </div>
 <div class="kit-info">
 <div class="kit-name">Seconda Divisa</div>
-<div class="kit-sub">Gara Trasferta · Blu/Rosso</div>
+<div class="kit-sub">Gara Trasferta · Blu/Bianco</div>
 </div>
 </div>
 
@@ -1576,7 +1587,7 @@ Seconda Squadra <span style="font-weight:600;opacity:.6;font-size:.8em;margin-le
 </div>
 <div class="kit-info">
 <div class="kit-name">Terza Divisa</div>
-<div class="kit-sub">Terzo Kit Ufficiale · Nero</div>
+<div class="kit-sub">Special Kit 30esimo Anniversario · Blu/Rosso/Oro</div>
 </div>
 </div>
 
@@ -2264,14 +2275,12 @@ renderTable(team);
   /* Guard 2: utente preferisce riduzione del movimento */
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // Selezioniamo sia la griglia delle magliette sia il rettangolo dello slider
   var elements = document.querySelectorAll('.kit-grid, .c-viewport');
   if (!elements.length) return;
 
-  var rafId = null;   /* id del requestAnimationFrame pendente */
-  var lastStates = []; /* tiene traccia delle ultime scale per ciascun elemento */
+  var rafId = null;
+  var lastStates = [];
 
-  // Inizializziamo lo stato per ogni elemento trovato
   elements.forEach(function(el, index) {
     lastStates[index] = -1;
   });
@@ -2284,7 +2293,6 @@ renderTable(team);
       var rect = el.getBoundingClientRect();
       var elCenterY = rect.top + rect.height * 0.5;
 
-      /* Calcolo progress per il singolo elemento */
       var progress;
       if (elCenterY >= vh) {
         progress = 0;
@@ -2292,19 +2300,20 @@ renderTable(team);
         progress = 1;
       } else {
         var raw = 1 - (elCenterY - vh * 0.5) / (vh * 0.5);
-        progress = 1 - (1 - raw) * (1 - raw); // ease-out quadratico
+        progress = 1 - (1 - raw) * (1 - raw);
       }
 
-      /* Calcolo scala massima sicura specifica per la larghezza di questo elemento */
-      var SCALE_MAX = Math.min(
-        1.25, 
-        (window.innerWidth - 8) / (el.offsetWidth || 300)
-      );
+      /* ── CONFIGURAZIONE ZOOM POTENZIATO ── */
+      var SCALE_MAX;
+      if (el.classList.contains('c-viewport')) {
+        SCALE_MAX = 1.60; // Lo slider grande zoomma molto di più!
+      } else {
+        SCALE_MAX = Math.min(1.25, (window.innerWidth - 8) / (el.offsetWidth || 300));
+      }
 
       var sc = 1 + (SCALE_MAX - 1) * progress;
       var scR = Math.round(sc * 10000) / 10000;
 
-      /* Aggiorna il DOM solo se la scala è cambiata rispetto all'ultimo scroll */
       if (scR !== lastStates[index]) {
         el.style.transform = (scR === 1) ? '' : ('scale(' + scR + ')');
         lastStates[index] = scR;
@@ -2317,11 +2326,8 @@ renderTable(team);
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-
-  /* Calcolo iniziale */
   update();
 
-  /* Cleanup su resize / rotazione */
   function onResize() {
     if (window.innerWidth > 767) {
       elements.forEach(function(el) {
