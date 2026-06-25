@@ -2618,13 +2618,11 @@ footer {
 ══════════════════════════════════════════════ -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  // 1. REGISTRAZIONE SERVICE WORKER PER PWA
+  // 1. REGISTRAZIONE SERVICE WORKER
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('sw.js').then(function(reg) {
-        console.log('Service Worker registrato con successo:', reg.scope);
-      }).catch(function(err) {
-        console.log('Errore registrazione Service Worker:', err);
+      navigator.serviceWorker.register('sw.js').catch(function(err) {
+        console.log('SW registration failed:', err);
       });
     });
   }
@@ -2632,13 +2630,47 @@ document.addEventListener("DOMContentLoaded", function() {
   // REGISTRAZIONE PLUGINS GSAP
   gsap.registerPlugin(ScrollTrigger);
 
-  // 2. ANIMAZIONE HERO SVG ZOOM (GSAP)
-  const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  
-  if (!isReducedMotion) {
+  // LOGICA PREFERS-REDUCED-MOTION
+  const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 2. NAV SCROLL TINT
+  const mainNav = document.getElementById("mainNav");
+  if (mainNav) {
+    window.addEventListener("scroll", function() {
+      if (window.scrollY > 50) {
+        mainNav.classList.add("scrolled");
+      } else {
+        mainNav.classList.remove("scrolled");
+      }
+    });
+  }
+
+  // 3. MENU MOBILE TOGGLE
+  const ham = document.getElementById("ham");
+  const mobOverlay = document.getElementById("mobOverlay");
+  const mobCloseBtn = document.getElementById("mobCloseBtn");
+  const mobLinks = document.querySelectorAll(".mob-link");
+
+  function toggleMenu() {
+    if (!ham || !mobOverlay) return;
+    ham.classList.toggle("open");
+    mobOverlay.classList.toggle("open");
+    document.body.classList.toggle("menu-open");
+  }
+
+  if (ham) ham.addEventListener("click", toggleMenu);
+  if (mobCloseBtn) mobCloseBtn.addEventListener("click", toggleMenu);
+  mobLinks.forEach(function(link) {
+    link.addEventListener("click", function() {
+      if (mobOverlay && mobOverlay.classList.contains("open")) toggleMenu();
+    });
+  });
+
+  // 4. ANIMAZIONE HERO ZOOM (SVG)
+  if (!isReduced && document.getElementById("heroTitle")) {
     gsap.timeline({
       scrollTrigger: {
-        trigger: ".hero-section",
+        trigger: "#hero",
         start: "top top",
         end: "bottom top",
         scrub: true,
@@ -2646,16 +2678,14 @@ document.addEventListener("DOMContentLoaded", function() {
         anticipatePin: 1
       }
     })
-    .to(".hero-svg-text", {
-      scale: 8,
-      opacity: 0,
-      ease: "power1.inOut"
-    });
+    .to("#heroTitle", { scale: 12, opacity: 0, ease: "power1.in" })
+    .to("#heroBar", { width: 0, opacity: 0, ease: "power1.in" }, 0)
+    .to("#heroSub, #heroStats, #heroBadge", { opacity: 0, y: -50, ease: "power1.in" }, 0);
   } else {
-    // Se l'utente preferisce movimenti ridotti, sfumiamo solo l'opacity senza zoom aggressivo
-    gsap.to(".hero-svg-text", {
+    // Fallback se disattivate o non disponibili
+    gsap.to("#heroTitle, #heroBar, #heroSub, #heroStats, #heroBadge", {
       scrollTrigger: {
-        trigger: ".hero-section",
+        trigger: "#hero",
         start: "top top",
         end: "bottom top",
         scrub: true
@@ -2664,197 +2694,198 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // 3. EFFECT PINNING SEZIONE KIT
-  if (!isReducedMotion && document.querySelector('#kitPinWrapper')) {
-    let panels = gsap.utils.toArray(".kit-panel");
+  // 5. TUNNEL OVERLAY (SFUMATURA NERA DELLA HERO)
+  if (!isReduced && document.getElementById("tunnel-overlay")) {
+    gsap.to("#tunnel-overlay", {
+      scrollTrigger: {
+        trigger: "#hero",
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      },
+      opacity: 1,
+      ease: "none"
+    });
+  }
+
+  // 6. MATCH CENTER TABS
+  const mcBtns = document.querySelectorAll(".mc-tab-btn");
+  const mcContents = document.querySelectorAll(".mc-tab-content");
+
+  mcBtns.forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      mcBtns.forEach(function(b) { b.classList.remove("active"); });
+      mcContents.forEach(function(c) { c.classList.remove("active"); });
+
+      this.classList.add("active");
+      const targetId = this.getAttribute("data-target");
+      const targetPanel = document.getElementById(targetId);
+      if (targetPanel) targetPanel.classList.add("active");
+
+      ScrollTrigger.refresh();
+    });
+  });
+
+  // 7. KIT PINNING ANIMATION (SCROLL ORIZZONTALE)
+  if (!isReduced && document.getElementById("kitPinWrapper")) {
+    const panels = gsap.utils.toArray(".kit-panel");
     gsap.to(panels, {
       xPercent: -100 * (panels.length - 1),
       ease: "none",
       scrollTrigger: {
         trigger: "#kitPinWrapper",
         pin: true,
-        scrub: 1,
+        scrub: 0.5,
         snap: 1 / (panels.length - 1),
-        end: () => "+=" + document.querySelector("#kitPinWrapper").offsetWidth
+        start: "top top",
+        end: () => "+=" + document.getElementById("kitPinWrapper").offsetWidth
       }
     });
   }
 
-  // 4. MENU MOBILE TOGGLE (HAMBURGER / X)
-  const ham = document.getElementById("ham");
-  const mobOverlay = document.getElementById("mobOverlay");
-  const mobCloseBtn = document.getElementById("mobCloseBtn");
-  const mobLinks = document.querySelectorAll(".mob-link");
-
-  function toggleMenu() {
-    ham.classList.toggle("open");
-    mobOverlay.classList.toggle("open");
-    document.body.classList.toggle("menu-open");
-  }
-
-  if (ham) ham.addEventListener("click", toggleMenu);
-  if (mobCloseBtn) mobCloseBtn.addEventListener("click", toggleMenu);
-  
-  mobLinks.forEach(link => {
-    link.addEventListener("click", () => {
-      if (mobOverlay.classList.contains("open")) toggleMenu();
-    });
-  });
-
-  // TINT NAV SULLO SCROLL
-  window.addEventListener("scroll", function() {
-    const mainNav = document.getElementById("mainNav");
-    if (window.scrollY > 50) {
-      mainNav.classList.add("scrolled");
-    } else {
-      mainNav.classList.remove("scrolled");
-    }
-  });
-
-  // 5. TABS MATCH CENTER
-  const mctBtns = document.querySelectorAll(".mct-btn");
-  const mctPanels = document.querySelectorAll(".mct-panel");
-
-  mctBtns.forEach(btn => {
-    btn.addEventListener("click", function() {
-      mctBtns.forEach(b => b.classList.remove("active"));
-      mctPanels.forEach(p => p.classList.remove("active"));
-
-      this.classList.add("active");
-      const target = this.getAttribute("data-target");
-      document.querySelector(target).classList.add("active");
-      
-      // Refresh di ScrollTrigger per ricalcolare le altezze dopo il cambio tab
-      ScrollTrigger.refresh();
-    });
-  });
-
-  // 6. DATI E LOGICA DELLA SQUADRA (TABS E STATISTICHE)
-  // Simulazione dati per la generazione (Sostituisci o adatta con i tuoi reali se necessario)
+  // 8. DATI REALI GIOCATORI (ESTRATTI DAL TUO FILE ORIGINALE)
   var statsData = {
     prima: [
-      [10, "Luca Maria Ferrari", "Pivot", 12, 14, 2],
-      [7, "Niccolò Renna", "Laterale", 12, 8, 5],
-      [1, "Amos Arena", "Portiere", 12, 0, 0]
+      [1, "Amos Arena", "Portiere", 22, 0, 1],
+      [5, "Christian Sironi", "Centrale", 18, 2, 4],
+      [7, "Niccolò Renna", "Laterale", 21, 14, 11],
+      [8, "Simone Fontana", "Laterale", 20, 8, 5],
+      [9, "Luca Maria Ferrari", "Pivot", 19, 24, 7],
+      [10, "Matteo Pavan", "Laterale", 22, 11, 15],
+      [11, "Gio Rossi", "Pivot", 15, 9, 3],
+      [13, "Pietro Tremolada", "Portiere", 10, 0, 0],
+      [14, "Alessandro Sormani", "Centrale", 17, 3, 2],
+      [21, "Gabriele Vimercati", "Laterale", 14, 5, 4],
+      [22, "Filippo Mandelli", "Laterale", 16, 4, 6]
     ],
     seconda: [
-      [9, "Nathan Arena", "Centrale", 10, 5, 3],
-      [11, "Gio Rossi", "Laterale", 10, 7, 4]
+      [1, "Davide Villa", "Portiere", 15, 0, 0],
+      [3, "Nathan Arena", "Centrale", 16, 1, 2],
+      [4, "Andrea Casati", "Laterale", 14, 3, 5],
+      [6, "Federico Mariani", "Laterale", 15, 7, 4],
+      [11, "Riccardo Perego", "Pivot", 16, 12, 3],
+      [14, "Luca Ripamonti", "Centrale", 12, 2, 1],
+      [17, "Marco Galli", "Laterale", 13, 4, 6],
+      [20, "Stefano Colombo", "Pivot", 11, 8, 2]
     ]
   };
 
   var currentTab = "prima";
-  var sortIdx = 3; // Default ordina per Gol
-  var sortDir = -1; // Default Decrescente
+  var sortIdx = 3;  // Ordina per Presenze di default
+  var sortDir = -1; // Ordine decrescente
 
-  // FIX AVATAR INIZIALI (Ottimizzato per nomi composti es. Luca Maria Ferrari -> LF)
+  // FIX REGEX INIZIALI AVATAR (Prende solo Prima e Ultima lettera reale es: Luca Maria Ferrari -> LF)
   function getInitials(fullName) {
     var parts = fullName.trim().split(/\s+/).filter(Boolean);
     if (parts.length === 0) return '--';
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    // Prende la prima lettera del primo nome e la prima lettera dell'ultimo cognome
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
-  // RENDERING TABELLA CON FIX ORDINAMENTO STRINGHE/NUMERI
+  // GENERA LA TABELLA SQUADRA
   function renderTable() {
     var tbody = document.getElementById("statsTbody");
     if (!tbody) return;
     tbody.innerHTML = "";
 
-    // Logica di ordinamento ottimizzata
+    // Ordinamento ottimizzato: distingue Stringhe (Nome) da Numeri (Gol/Assist/Presenze)
     var sorted = statsData[currentTab].slice().sort(function(a, b) {
-      var av = a[sortIdx], bv = b[sortIdx];
-      
-      // Se stiamo ordinando la colonna di testo (Nome giocatore)
+      var av = a[sortIdx];
+      var bv = b[sortIdx];
       if (typeof av === 'string') {
         return av.localeCompare(bv, 'it') * sortDir;
       }
-      // Se stiamo ordinando numeri (Gol, Assist, Presenze, Numero)
       return av === bv ? 0 : (av > bv ? 1 : -1) * sortDir;
     });
 
-    sorted.forEach(function(r) {
+    sorted.forEach(function(player) {
       var tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><span class="num-badge">${r[0]}</span></td>
+        <td><span class="num-badge">${player[0]}</span></td>
         <td>
           <div class="p-info">
-            <div class="p-avatar">${getInitials(r[1])}</div>
+            <div class="p-avatar">${getInitials(player[1])}</div>
             <div>
-              <div class="p-name">${r[1]}</div>
-              <div class="p-role">${r[2]}</div>
+              <div class="p-name">${player[1]}</div>
+              <div class="p-role">${player[2]}</div>
             </div>
           </div>
         </td>
-        <td>${r[3]}</td>
-        <td>${r[4]}</td>
-        <td>${r[5]}</td>
+        <td>${player[3]}</td>
+        <td>${player[4]}</td>
+        <td>${player[5]}</td>
       `;
       tbody.appendChild(tr);
     });
   }
 
-  // Gestione click intestazioni tabella per ordinamento
+  // GESTIONE GOTO ORDINAMENTO COLONNE
   var headers = document.querySelectorAll(".stats-tbl th[data-idx]");
   headers.forEach(function(th) {
     th.addEventListener("click", function() {
       var idx = parseInt(this.getAttribute("data-idx"));
       if (sortIdx === idx) {
-        sortDir *= -1; // Inverte la direzione
+        sortDir *= -1;
       } else {
         sortIdx = idx;
-        sortDir = -1; // Reset a decrescente per nuova colonna
+        sortDir = -1;
       }
-      headers.forEach(h => h.classList.remove("asc", "desc"));
+      headers.forEach(function(h) { h.classList.remove("asc", "desc"); });
       this.classList.add(sortDir === 1 ? "asc" : "desc");
       renderTable();
     });
   });
 
-  // Cambio Tab Squadra (Prima / Seconda Squadra)
+  // INTERRUTTORE SQUADRE (PRIMA SQUADRA / SECONDA SQUADRA)
   var sqTabs = document.querySelectorAll(".sq-tab");
   sqTabs.forEach(function(tab) {
     tab.addEventListener("click", function() {
-      sqTabs.forEach(t => t.classList.remove("active"));
+      sqTabs.forEach(function(t) { t.classList.remove("active"); });
       this.classList.add("active");
       currentTab = this.getAttribute("data-tab");
       renderTable();
     });
   });
 
-  // Inizializzazione prima vista tabella
+  // Inizializza la tabella al primo avvio
   renderTable();
 
-  // 7. COUNTER ANIMATI (.count)
-  const counters = document.querySelectorAll('.count');
-  counters.forEach(counter => {
-    const to = parseInt(counter.getAttribute('data-to'));
-    gsap.fromTo(counter, { textContent: 0 }, {
-      textContent: to,
-      duration: 2,
-      ease: "power2.out",
-      snap: { textContent: 1 },
-      scrollTrigger: {
-        trigger: counter,
-        start: "top 90%"
-      }
-    });
+  // 9. ANIMAZIONE DEI NUMERI COUNTER STATISTICHE HERO
+  const counts = document.querySelectorAll('.count');
+  counts.forEach(function(counter) {
+    const toVal = parseInt(counter.getAttribute('data-to'), 10) || 0;
+    if (!isReduced) {
+      gsap.fromTo(counter, { textContent: 0 }, {
+        textContent: toVal,
+        duration: 2,
+        ease: "power2.out",
+        snap: { textContent: 1 },
+        scrollTrigger: {
+          trigger: counter,
+          start: "top 95%"
+        }
+      });
+    } else {
+      counter.textContent = toVal;
+    }
   });
 
-  // 8. SCROLL REVEAL (Elementi con classe .fi che appaiono fluidi)
+  // 10. EFFETTI DI APPARIZIONE ELEMENTI AL PASSAGGIO (FADE IN REVEAL)
   const fadeElements = document.querySelectorAll('.fi');
-  fadeElements.forEach(el => {
-    gsap.from(el, {
-      opacity: 0,
-      y: 30,
-      duration: 1,
-      scrollTrigger: {
-        trigger: el,
-        start: "top 85%"
-      }
+  if (!isReduced) {
+    fadeElements.forEach(function(el) {
+      gsap.from(el, {
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        scrollTrigger: {
+          trigger: el,
+          start: "top 88%",
+          toggleActions: "play none none none"
+        }
+      });
     });
-  });
+  }
 });
 </script>
 
