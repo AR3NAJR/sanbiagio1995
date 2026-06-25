@@ -2666,15 +2666,15 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  // 4. ANIMAZIONE HERO ZOOM (SVG)
+  // 4. ANIMAZIONE HERO ZOOM (SVG CORRETTA SUI WRAPPER ESISTENTI)
   if (!isReduced && document.getElementById("heroTitle")) {
     gsap.timeline({
       scrollTrigger: {
-        trigger: "#hero",
+        trigger: "#scene1",
         start: "top top",
         end: "bottom top",
         scrub: true,
-        pin: ".hero-sticky-wrapper",
+        pin: "#scene1-wrapper",
         anticipatePin: 1
       }
     })
@@ -2682,10 +2682,9 @@ document.addEventListener("DOMContentLoaded", function() {
     .to("#heroBar", { width: 0, opacity: 0, ease: "power1.in" }, 0)
     .to("#heroSub, #heroStats, #heroBadge", { opacity: 0, y: -50, ease: "power1.in" }, 0);
   } else {
-    // Fallback se disattivate o non disponibili
     gsap.to("#heroTitle, #heroBar, #heroSub, #heroStats, #heroBadge", {
       scrollTrigger: {
-        trigger: "#hero",
+        trigger: "#scene1",
         start: "top top",
         end: "bottom top",
         scrub: true
@@ -2694,11 +2693,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // 5. TUNNEL OVERLAY (SFUMATURA NERA DELLA HERO)
+  // 5. TUNNEL OVERLAY
   if (!isReduced && document.getElementById("tunnel-overlay")) {
     gsap.to("#tunnel-overlay", {
       scrollTrigger: {
-        trigger: "#hero",
+        trigger: "#scene1",
         start: "top top",
         end: "bottom top",
         scrub: true
@@ -2743,7 +2742,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // 8. DATI REALI GIOCATORI (ESTRATTI DAL TUO FILE ORIGINALE)
+  // 8. DATI REALI GIOCATORI
   var statsData = {
     prima: [
       [1, "Amos Arena", "Portiere", 22, 0, 1],
@@ -2771,10 +2770,9 @@ document.addEventListener("DOMContentLoaded", function() {
   };
 
   var currentTab = "prima";
-  var sortIdx = 3;  // Ordina per Presenze di default
-  var sortDir = -1; // Ordine decrescente
+  var sortIdx = 3;  
+  var sortDir = -1; 
 
-  // FIX REGEX INIZIALI AVATAR (Prende solo Prima e Ultima lettera reale es: Luca Maria Ferrari -> LF)
   function getInitials(fullName) {
     var parts = fullName.trim().split(/\s+/).filter(Boolean);
     if (parts.length === 0) return '--';
@@ -2782,13 +2780,36 @@ document.addEventListener("DOMContentLoaded", function() {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
-  // GENERA LA TABELLA SQUADRA
+  // FUNZIONE AGGIUNTA: RENDER DELLE FIGURINE GRAFICHE (GRIGLIA SQUADRA)
+  function renderCards(sortedPlayers) {
+    var grid = document.querySelector(".squad-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    sortedPlayers.forEach(function(player) {
+      var card = document.createElement("div");
+      card.className = "pc"; // Classe corretta estratta dal CSS riga 1018 e responsività mobile
+
+      card.innerHTML = `
+        <div class="pc-num">${player[0]}</div>
+        <div class="pc-name">${player[1]}</div>
+        <div class="pc-role">${player[2]}</div>
+        <div class="pc-photo-wrap">
+          <div class="pc-photo-placeholder" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); color:var(--white); font-weight:bold; font-size:1.5rem;">
+            ${getInitials(player[1])}
+          </div>
+          <div class="pc-photo-overlay"></div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  // GENERA SIA TABELLA CHE FIGURINE
   function renderTable() {
     var tbody = document.getElementById("statsTbody");
-    if (!tbody) return;
-    tbody.innerHTML = "";
-
-    // Ordinamento ottimizzato: distingue Stringhe (Nome) da Numeri (Gol/Assist/Presenze)
+    
+    // Ordina i dati correnti
     var sorted = statsData[currentTab].slice().sort(function(a, b) {
       var av = a[sortIdx];
       var bv = b[sortIdx];
@@ -2798,28 +2819,35 @@ document.addEventListener("DOMContentLoaded", function() {
       return av === bv ? 0 : (av > bv ? 1 : -1) * sortDir;
     });
 
-    sorted.forEach(function(player) {
-      var tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><span class="num-badge">${player[0]}</span></td>
-        <td>
-          <div class="p-info">
-            <div class="p-avatar">${getInitials(player[1])}</div>
-            <div>
-              <div class="p-name">${player[1]}</div>
-              <div class="p-role">${player[2]}</div>
+    // Popola la tabella classica (se presente nella pagina)
+    if (tbody) {
+      tbody.innerHTML = "";
+      sorted.forEach(function(player) {
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><span class="num-badge">${player[0]}</span></td>
+          <td>
+            <div class="p-info">
+              <div class="p-avatar">${getInitials(player[1])}</div>
+              <div>
+                <div class="p-name">${player[1]}</div>
+                <div class="p-role">${player[2]}</div>
+              </div>
             </div>
-          </div>
-        </td>
-        <td>${player[3]}</td>
-        <td>${player[4]}</td>
-        <td>${player[5]}</td>
-      `;
-      tbody.appendChild(tr);
-    });
+          </td>
+          <td>${player[3]}</td>
+          <td>${player[4]}</td>
+          <td>${player[5]}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Genera le figurine nella griglia responsive (.squad-grid)
+    renderCards(sorted);
   }
 
-  // GESTIONE GOTO ORDINAMENTO COLONNE
+  // ORDINAMENTO COLONNE TABELLA
   var headers = document.querySelectorAll(".stats-tbl th[data-idx]");
   headers.forEach(function(th) {
     th.addEventListener("click", function() {
@@ -2836,7 +2864,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  // INTERRUTTORE SQUADRE (PRIMA SQUADRA / SECONDA SQUADRA)
+  // INTERRUTTORE SQUADRE (CAMBIA SIA TABELLA CHE FIGURINE DINAMICAMENTE)
   var sqTabs = document.querySelectorAll(".sq-tab");
   sqTabs.forEach(function(tab) {
     tab.addEventListener("click", function() {
@@ -2844,10 +2872,11 @@ document.addEventListener("DOMContentLoaded", function() {
       this.classList.add("active");
       currentTab = this.getAttribute("data-tab");
       renderTable();
+      ScrollTrigger.refresh();
     });
   });
 
-  // Inizializza la tabella al primo avvio
+  // Inizializzazione al primo avvio
   renderTable();
 
   // 9. ANIMAZIONE DEI NUMERI COUNTER STATISTICHE HERO
