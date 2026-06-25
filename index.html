@@ -106,9 +106,10 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 /* Fade-in generico */
 .fi {
-  opacity: 0;
-  transform: translateY(26px);
+  opacity: 1;                 /* Cambiato da 0 a 1 per rendere tutto visibile */
+  transform: none;            /* Cambiato per evitare che i blocchi rimangano spostati verso il basso */
   transition: opacity .75s var(--ease), transform .75s var(--ease);
+}
 }
 .fi.on { opacity: 1; transform: none; }
 
