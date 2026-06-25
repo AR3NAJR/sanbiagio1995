@@ -1,0 +1,87 @@
+{
+  "name": "San Biagio 1995 A.S.D.",
+  "short_name": "San Biagio",
+  "description": "Sito ufficiale San Biagio 1995 A.S.D. – Futsal Verano Brianza. Prima Squadra in Serie C2, Seconda Squadra in Serie D.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#06060E",
+  "theme_color": "#C8102E",
+  "orientation": "portrait-primary",
+  "lang": "it",
+  "categories": ["sports"],
+  "icons": [
+    {
+      "src": "icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "San Biagio 1995 – Home mobile"
+    },
+    {
+      "src": "icons/screenshot-desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "San Biagio 1995 – Home desktop"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Risultati",
+      "url": "/#match-center",
+      "description": "Classifica e risultati della stagione"
+    },
+    {
+      "name": "Squadra",
+      "url": "/#scene3",
+      "description": "La rosa della Prima Squadra"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
