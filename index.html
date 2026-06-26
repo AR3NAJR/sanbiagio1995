@@ -2285,6 +2285,57 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.warn('[SW] Registrazione fallita:', err));
   });
 }
+   
+// ============================================================
+// FIX SISTEMA DI NAVIGAZIONE E MENU MOBILE OVERLAY
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const hamburgerBtn = document.querySelector('.hamburger');
+  const mobileOverlay = document.querySelector('.mob-overlay');
+  const closeMenuBtn = document.getElementById('closeMobMenu');
+  const mobileLinks = document.querySelectorAll('.mob-overlay .mob-link');
+
+  // 1. STATO INIZIALE DI SICUREZZA (Forza la chiusura per sbloccare la Hero)
+  if (hamburgerBtn && mobileOverlay) {
+    hamburgerBtn.classList.remove('open');
+    mobileOverlay.classList.remove('open');
+  }
+
+  // 2. FUNZIONI DI APERTURA E CHIUSURA
+  function openMenu() {
+    hamburgerBtn?.classList.add('open');
+    mobileOverlay?.classList.add('open');
+  }
+
+  function closeMenu() {
+    hamburgerBtn?.classList.remove('open');
+    mobileOverlay?.classList.remove('open');
+  }
+
+  // 3. COLLEGAMENTO DEI TRIGGER (Click)
+  // Cliccando sulle tre linette (Hamburger)
+  hamburgerBtn?.addEventListener('click', () => {
+    if (mobileOverlay?.classList.contains('open')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  // Cliccando sulla X di chiusura (#closeMobMenu)
+  closeMenuBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeMenu();
+  });
+
+  // Cliccando su uno dei link del menu (chiude l'overlay automaticamente)
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      closeMenu();
+    });
+  });
+});
+   
 </script>
 </body>
 </html>
