@@ -359,102 +359,164 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 .rdot.pivot::before{background:#FF6B8A;}
 .rdot.staff::before{background:#B0A0FF;}
 
-/* 4-col desktop grid */
-.squad-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1rem;
+/* 4-col desktop grid — Ottimizzata per non allungarsi */
+.squad-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* ---- Card figurina ---- */
-.pc{
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:6px;
-  position:relative;overflow:hidden;
-  transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;
-  cursor:default;
-  min-height:190px;
-  display:flex;flex-direction:column;justify-content:flex-end;
+.pc {
+  background: rgba(6, 6, 14, 0.6); /* Sfondo più scuro per dare risalto alla foto */
+  border: 1px solid rgba(255, 255, 255, .06);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .3s var(--ease), border-color .3s, box-shadow .3s;
+  cursor: default;
+  
+  /* FORZATURA GEOMETRICA DESKTOP (Rapporto verticale slanciato 3:4) */
+  width: 100%;
+  aspect-ratio: 3 / 4; 
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
-.pc:hover{
-  border-color:rgba(200,16,46,.3);
-  transform:translateY(-5px);
-  box-shadow:0 20px 48px rgba(0,0,0,.45);
+
+.pc:hover {
+  border-color: rgba(200,16,46,.4);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 48px rgba(0,0,0,.55);
 }
+
 /* Left accent bar */
-.pc::before{
-  content:'';position:absolute;top:0;left:0;
-  width:3px;height:0;
-  background:linear-gradient(to bottom,var(--red),var(--blue-md));
-  transition:height .35s;z-index:4;
+.pc::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 3px; height: 0;
+  background: linear-gradient(to bottom, var(--red), var(--blue-md));
+  transition: height .35s; z-index: 4;
 }
-.pc:hover::before{height:100%;}
+.pc:hover::before { height: 100%; }
 
-/* Background photo (fills card, decorative) */
-.pc-bg-photo{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;
-  opacity:.22;transition:opacity .4s;
-  pointer-events:none;z-index:0;
+/* Background photo (La foto ora riempie perfettamente il rettangolo verticale senza distorcersi) */
+.pc-bg-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top; /* Tiene sempre a fuoco la testa del giocatore */
+  opacity: .28; /* Alzata leggermente per dare più visibilità */
+  transition: opacity .4s, transform .4s;
+  pointer-events: none;
+  z-index: 0;
 }
-.pc:hover .pc-bg-photo{opacity:.38;}
+.pc:hover .pc-bg-photo { 
+  opacity: .55; 
+  transform: scale(1.03); /* Piccolo effetto zoom al passaggio del mouse */
+}
 
-/* Gradient overlay (bottom readability) */
-.pc-gradient{
-  position:absolute;inset:0;z-index:1;
-  background:linear-gradient(to top,rgba(6,6,14,.96) 40%,rgba(6,6,14,.25) 100%);
+/* Gradient overlay (Aumentato per garantire massima leggibilità del testo bianco) */
+.pc-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(6,6,14,0.98) 0%, rgba(6,6,14,0.7) 35%, rgba(6,6,14,0.1) 100%);
+  pointer-events: none;
 }
 
 /* Big number top-right in outline */
-.pc-num{
-  position:absolute;top:.55rem;right:.7rem;
-  font-family:'Barlow Condensed',sans-serif;font-weight:900;
-  font-size:3.8rem;line-height:1;
-  color:transparent;
-  -webkit-text-stroke:1.5px rgba(255,255,255,.12);
-  z-index:2;
-  transition:-webkit-text-stroke-color .3s;
-  letter-spacing:-.02em;
-  pointer-events:none;
+.pc-num {
+  position: absolute; top: .4rem; right: .7rem;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+  font-size: 3.5rem; line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, .15);
+  z-index: 2;
+  transition: -webkit-text-stroke-color .3s, transform .3s;
+  letter-spacing: -.02em;
+  pointer-events: none;
 }
-.pc:hover .pc-num{-webkit-text-stroke-color:rgba(255,255,255,.3);}
-.pc-staff .pc-num{
-  font-size:1.5rem;letter-spacing:.04em;
-  -webkit-text-stroke:1px rgba(255,255,255,.2);
-  top:.7rem;
+.pc:hover .pc-num { 
+  -webkit-text-stroke-color: rgba(255,255,255,.4);
+  transform: translateY(2px);
+}
+.pc-staff .pc-num {
+  font-size: 1.3rem; letter-spacing: .04em;
+  -webkit-text-stroke: 1px rgba(255,255,255,.2);
+  top: .7rem;
 }
 
 /* Text content at bottom */
-.pc-content{
-  position:relative;z-index:3;
-  padding:.85rem 1rem .9rem;
+.pc-content {
+  position: relative; z-index: 3;
+  padding: 1rem .85rem .85rem;
 }
-.pc-name{
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;
-  font-size:.98rem;color:var(--white);text-transform:uppercase;
-  letter-spacing:.04em;line-height:1.1;margin-bottom:3px;
+.pc-name {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+  font-size: 1.05rem; color: var(--white); text-transform: uppercase;
+  letter-spacing: .04em; line-height: 1.1; margin-bottom: 2px;
 }
-.pc-role{font-size:.56rem;text-transform:uppercase;letter-spacing:.14em;}
-.pc-role.portiere{color:#FFD700;}
-.pc-role.centrale{color:var(--blue-md);}
-.pc-role.laterale{color:#4ECDC4;}
-.pc-role.pivot{color:#FF6B8A;}
-.pc-role.staff{color:#B0A0FF;}
+.pc-role { font-size: .58rem; text-transform: uppercase; letter-spacing: .14em; font-weight: 600; }
+.pc-role.portiere { color: #FFD700; }
+.pc-role.centrale { color: var(--blue-md); }
+.pc-role.laterale { color: #4ECDC4; }
+.pc-role.pivot { color: #FF6B8A; }
+.pc-role.staff { color: #B0A0FF; }
 
 /* Colored top accent strip per role */
-.pc-accent{
-  position:absolute;top:0;left:0;right:0;
-  height:3px;z-index:4;
-  transition:height .3s;
+.pc-accent {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; z-index: 4;
+  transition: height .3s;
 }
-.pc:hover .pc-accent{height:4px;}
-.pc-accent.portiere{background:linear-gradient(90deg,#FFD700 0%,transparent 80%);}
-.pc-accent.centrale{background:linear-gradient(90deg,var(--blue-md) 0%,transparent 80%);}
-.pc-accent.laterale{background:linear-gradient(90deg,#4ECDC4 0%,transparent 80%);}
-.pc-accent.pivot{background:linear-gradient(90deg,#FF6B8A 0%,transparent 80%);}
-.pc-accent.staff{background:linear-gradient(90deg,#B0A0FF 0%,transparent 80%);}
+.pc:hover .pc-accent { height: 4px; }
+.pc-accent.portiere { background: linear-gradient(90deg,#FFD700 0%,transparent 80%); }
+.pc-accent.centrale { background: linear-gradient(90deg,var(--blue-md) 0%,transparent 80%); }
+.pc-accent.laterale { background: linear-gradient(90deg,#4ECDC4 0%,transparent 80%); }
+.pc-accent.pivot { background: linear-gradient(90deg,#FF6B8A 0%,transparent 80%); }
+.pc-accent.staff { background: linear-gradient(90deg,#B0A0FF 0%,transparent 80%); }
 
+
+/* ============================================================
+   RESPONSIVE MODIFICATO — MOBILE (Schermi Verticali)
+============================================================ */
+@media (max-width: 768px) {
+  .squad-grid {
+    grid-template-columns: repeat(2, 1fr); /* Due colonne su mobile */
+    gap: .85rem;
+  }
+  
+  .pc {
+    /* FORZATURA GEOMETRICA MOBILE: Diventa nettamente più verticale e slanciata (Proporzione circa 1:1.45) */
+    aspect-ratio: 1 / 1.45; 
+  }
+  
+  .pc-num {
+    font-size: 2.8rem;
+    top: .2rem;
+    right: .5rem;
+  }
+  
+  .pc-name {
+    font-size: .88rem;
+  }
+  
+  .pc-role {
+    font-size: .52rem;
+  }
+}
+
+@media (max-width: 400px) {
+  /* Per smartphone molto stretti riduciamo leggermente il font per non far andare a capo i nomi lunghi */
+  .pc-name {
+    font-size: .82rem;
+  }
+}
 /* ============================================================
    3 — MATCH CENTER
 ============================================================ */
