@@ -1686,7 +1686,7 @@ function openMenu() {
   ham.setAttribute('aria-label', 'Chiudi menu');
   mobOverlay.classList.add('open');
   mobOverlay.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden'; // impedisce scroll di sfondo
+  document.body.style.overflow = 'hidden';
 }
 
 function closeMenu() {
@@ -1699,15 +1699,12 @@ function closeMenu() {
   document.body.style.overflow = '';
 }
 
-// Toggle al click sul pulsante hamburger (stessa icona → X)
 ham.addEventListener('click', () => menuOpen ? closeMenu() : openMenu());
 
-// Chiudi cliccando su un link del menu
 mobOverlay.querySelectorAll('[data-close]').forEach(link => {
   link.addEventListener('click', closeMenu);
 });
 
-// Chiudi con tasto Escape
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && menuOpen) closeMenu();
 });
@@ -1716,7 +1713,6 @@ document.addEventListener('keydown', e => {
 // HERO ANIMATIONS
 // ============================================================
 if (!prefersReduced) {
-  // Intro timeline
   const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
   heroTl
     .to('#heroLogo',       { opacity: 1, y: 0, duration: .8 })
@@ -1727,7 +1723,6 @@ if (!prefersReduced) {
     .to('#heroStats',      { opacity: 1, duration: .55 },       '-=.3')
     .to('#heroBadge',      { opacity: 1, duration: .5 },        '-=.25');
 
-  // Counter animation
   heroTl.call(() => {
     document.querySelectorAll('.count').forEach(el => {
       const target = +el.dataset.to;
@@ -1743,7 +1738,6 @@ if (!prefersReduced) {
     });
   });
 
-  // ---- SCROLLTRIGGER — Hero zoom con SVG (nessuna sgranatura) ----
   const heroPinLen = window.innerHeight * 2;
 
   ScrollTrigger.create({
@@ -1753,18 +1747,16 @@ if (!prefersReduced) {
     pin: true,
     pinSpacing: true,
     anticipatePin: 1,
-    invalidateOnRefresh: true,   // ricalcola on resize
-    fastScrollEnd: true,         // previene glitch su scroll rapido
+    invalidateOnRefresh: true,
+    fastScrollEnd: true,
     onUpdate(self) {
       const p = self.progress;
-      // Fase 1 (0–0.5): titolo SVG cresce → essendo vettoriale resta nitido
       if (p <= 0.5) {
         const t = p / 0.5;
         const scale = 1 + t * 6;
         gsap.set('#heroTitleWrap', { scale, transformOrigin: 'center center' });
         gsap.set('#heroContent',   { opacity: Math.max(0, 1 - t * 2) });
       }
-      // Fase 2 (0.4–1): tunnel overlay
       if (p >= 0.38) {
         const t = (p - 0.38) / 0.62;
         gsap.set('#tunnel-overlay', { opacity: Math.min(t * 1.3, 1) });
@@ -1772,14 +1764,13 @@ if (!prefersReduced) {
     }
   });
 
-  // Field grid parallax
   gsap.to('.field-grid', {
     yPercent: -28,
     ease: 'none',
     scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
   });
 
-  // ---- KIT PIN (solo desktop) ----
+  // ---- KIT PIN ----
   function setupKitPin() {
     const stage  = document.getElementById('kitPinStage');
     const panels = stage.querySelectorAll('.kit-panel');
@@ -1787,7 +1778,6 @@ if (!prefersReduced) {
     const dots   = document.querySelectorAll('.kp-dot');
     const isMob  = window.innerWidth <= 800;
 
-    // Cleanup
     ScrollTrigger.getAll().filter(st => st.vars.id === 'kitPin').forEach(st => st.kill());
 
     if (isMob) {
@@ -1848,25 +1838,109 @@ const fiObs = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.fi').forEach(el => fiObs.observe(el));
 
+
 // ============================================================
-// SQUAD TABS
+// SQUADRA — DATABASE DINAMICO E CODICE LOGICA FIGURINE
 // ============================================================
+const squadData = {
+  prima: [
+    // [Numero/Sigla, "Nome Cognome", "Ruolo", "Specifico_Ruolo_o_Titolo", "nome_immagine.png"]
+    ["PRES", "Federico Morrone", "Staff", "Presidente", ""],
+    ["MIST", "Marcello Galbiati", "Staff", "Allenatore", ""],
+    ["VICE", "Marco Testa", "Staff", "Vice Allenatore", ""],
+    ["ATL", "Luca Verga", "Staff", "Prep. Atletico", ""],
+    [1, "Marco Colombo", "Portiere", "Portiere", ""],
+    [12, "Francesco Cantù", "Portiere", "Portiere", ""],
+    [77, "Amos Arena", "Portiere", "Portiere", "arena.png"],
+    [2, "Andrea Riva", "Centrale", "Centrale", ""],
+    [4, "Simone Fumagalli", "Centrale", "Centrale", ""],
+    [13, "Giacomo Molteni", "Centrale", "Centrale", ""],
+    [3, "Luca Brambilla", "Laterale", "Laterale", ""],
+    [5, "Davide Citterio", "Laterale", "Laterale", ""],
+    [6, "Roberto Bernasconi", "Laterale", "Laterale", ""],
+    [7, "Matteo Sala", "Laterale", "Laterale", ""],
+    [8, "Paolo Viganò", "Laterale", "Laterale", ""],
+    [11, "Nicola Airoldi", "Laterale", "Laterale", ""],
+    [9, "Christian Ferrario", "Pivot", "Pivot", ""],
+    [10, "Emanuele Castelli", "Pivot", "Pivot", ""],
+    [14, "Alessandro Rizzi", "Pivot", "Pivot", ""]
+  ],
+  seconda: [
+    ["PRES", "Federico Morrone", "Staff", "Presidente", "morrone.png"],
+    ["MIST", "Allenatore D", "Staff", "Allenatore", ""],
+    [1, "Amos Arena", "Portiere", "Portiere", "arena.png"],
+    [2, "Andrea Riva", "Centrale", "Centrale", ""],
+    [4, "Simone Fumagalli", "Centrale", "Centrale", ""],
+    [13, "Giacomo Molteni", "Centrale", "Centrale", ""],
+    [3, "Luca Brambilla", "Laterale", "Laterale", ""],
+  ]
+};
+
+function getInitials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
+function renderSquadCards(squadKey) {
+  const grid = document.querySelector(".squad-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  const list = squadData[squadKey] || [];
+  list.forEach(player => {
+    const card = document.createElement("div");
+    const roleClass = player[2].toLowerCase();
+    
+    if (roleClass === 'staff') {
+      card.className = "pc pc-staff";
+    } else {
+      card.className = "pc pc-" + roleClass;
+    }
+
+    // Costruzione Foto di Sfondo (se non inserita mostra iniziali giganti invisibili/eleganti)
+    let photoHtml = "";
+    if (player[4] && player[4] !== "") {
+      photoHtml = `<img src="${player[4]}" class="pc-bg-photo" alt="${player[1]}">`;
+    } else {
+      photoHtml = `<div class="pc-bg-photo" style="display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:4.5rem; font-weight:900; color:rgba(255,255,255,0.02); user-select:none;">${getInitials(player[1])}</div>`;
+    }
+
+    card.innerHTML = `
+      <div class="pc-accent ${roleClass}"></div>
+      ${photoHtml}
+      <div class="pc-gradient"></div>
+      <div class="pc-num">${player[0]}</div>
+      <div class="pc-content">
+        <div class="pc-name">${player[1]}</div>
+        <div class="pc-role ${roleClass}">${player[3]}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// Collegamento dei Tab della Squadra per aggiornare la griglia al click
 document.querySelectorAll('.sq-tab').forEach(tab => {
   tab.addEventListener('click', function () {
     document.querySelectorAll('.sq-tab').forEach(t => {
       t.classList.remove('active');
       t.setAttribute('aria-selected', 'false');
     });
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     this.classList.add('active');
     this.setAttribute('aria-selected', 'true');
-    const panel = document.getElementById(this.getAttribute('aria-controls'));
-    if (panel) panel.classList.add('active');
+    
+    // Controlla quale pannello caricare (Prima o Seconda squadra)
+    const targetPanel = this.getAttribute('aria-controls'); 
+    const squadKey = targetPanel === 'panel-seconda' ? 'seconda' : 'prima';
+    renderSquadCards(squadKey);
   });
 });
 
+// Avvio iniziale della griglia rosa (Prima squadra di default)
+renderSquadCards('prima');
+
+
 // ============================================================
-// MATCH CENTER TABS
+// MATCH CENTER TABS & MARCATORI TABLE
 // ============================================================
 document.querySelectorAll('.mc-tab-btn').forEach(btn => {
   btn.addEventListener('click', function () {
@@ -1882,9 +1956,6 @@ document.querySelectorAll('.mc-tab-btn').forEach(btn => {
   });
 });
 
-// ============================================================
-// MARCATORI TABLE
-// ============================================================
 const marcatoriData = {
   prima: [
     { name: 'Christian Ferrario',  num: 9,  goals: 14, assists: 5, yellow: 2 },
@@ -1923,7 +1994,7 @@ function renderMarcatori(squad, sort) {
   tbody.innerHTML = data.map((p, i) => `
     <tr class="${i === 0 ? 'is-top' : ''}">
       <td><div class="p-cell">
-        <div class="p-avatar">${p.name.split(' ').map(w => w[0]).join('').slice(0, 2)}</div>
+        <div class="p-avatar">${getInitials(p.name)}</div>
         <span class="p-cell-name">${p.name}</span>
         <span class="p-num-badge">#${p.num}</span>
       </div></td>
@@ -1956,111 +2027,22 @@ renderMarcatori('prima', currentSort);
 
 // ============================================================
 // NEWS — fetchNews()
-// Predisposto per automazione via JSON esterno o Google Sheets.
 // ============================================================
-
-/** Dati mockup — rimangono come fallback */
 const newsData = [
-  {
-    id: 1,
-    tag: 'Risultato',
-    date: '22 Giu 2025',
-    title: 'Vittoria schiacciante: San Biagio 7–2',
-    excerpt: 'Prestazione dominante dei ragazzi di Galbiati. Tripletta di Ferrario e doppietta di Castelli in una serata da ricordare per tutti i tifosi.',
-    link: '#',
-    featured: true
-  },
-  {
-    id: 2,
-    tag: 'Calciomercato',
-    date: '18 Giu 2025',
-    title: 'Nuovo acquisto: benvenuto a Verano',
-    excerpt: 'La società comunica l\'ingaggio di un nuovo rinforzo per la stagione 2025/26.',
-    link: '#',
-    featured: false
-  },
-  {
-    id: 3,
-    tag: 'Società',
-    date: '15 Giu 2025',
-    title: 'Rinnovo maglia 2026/27 con Erreà Sport',
-    excerpt: 'Confermata la partnership con Erreà Sport per la prossima stagione. Grafica firmata Amos Arena.',
-    link: '#',
-    featured: false
-  },
-  {
-    id: 4,
-    tag: 'Risultato',
-    date: '8 Giu 2025',
-    title: 'Playoff: qualificazione meritatissima',
-    excerpt: 'La Prima Squadra si qualifica ai playoff di C2 con due giornate d\'anticipo. Obiettivo C1.',
-    link: '#',
-    featured: false
-  },
-  {
-    id: 5,
-    tag: 'Evento',
-    date: '1 Giu 2025',
-    title: 'Torneo estivo: iscrizioni aperte',
-    excerpt: 'Anche quest\'anno San Biagio organizza il torneo estivo. Aperte le iscrizioni per under 17.',
-    link: '#',
-    featured: false
-  }
+  { id: 1, tag: 'Risultato', date: '22 Giu 2025', title: 'Vittoria schiacciante: San Biagio 7–2', excerpt: 'Prestazione dominante dei ragazzi di Galbiati. Tripletta di Ferrario e doppietta di Castelli.', link: '#', featured: true },
+  { id: 2, tag: 'Calciomercato', date: '18 Giu 2025', title: 'Nuovo acquisto: benvenuto a Verano', excerpt: 'La società comunica l\'ingaggio di un nuovo rinforzo per la stagione 2025/26.', link: '#', featured: false },
+  { id: 3, tag: 'Società', date: '15 Giu 2025', title: 'Rinnovo maglia 2026/27 con Erreà Sport', excerpt: 'Confermata la partnership con Erreà Sport per la prossima stagione. Grafica firmata Amos Arena.', link: '#', featured: false },
+  { id: 4, tag: 'Risultato', date: '8 Giu 2025', title: 'Playoff: qualificazione meritatissima', excerpt: 'La Prima Squadra si qualifica ai playoff di C2 con due giornate d\'anticipo.', link: '#', featured: false },
+  { id: 5, tag: 'Evento', date: '1 Img 2025', title: 'Torneo estivo: iscrizioni aperte', excerpt: 'Anche quest\'anno San Biagio organizza il torneo estivo. Aperte le iscrizioni.', link: '#', featured: false }
 ];
 
-/**
- * fetchNews()
- * -----------------------------------------------------------
- * Per attivare il fetch da Google Sheets:
- *   1. Crea un foglio con colonne: Data | Tag | Titolo | Excerpt | Link | Featured
- *   2. Rendi pubblico il foglio (Condividi → Chiunque abbia il link)
- *   3. Sostituisci YOUR_SHEET_ID e YOUR_API_KEY qui sotto
- *   4. Decommenta le righe del fetch e commenta la riga "return newsData"
- *
- * Endpoint esempio:
- *   const SHEET_URL = `https://sheets.googleapis.com/v4/spreadsheets/
- *     YOUR_SHEET_ID/values/Foglio1!A2:F50?key=YOUR_API_KEY`;
- */
 async function fetchNews() {
-  try {
-    // --- FETCH REMOTO (da attivare) ---
-    // const SHEET_URL = 'https://sheets.googleapis.com/v4/spreadsheets/YOUR_SHEET_ID/values/Foglio1!A2:F50?key=YOUR_API_KEY';
-    // const res = await fetch(SHEET_URL, { cache: 'no-store' });
-    // if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    // const json = await res.json();
-    // const remoteNews = (json.values || [])
-    //   .filter(r => r[2]) // filtra righe senza titolo
-    //   .map((r, i) => ({
-    //     id: i + 1,
-    //     date: r[0]  || '',
-    //     tag: r[1]   || 'News',
-    //     title: r[2] || '',
-    //     excerpt: r[3] || '',
-    //     link: r[4]  || '#',
-    //     featured: String(r[5]).toLowerCase() === 'true'
-    //   }));
-    //
-    // // Filtra per data: ultimi 90 giorni (adatta la logica al tuo formato data)
-    // const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
-    // const recent = remoteNews.filter(n => {
-    //   const d = new Date(n.date); // funziona se la data è ISO (YYYY-MM-DD)
-    //   return !isNaN(d) ? d.getTime() > cutoff : true;
-    // });
-    // return recent.length ? recent : remoteNews;
-
-    // --- MOCKUP (rimuovere quando si attiva il fetch) ---
-    return newsData;
-  } catch (err) {
-    console.warn('fetchNews: uso dati mockup.', err);
-    return newsData;
-  }
+  try { return newsData; } catch (err) { return newsData; }
 }
 
 function renderNews(news) {
   const featured = news.find(n => n.featured);
   const others   = news.filter(n => !n.featured);
-
-  // Sezione featured (2 col)
   const featuredEl = document.getElementById('newsFeatured');
   if (featuredEl && featured) {
     const side = others[0];
@@ -2093,7 +2075,6 @@ function renderNews(news) {
     `;
   }
 
-  // Riga 3-col con le restanti
   const rowEl = document.getElementById('newsRow');
   if (rowEl) {
     rowEl.innerHTML = others.slice(1).map(n => `
@@ -2108,25 +2089,23 @@ function renderNews(news) {
         </div>
       </article>
     `).join('');
-    // Applica observer sui nuovi elementi
     rowEl.querySelectorAll('.fi').forEach(el => fiObs.observe(el));
   }
 }
 
 fetchNews().then(renderNews);
 
-// Sponsor CTA scroll
 document.getElementById('sponsorCtaBtn')?.addEventListener('click', () => {
   document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' });
 });
 
 // ============================================================
-// PWA — Service Worker registration
+// PWA — Service Worker registration (Aggiornato per service-worker.js)
 // ============================================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('[SW] Registrato:', reg.scope))
+      .then(reg => console.log('[SW] Registrato con successo:', reg.scope))
       .catch(err => console.warn('[SW] Registrazione fallita:', err));
   });
 }
