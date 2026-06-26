@@ -122,6 +122,35 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   overflow:hidden;
 }
 .mob-overlay.open{pointer-events:all;opacity:1;}
+
+/* Stile per la X di chiusura nell'angolo in alto a destra */
+#closeMobMenu {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 3rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1010;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: color .2s, opacity .3s, transform .3s;
+}
+.mob-overlay.open #closeMobMenu {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: .05s;
+}
+#closeMobMenu:hover,
+#closeMobMenu:active {
+  color: var(--red);
+  transform: scale(1.1);
+}
+
 .mob-div{width:36px;height:1.5px;background:rgba(200,16,46,.3);margin:1.1rem 0;}
 .mob-link{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;
@@ -130,13 +159,16 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   opacity:0;transform:translateY(12px);
   transition:color .2s,opacity .3s,transform .3s;
 }
+
+/* Corretti i selettori dei figli considerando il bottone in prima posizione */
 .mob-overlay.open .mob-link{opacity:1;transform:none;}
-.mob-overlay.open .mob-link:nth-child(2){transition-delay:.05s;}
-.mob-overlay.open .mob-link:nth-child(3){transition-delay:.10s;}
-.mob-overlay.open .mob-link:nth-child(4){transition-delay:.15s;}
-.mob-overlay.open .mob-link:nth-child(5){transition-delay:.20s;}
-.mob-overlay.open .mob-link:nth-child(6){transition-delay:.25s;}
-.mob-overlay.open .mob-link:nth-child(7){transition-delay:.30s;}
+.mob-overlay.open .mob-link:nth-child(3){transition-delay:.08s;}
+.mob-overlay.open .mob-link:nth-child(4){transition-delay:.13s;}
+.mob-overlay.open .mob-link:nth-child(5){transition-delay:.18s;}
+.mob-overlay.open .mob-link:nth-child(6){transition-delay:.23s;}
+.mob-overlay.open .mob-link:nth-child(7){transition-delay:.28s;}
+.mob-overlay.open .mob-link:nth-child(8){transition-delay:.33s;}
+
 .mob-link:hover{color:var(--red);}
 
 /* ============================================================
