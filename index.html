@@ -122,35 +122,6 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   overflow:hidden;
 }
 .mob-overlay.open{pointer-events:all;opacity:1;}
-
-/* Stile per la X di chiusura nell'angolo in alto a destra */
-#closeMobMenu {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 3rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0.5rem;
-  z-index: 1010;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: color .2s, opacity .3s, transform .3s;
-}
-.mob-overlay.open #closeMobMenu {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: .05s;
-}
-#closeMobMenu:hover,
-#closeMobMenu:active {
-  color: var(--red);
-  transform: scale(1.1);
-}
-
 .mob-div{width:36px;height:1.5px;background:rgba(200,16,46,.3);margin:1.1rem 0;}
 .mob-link{
   font-family:'Barlow Condensed',sans-serif;font-weight:900;
@@ -159,16 +130,13 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   opacity:0;transform:translateY(12px);
   transition:color .2s,opacity .3s,transform .3s;
 }
-
-/* Corretti i selettori dei figli considerando il bottone in prima posizione */
 .mob-overlay.open .mob-link{opacity:1;transform:none;}
-.mob-overlay.open .mob-link:nth-child(3){transition-delay:.08s;}
-.mob-overlay.open .mob-link:nth-child(4){transition-delay:.13s;}
-.mob-overlay.open .mob-link:nth-child(5){transition-delay:.18s;}
-.mob-overlay.open .mob-link:nth-child(6){transition-delay:.23s;}
-.mob-overlay.open .mob-link:nth-child(7){transition-delay:.28s;}
-.mob-overlay.open .mob-link:nth-child(8){transition-delay:.33s;}
-
+.mob-overlay.open .mob-link:nth-child(2){transition-delay:.05s;}
+.mob-overlay.open .mob-link:nth-child(3){transition-delay:.10s;}
+.mob-overlay.open .mob-link:nth-child(4){transition-delay:.15s;}
+.mob-overlay.open .mob-link:nth-child(5){transition-delay:.20s;}
+.mob-overlay.open .mob-link:nth-child(6){transition-delay:.25s;}
+.mob-overlay.open .mob-link:nth-child(7){transition-delay:.30s;}
 .mob-link:hover{color:var(--red);}
 
 /* ============================================================
@@ -442,14 +410,14 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   height: 100%;
   object-fit: cover;
   object-position: center top; /* Tiene sempre a fuoco la testa del giocatore */
-  opacity: .60; /* Alzata leggermente per dare più visibilità */
+  opacity: .28; /* Alzata leggermente per dare più visibilità */
   transition: opacity .4s, transform .4s;
   pointer-events: none;
   z-index: 0;
 }
 .pc:hover .pc-bg-photo { 
-  opacity: 1.0; 
-  transform: scale(1.05); /* Piccolo effetto zoom al passaggio del mouse */
+  opacity: .55; 
+  transform: scale(1.03); /* Piccolo effetto zoom al passaggio del mouse */
 }
 
 /* Gradient overlay (Aumentato per garantire massima leggibilità del testo bianco) */
@@ -830,35 +798,13 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   background:linear-gradient(160deg,rgba(255,200,80,.2),transparent 55%);
   mix-blend-mode:screen;pointer-events:none;z-index:1;
 }
-/* Pin mode layout — Corretto per bloccare l'altezza a tutto schermo ed evitare sovrapposizioni */
-.kit-pin-mode .kit-panel{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100vh; /* Forza il pannello a prendere tutta l'altezza dello schermo */
-  display:block;
-  max-width:none;
-  padding:0;
-  margin:0;
-}
-.kit-pin-mode .kit-full{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:2;
-}
+/* Pin mode layout */
+.kit-pin-mode .kit-panel{position:absolute;inset:0;display:block;max-width:none;padding:0;margin:0;}
+.kit-pin-mode .kit-full{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;}
 .kit-pin-mode .kit-full-img{max-width:min(360px,36vw);}
 .kit-pin-mode .kit-macro{
-  position:absolute;
-  top:9%;
-  right:6%;
-  width:36%;
-  height:82%;
-  aspect-ratio:auto;
-  z-index:3;
-  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  position:absolute;top:9%;right:6%;width:36%;height:82%;aspect-ratio:auto;
+  z-index:3;box-shadow:0 30px 80px rgba(0,0,0,.55);
 }
 .kit-pin-mode .kit-panel[data-side="left"] .kit-macro{right:auto;left:6%;}
 .kit-macro.cut-a{clip-path:polygon(14% 0,100% 0,100% 100%,0 100%);}
@@ -1237,10 +1183,6 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 
 <!-- Mobile overlay menu -->
 <div class="mob-overlay" id="mobOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu principale">
-  
-  <!-- LA X DI CHIUSURA INSERITA QUI -->
-  <button id="closeMobMenu" data-close aria-label="Chiudi menu">&times;</button>
-
   <div class="mob-div"></div>
   <a href="#scene3" class="mob-link" data-close>Squadra</a>
   <a href="#match-center" class="mob-link" data-close>Risultati</a>
@@ -1345,39 +1287,54 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
     </div>
     <div class="squad-grid" id="gridPrima">
       <!-- STAFF -->
-      <div class="pc pc-staff"><div class="pc-accent staff"></div><img src="g" class="pc-bg-photo" alt="Federico Morrone" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">PRES</div><div class="pc-content"><div class="pc-name">Federico Morrone</div><div class="pc-role staff">Presidente</div></div></div>
-      <div class="pc pc-staff"><div class="pc-accent staff"></div><img src="" class="pc-bg-photo" alt="Marcello Galbiati" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">MIST</div><div class="pc-content"><div class="pc-name">Marcello Galbiati</div><div class="pc-role staff">Allenatore</div></div></div>
-      <div class="pc pc-staff"><div class="pc-accent staff"></div><img src="" class="pc-bg-photo" alt="Marco Testa" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">VICE</div><div class="pc-content"><div class="pc-name">Marco Testa</div><div class="pc-role staff">Vice Allenatore</div></div></div>
-      <div class="pc pc-staff"><div class="pc-accent staff"></div><img src="" class="pc-bg-photo" alt="Luca Verga" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">ATL</div><div class="pc-content"><div class="pc-name">Luca Verga</div><div class="pc-role staff">Prep. Atletico</div></div></div>
-      
+      <div class="pc pc-staff"><div class="pc-accent staff"></div><div class="pc-gradient"></div><div class="pc-num">PRES</div><div class="pc-content"><div class="pc-name">Federico Morrone</div><div class="pc-role staff">Presidente</div></div></div>
+      <div class="pc pc-staff"><div class="pc-accent staff"></div><div class="pc-gradient"></div><div class="pc-num">MIST</div><div class="pc-content"><div class="pc-name">Marcello Galbiati</div><div class="pc-role staff">Allenatore</div></div></div>
+      <div class="pc pc-staff"><div class="pc-accent staff"></div><div class="pc-gradient"></div><div class="pc-num">VICE</div><div class="pc-content"><div class="pc-name">Marco Testa</div><div class="pc-role staff">Vice Allenatore</div></div></div>
+      <div class="pc pc-staff"><div class="pc-accent staff"></div><div class="pc-gradient"></div><div class="pc-num">ATL</div><div class="pc-content"><div class="pc-name">Luca Verga</div><div class="pc-role staff">Prep. Atletico</div></div></div>
       <!-- PORTIERI -->
-      <div class="pc"><div class="pc-accent portiere"></div><img src="" class="pc-bg-photo" alt="Marco Colombo" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">1</div><div class="pc-content"><div class="pc-name">Marco Colombo</div><div class="pc-role portiere">Portiere</div></div></div>
-      <div class="pc"><div class="pc-accent portiere"></div><img src="" class="pc-bg-photo" alt="Francesco Cantù" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">12</div><div class="pc-content"><div class="pc-name">Francesco Cantù</div><div class="pc-role portiere">Portiere</div></div></div>
-        <div class="pc"><div class="pc-accent portiere"></div><img src="arena.png" class="pc-bg-photo" alt="Amos Arena" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">77</div><div class="pc-content"><div class="pc-name">Amos Arena</div><div class="pc-role portiere">Portiere</div></div></div>
-      
+      <div class="pc"><div class="pc-accent portiere"></div><div class="pc-gradient"></div><div class="pc-num">1</div><div class="pc-content"><div class="pc-name">Marco Colombo</div><div class="pc-role portiere">Portiere</div></div></div>
+      <div class="pc"><div class="pc-accent portiere"></div><div class="pc-gradient"></div><div class="pc-num">12</div><div class="pc-content"><div class="pc-name">Francesco Cantù</div><div class="pc-role portiere">Portiere</div></div></div>
       <!-- CENTRALI -->
-      <div class="pc"><div class="pc-accent centrale"></div><img src="" class="pc-bg-photo" alt="Andrea Riva" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">2</div><div class="pc-content"><div class="pc-name">Andrea Riva</div><div class="pc-role centrale">Centrale</div></div></div>
-      <div class="pc"><div class="pc-accent centrale"></div><img src="" class="pc-bg-photo" alt="Simone Fumagalli" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">4</div><div class="pc-content"><div class="pc-name">Simone Fumagalli</div><div class="pc-role centrale">Centrale</div></div></div>
-      <div class="pc"><div class="pc-accent centrale"></div><img src="" class="pc-bg-photo" alt="Giacomo Molteni" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">13</div><div class="pc-content"><div class="pc-name">Giacomo Molteni</div><div class="pc-role centrale">Centrale</div></div></div>
-      
+      <div class="pc"><div class="pc-accent centrale"></div><div class="pc-gradient"></div><div class="pc-num">2</div><div class="pc-content"><div class="pc-name">Andrea Riva</div><div class="pc-role centrale">Centrale</div></div></div>
+      <div class="pc"><div class="pc-accent centrale"></div><div class="pc-gradient"></div><div class="pc-num">4</div><div class="pc-content"><div class="pc-name">Simone Fumagalli</div><div class="pc-role centrale">Centrale</div></div></div>
+      <div class="pc"><div class="pc-accent centrale"></div><div class="pc-gradient"></div><div class="pc-num">13</div><div class="pc-content"><div class="pc-name">Giacomo Molteni</div><div class="pc-role centrale">Centrale</div></div></div>
       <!-- LATERALI -->
-      <div class="pc"><div class="pc-accent laterale"></div><img src="" class="pc-bg-photo" alt="Luca Brambilla" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">3</div><div class="pc-content"><div class="pc-name">Luca Brambilla</div><div class="pc-role laterale">Laterale</div></div></div>
-      <div class="pc"><div class="pc-accent laterale"></div><img src="" class="pc-bg-photo" alt="Davide Citterio" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">5</div><div class="pc-content"><div class="pc-name">Davide Citterio</div><div class="pc-role laterale">Laterale</div></div></div>
-      <div class="pc"><div class="pc-accent laterale"></div><img src="" class="pc-bg-photo" alt="Roberto Bernasconi" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">6</div><div class="pc-content"><div class="pc-name">Roberto Bernasconi</div><div class="pc-role laterale">Laterale</div></div></div>
-      <div class="pc"><div class="pc-accent laterale"></div><img src="" class="pc-bg-photo" alt="Matteo Sala" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">7</div><div class="pc-content"><div class="pc-name">Matteo Sala</div><div class="pc-role laterale">Laterale</div></div></div>
-      <div class="pc"><div class="pc-accent laterale"></div><img src="" class="pc-bg-photo" alt="Paolo Viganò" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">8</div><div class="pc-content"><div class="pc-name">Paolo Viganò</div><div class="pc-role laterale">Laterale</div></div></div>
-      <div class="pc"><div class="pc-accent laterale"></div><img src="" class="pc-bg-photo" alt="Nicola Airoldi" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">11</div><div class="pc-content"><div class="pc-name">Nicola Airoldi</div><div class="pc-role laterale">Laterale</div></div></div>
-      
+      <div class="pc"><div class="pc-accent laterale"></div><div class="pc-gradient"></div><div class="pc-num">3</div><div class="pc-content"><div class="pc-name">Luca Brambilla</div><div class="pc-role laterale">Laterale</div></div></div>
+      <div class="pc"><div class="pc-accent laterale"></div><div class="pc-gradient"></div><div class="pc-num">5</div><div class="pc-content"><div class="pc-name">Davide Citterio</div><div class="pc-role laterale">Laterale</div></div></div>
+      <div class="pc"><div class="pc-accent laterale"></div><div class="pc-gradient"></div><div class="pc-num">6</div><div class="pc-content"><div class="pc-name">Roberto Bernasconi</div><div class="pc-role laterale">Laterale</div></div></div>
+      <div class="pc"><div class="pc-accent laterale"></div><div class="pc-gradient"></div><div class="pc-num">7</div><div class="pc-content"><div class="pc-name">Matteo Sala</div><div class="pc-role laterale">Laterale</div></div></div>
+      <div class="pc"><div class="pc-accent laterale"></div><div class="pc-gradient"></div><div class="pc-num">8</div><div class="pc-content"><div class="pc-name">Paolo Viganò</div><div class="pc-role laterale">Laterale</div></div></div>
+      <div class="pc"><div class="pc-accent laterale"></div><div class="pc-gradient"></div><div class="pc-num">11</div><div class="pc-content"><div class="pc-name">Nicola Airoldi</div><div class="pc-role laterale">Laterale</div></div></div>
       <!-- PIVOT -->
-      <div class="pc"><div class="pc-accent pivot"></div><img src="" class="pc-bg-photo" alt="Christian Ferrario" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">9</div><div class="pc-content"><div class="pc-name">Christian Ferrario</div><div class="pc-role pivot">Pivot</div></div></div>
-      <div class="pc"><div class="pc-accent pivot"></div><img src="" class="pc-bg-photo" alt="Emanuele Castelli" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">10</div><div class="pc-content"><div class="pc-name">Emanuele Castelli</div><div class="pc-role pivot">Pivot</div></div></div>
-      <div class="pc"><div class="pc-accent pivot"></div><img src="" class="pc-bg-photo" alt="Alessandro Rizzi" onerror="this.style.display='none';"><div class="pc-gradient"></div><div class="pc-num">14</div><div class="pc-content"><div class="pc-name">Alessandro Rizzi</div><div class="pc-role pivot">Pivot</div></div></div>
-    </div> </div> <div class="tab-panel" id="panel-seconda" role="tabpanel" aria-labelledby="tab-seconda" style="display: none;">
-    <div class="squad-grid" id="gridSeconda">
-      </div>
+      <div class="pc"><div class="pc-accent pivot"></div><div class="pc-gradient"></div><div class="pc-num">9</div><div class="pc-content"><div class="pc-name">Christian Ferrario</div><div class="pc-role pivot">Pivot</div></div></div>
+      <div class="pc"><div class="pc-accent pivot"></div><div class="pc-gradient"></div><div class="pc-num">10</div><div class="pc-content"><div class="pc-name">Emanuele Castelli</div><div class="pc-role pivot">Pivot</div></div></div>
+      <div class="pc"><div class="pc-accent pivot"></div><div class="pc-gradient"></div><div class="pc-num">14</div><div class="pc-content"><div class="pc-name">Alessandro Rizzi</div><div class="pc-role pivot">Pivot</div></div></div>
+    </div>
   </div>
 
+  <!-- Seconda Squadra -->
+  <div class="tab-panel" id="panel-seconda" role="tabpanel" aria-labelledby="tab-seconda">
+    <div class="role-leg">
+      <span class="rdot portiere">Portiere</span>
+      <span class="rdot centrale">Centrale</span>
+      <span class="rdot laterale">Laterale</span>
+      <span class="rdot pivot">Pivot</span>
+      <span class="rdot staff">Staff</span>
+    </div>
+    <div class="squad-grid" id="gridSeconda">
+      <div class="pc pc-staff"><div class="pc-accent staff"></div><div class="pc-gradient"></div><div class="pc-num">MIST</div><div class="pc-content"><div class="pc-name">Antonio Rivolta</div><div class="pc-role staff">Allenatore</div></div></div>
+      <div class="pc"><div class="pc-accent portiere"></div><div class="pc-gradient"></div><div class="pc-num">1</div><div class="pc-content"><div class="pc-name">Stefano Longo</div><div class="pc-role portiere">Portiere</div></div></div>
+      <div class="pc"><div class="pc-accent centrale"></div><div class="pc-gradient"></div><div class="pc-num">4</div><div class="pc-content"><div class="pc-name">Marco Meroni</div><div class="pc-role centrale">Centrale</div></div></div>
+      <div class="pc"><div class="pc-accent centrale"></div><div class="pc-gradient"></div><div class="pc-num">6</div><div class="pc-content"><div class="pc-name">Giorgio Villa</div><div class="pc-role centrale">Centrale</div></div></div>
+      <div class="pc"><div class="pc-accent laterale"></div><div class="pc-gradient"></div><div class="pc-num">7</div><div class="pc-content"><div class="pc-name">Riccardo Frigerio</div><div class="pc-role laterale">Laterale</div></div></div>
+      <div class="pc"><div class="pc-accent laterale"></div><div class="pc-gradient"></div><div class="pc-num">8</div><div class="pc-content"><div class="pc-name">Davide Colombo</div><div class="pc-role laterale">Laterale</div></div></div>
+      <div class="pc"><div class="pc-accent laterale"></div><div class="pc-gradient"></div><div class="pc-num">11</div><div class="pc-content"><div class="pc-name">Andrea Terraneo</div><div class="pc-role laterale">Laterale</div></div></div>
+      <div class="pc"><div class="pc-accent pivot"></div><div class="pc-gradient"></div><div class="pc-num">9</div><div class="pc-content"><div class="pc-name">Fabio Ferrante</div><div class="pc-role pivot">Pivot</div></div></div>
+      <div class="pc"><div class="pc-accent pivot"></div><div class="pc-gradient"></div><div class="pc-num">10</div><div class="pc-content"><div class="pc-name">Lorenzo Mazza</div><div class="pc-role pivot">Pivot</div></div></div>
+    </div>
+  </div>
 </section>
+
 <!-- ══════════════════════════════════════════════
      3 — MATCH CENTER
 ══════════════════════════════════════════════ -->
@@ -1715,106 +1672,6 @@ window.addEventListener('scroll', () => {
   navEl.classList.toggle('scrolled', window.scrollY > 60);
 }, { passive: true });
 
-   // ============================================================
-// GESTIONE DINAMICA SQUADRA (C2 / SERIE D)
-// ============================================================
-
-// 1. Database ufficiale della Seconda Squadra (Serie D)
-const secondaSquadraData = [
-  ["PRES", "Federico Morrone", "Staff", "Presidente", ""],
-  ["MIST", "Allenatore D", "Staff", "Allenatore", ""],
-  [1, "Amos Arena", "Portiere", "Portiere", "arena.png"],
-  [2, "Andrea Riva", "Centrale", "Centrale", ""],
-  [4, "Simone Fumagalli", "Centrale", "Centrale", ""],
-  [13, "Giacomo Molteni", "Centrale", "Centrale", ""],
-  [3, "Luca Brambilla", "Laterale", "Laterale", ""],
-  [6, "Roberto Bernasconi", "Laterale", "Laterale", ""],
-  [7, "Matteo Sala", "Laterale", "Laterale", ""],
-  [8, "Paolo Viganò", "Laterale", "Laterale", ""],
-  [11, "Nicola Airoldi", "Laterale", "Laterale", ""],
-  [9, "Christian Ferrario", "Pivot", "Pivot", ""],
-  [10, "Emanuele Castelli", "Pivot", "Pivot", ""]
-];
-
-// Funzione per generare le iniziali se la foto non è impostata
-function getPlayerInitials(name) {
-  return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-}
-
-// Funzione che crea le card per la Serie D dentro l'HTML
-function renderSecondaSquadra() {
-  const grid = document.getElementById("gridSeconda");
-  if (!grid) return;
-  
-  grid.innerHTML = ""; // Svuota per sicurezza
-  
-  secondaSquadraData.forEach(p => {
-    const numOrSigla = p[0];
-    const name = p[1];
-    const roleGroup = p[2].toLowerCase(); // 'staff', 'portiere', etc.
-    const specificRole = p[3];
-    const imgFile = p[4];
-    
-    const card = document.createElement('div');
-    card.className = roleGroup === 'staff' ? 'pc pc-staff' : 'pc';
-    
-    // Gestione Immagine o Watermark Iniziali
-    let photoHtml = "";
-    if (imgFile && imgFile !== "") {
-      photoHtml = `<img src="${imgFile}" class="pc-bg-photo" alt="${name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`;
-      photoHtml += `<div class="pc-bg-placeholder" style="display:none; align-items:center; justify-content:center; position:absolute; inset:0; font-family:'Barlow Condensed',sans-serif; font-size:4.5rem; font-weight:900; color:rgba(255,255,255,0.03); background:transparent;">${getPlayerInitials(name)}</div>`;
-    } else {
-      photoHtml = `<div class="pc-bg-placeholder" style="display:flex; align-items:center; justify-content:center; position:absolute; inset:0; font-family:'Barlow Condensed',sans-serif; font-size:4.5rem; font-weight:900; color:rgba(255,255,255,0.03); background:transparent;">${getPlayerInitials(name)}</div>`;
-    }
-    
-    card.innerHTML = `
-      <div class="pc-accent ${roleGroup}"></div>
-      ${photoHtml}
-      <div class="pc-gradient"></div>
-      <div class="pc-num">${numOrSigla}</div>
-      <div class="pc-content">
-        <div class="pc-name">${name}</div>
-        <div class="pc-role ${roleGroup}">${specificRole}</div>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-// Gestione dell'evento click sui pulsanti dei Tab (Prima e Seconda Squadra)
-function initSquadTabs() {
-  const tabs = document.querySelectorAll('.sq-tab');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      tabs.forEach(t => {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-      });
-      
-      this.classList.add('active');
-      this.setAttribute('aria-selected', 'true');
-      
-      const targetPanelId = this.getAttribute('aria-controls');
-      
-      document.querySelectorAll('.tab-panel').forEach(panel => {
-        if (panel.id === targetPanelId) {
-          panel.classList.add('active');
-          panel.style.display = 'block';
-        } else {
-          panel.classList.remove('active');
-          panel.style.display = 'none';
-        }
-      });
-    });
-  });
-}
-
-// Avvia tutto non appena il DOM è pronto
-document.addEventListener('DOMContentLoaded', () => {
-  renderSecondaSquadra();
-  initSquadTabs();
-});
-
 // ============================================================
 // HAMBURGER MENU TOGGLE (apri/chiudi + X)
 // ============================================================
@@ -1913,86 +1770,59 @@ if (!prefersReduced) {
     scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
   });
 
- // ============================================================
-// KIT PIN — RIPRISTINATO E OTTIMIZZATO SENZA SOVRAPPOSIZIONI
-// ============================================================
-function setupKitPin() {
-  const stage  = document.getElementById('kitPinStage');
-  if (!stage) return;
+  // ---- KIT PIN ----
+  function setupKitPin() {
+    const stage  = document.getElementById('kitPinStage');
+    const panels = stage.querySelectorAll('.kit-panel');
+    const words  = stage.querySelectorAll('.kbt-word');
+    const dots   = document.querySelectorAll('.kp-dot');
+    const isMob  = window.innerWidth <= 800;
 
-  const panels = stage.querySelectorAll('.kit-panel');
-  const words  = stage.querySelectorAll('.kbt-word');
-  const dots   = document.querySelectorAll('.kp-dot');
-  const isMob  = window.innerWidth <= 800;
+    ScrollTrigger.getAll().filter(st => st.vars.id === 'kitPin').forEach(st => st.kill());
 
-  // Killiamo i vecchi trigger per evitare che si sovrappongano al resize della pagina
-  ScrollTrigger.getAll().filter(st => st.vars.id === 'kitPin').forEach(st => st.kill());
+    if (isMob) {
+      stage.classList.remove('kit-pin-mode');
+      return;
+    }
 
-  if (isMob) {
-    stage.classList.remove('kit-pin-mode');
-    // Su mobile togliamo i blocchi e forziamo i pannelli a essere visibili nel flusso normale
-    panels.forEach(p => {
-      p.style.opacity = '1';
-      p.style.transform = 'none';
-      p.style.position = 'relative';
-    });
-    return;
-  }
+    stage.classList.add('kit-pin-mode');
+    const pinLen = window.innerHeight * panels.length * 1.15;
 
-  stage.classList.add('kit-pin-mode');
-  
-  // Ripristiniamo la posizione assoluta per i pannelli su desktop per sovrapporli
-  panels.forEach((p, idx) => {
-    p.style.position = 'absolute';
-    if (idx > 0) p.style.opacity = '0'; // Nascondiamo i successivi all'inizio
-  });
-
-  // Creiamo la Timeline nativa agganciata allo scroll
-  const kitTl = gsap.timeline({
-    scrollTrigger: {
+    ScrollTrigger.create({
       id: 'kitPin',
       trigger: '#kitPinWrapper',
       start: 'top top',
-      end: `+=${window.innerHeight * panels.length * 1.2}`,
+      end: `+=${pinLen}`,
       pin: true,
-      scrub: true,
+      pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      fastScrollEnd: true
-    }
-  });
+      fastScrollEnd: true,
+      onUpdate(self) {
+        const p   = self.progress;
+        const seg = 1 / panels.length;
+        const idx = Math.min(Math.floor(p / seg), panels.length - 1);
 
-  // Animiamo i passaggi in sequenza millimetrica
-  panels.forEach((panel, i) => {
-    if (i === 0) return; // Il primo è già visibile di default
+        panels.forEach((panel, i) => {
+          const loc = Math.max(0, Math.min(1, (p - i * seg) / seg));
+          const active = i === idx;
+          panel.style.opacity   = active ? 1 : (i < idx ? 0 : (i === idx + 1 ? 0.25 : 0));
+          panel.style.transform = `scale(${active ? 1 : (i < idx ? 0.94 : 1.03)})`;
+          panel.style.transition = 'opacity .3s,transform .3s';
+        });
 
-    const label = `slide_${i}`;
-    
-    // Dissolvenza del pannello precedente e comparsa di quello nuovo
-    kitTl.to(panels[i - 1], { opacity: 0, scale: 0.94, duration: 1 }, label)
-         .fromTo(panel, { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 1 }, label);
+        words.forEach((w, i) => { w.style.opacity = i === idx ? 0.55 : 0; });
+        dots.forEach((d, i) => { d.classList.toggle('active', i === idx); });
+      }
+    });
+  }
 
-    // Gestione della parola gigante di sfondo
-    if (words[i - 1] && words[i]) {
-      kitTl.to(words[i - 1], { opacity: 0, duration: 0.4 }, label)
-           .to(words[i], { opacity: 0.55, duration: 0.4 }, label);
-    }
-
-    // Aggiornamento dei pallini indicatori laterali
-    if (dots.length) {
-      kitTl.call(() => {
-        dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
-      }, null, label);
-    }
-  });
-}
-
-// Avvio della logica e listener per il cambio di orientamento o resize dello schermo
-setupKitPin();
-window.addEventListener('resize', () => {
-  ScrollTrigger.refresh();
   setupKitPin();
-}, { passive: true });
+  window.addEventListener('resize', () => {
+    ScrollTrigger.refresh();
+    setupKitPin();
+  }, { passive: true });
+}
 
 // ============================================================
 // FADE-IN su scroll (IntersectionObserver)
@@ -2036,20 +1866,13 @@ const squadData = {
     [14, "Alessandro Rizzi", "Pivot", "Pivot", ""]
   ],
   seconda: [
-    ["PRES", "Federico Morrone", "Staff", "Presidente", ""],
+    ["PRES", "Federico Morrone", "Staff", "Presidente", "morrone.png"],
     ["MIST", "Allenatore D", "Staff", "Allenatore", ""],
     [1, "Amos Arena", "Portiere", "Portiere", "arena.png"],
     [2, "Andrea Riva", "Centrale", "Centrale", ""],
     [4, "Simone Fumagalli", "Centrale", "Centrale", ""],
     [13, "Giacomo Molteni", "Centrale", "Centrale", ""],
     [3, "Luca Brambilla", "Laterale", "Laterale", ""],
-    [6, "Roberto Bernasconi", "Laterale", "Laterale", ""],
-    [7, "Matteo Sala", "Laterale", "Laterale", ""],
-    [8, "Paolo Viganò", "Laterale", "Laterale", ""],
-    [11, "Nicola Airoldi", "Laterale", "Laterale", ""],
-    [9, "Christian Ferrario", "Pivot", "Pivot", ""],
-    [10, "Emanuele Castelli", "Pivot", "Pivot", ""],
-    [14, "Alessandro Rizzi", "Pivot", "Pivot", ""]
   ]
 };
 
@@ -2286,57 +2109,6 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.warn('[SW] Registrazione fallita:', err));
   });
 }
-   
-// ============================================================
-// FIX SISTEMA DI NAVIGAZIONE E MENU MOBILE OVERLAY
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-  const hamburgerBtn = document.querySelector('.hamburger');
-  const mobileOverlay = document.querySelector('.mob-overlay');
-  const closeMenuBtn = document.getElementById('closeMobMenu');
-  const mobileLinks = document.querySelectorAll('.mob-overlay .mob-link');
-
-  // 1. STATO INIZIALE DI SICUREZZA (Forza la chiusura per sbloccare la Hero)
-  if (hamburgerBtn && mobileOverlay) {
-    hamburgerBtn.classList.remove('open');
-    mobileOverlay.classList.remove('open');
-  }
-
-  // 2. FUNZIONI DI APERTURA E CHIUSURA
-  function openMenu() {
-    hamburgerBtn?.classList.add('open');
-    mobileOverlay?.classList.add('open');
-  }
-
-  function closeMenu() {
-    hamburgerBtn?.classList.remove('open');
-    mobileOverlay?.classList.remove('open');
-  }
-
-  // 3. COLLEGAMENTO DEI TRIGGER (Click)
-  // Cliccando sulle tre linette (Hamburger)
-  hamburgerBtn?.addEventListener('click', () => {
-    if (mobileOverlay?.classList.contains('open')) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  });
-
-  // Cliccando sulla X di chiusura (#closeMobMenu)
-  closeMenuBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    closeMenu();
-  });
-
-  // Cliccando su uno dei link del menu (chiude l'overlay automaticamente)
-  mobileLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      closeMenu();
-    });
-  });
-});
-   
 </script>
 </body>
 </html>
