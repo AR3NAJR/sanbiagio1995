@@ -830,13 +830,35 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   background:linear-gradient(160deg,rgba(255,200,80,.2),transparent 55%);
   mix-blend-mode:screen;pointer-events:none;z-index:1;
 }
-/* Pin mode layout */
-.kit-pin-mode .kit-panel{position:absolute;inset:0;display:block;max-width:none;padding:0;margin:0;}
-.kit-pin-mode .kit-full{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;}
+/* Pin mode layout — Corretto per bloccare l'altezza a tutto schermo ed evitare sovrapposizioni */
+.kit-pin-mode .kit-panel{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100vh; /* Forza il pannello a prendere tutta l'altezza dello schermo */
+  display:block;
+  max-width:none;
+  padding:0;
+  margin:0;
+}
+.kit-pin-mode .kit-full{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2;
+}
 .kit-pin-mode .kit-full-img{max-width:min(360px,36vw);}
 .kit-pin-mode .kit-macro{
-  position:absolute;top:9%;right:6%;width:36%;height:82%;aspect-ratio:auto;
-  z-index:3;box-shadow:0 30px 80px rgba(0,0,0,.55);
+  position:absolute;
+  top:9%;
+  right:6%;
+  width:36%;
+  height:82%;
+  aspect-ratio:auto;
+  z-index:3;
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
 }
 .kit-pin-mode .kit-panel[data-side="left"] .kit-macro{right:auto;left:6%;}
 .kit-macro.cut-a{clip-path:polygon(14% 0,100% 0,100% 100%,0 100%);}
@@ -1806,59 +1828,86 @@ if (!prefersReduced) {
     scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
   });
 
-  // ---- KIT PIN ----
-  function setupKitPin() {
-    const stage  = document.getElementById('kitPinStage');
-    const panels = stage.querySelectorAll('.kit-panel');
-    const words  = stage.querySelectorAll('.kbt-word');
-    const dots   = document.querySelectorAll('.kp-dot');
-    const isMob  = window.innerWidth <= 800;
+ // ============================================================
+// KIT PIN — RIPRISTINATO E OTTIMIZZATO SENZA SOVRAPPOSIZIONI
+// ============================================================
+function setupKitPin() {
+  const stage  = document.getElementById('kitPinStage');
+  if (!stage) return;
 
-    ScrollTrigger.getAll().filter(st => st.vars.id === 'kitPin').forEach(st => st.kill());
+  const panels = stage.querySelectorAll('.kit-panel');
+  const words  = stage.querySelectorAll('.kbt-word');
+  const dots   = document.querySelectorAll('.kp-dot');
+  const isMob  = window.innerWidth <= 800;
 
-    if (isMob) {
-      stage.classList.remove('kit-pin-mode');
-      return;
-    }
+  // Killiamo i vecchi trigger per evitare che si sovrappongano al resize della pagina
+  ScrollTrigger.getAll().filter(st => st.vars.id === 'kitPin').forEach(st => st.kill());
 
-    stage.classList.add('kit-pin-mode');
-    const pinLen = window.innerHeight * panels.length * 1.15;
+  if (isMob) {
+    stage.classList.remove('kit-pin-mode');
+    // Su mobile togliamo i blocchi e forziamo i pannelli a essere visibili nel flusso normale
+    panels.forEach(p => {
+      p.style.opacity = '1';
+      p.style.transform = 'none';
+      p.style.position = 'relative';
+    });
+    return;
+  }
 
-    ScrollTrigger.create({
+  stage.classList.add('kit-pin-mode');
+  
+  // Ripristiniamo la posizione assoluta per i pannelli su desktop per sovrapporli
+  panels.forEach((p, idx) => {
+    p.style.position = 'absolute';
+    if (idx > 0) p.style.opacity = '0'; // Nascondiamo i successivi all'inizio
+  });
+
+  // Creiamo la Timeline nativa agganciata allo scroll
+  const kitTl = gsap.timeline({
+    scrollTrigger: {
       id: 'kitPin',
       trigger: '#kitPinWrapper',
       start: 'top top',
-      end: `+=${pinLen}`,
+      end: `+=${window.innerHeight * panels.length * 1.2}`,
       pin: true,
-      pinSpacing: true,
+      scrub: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      fastScrollEnd: true,
-      onUpdate(self) {
-        const p   = self.progress;
-        const seg = 1 / panels.length;
-        const idx = Math.min(Math.floor(p / seg), panels.length - 1);
+      fastScrollEnd: true
+    }
+  });
 
-        panels.forEach((panel, i) => {
-          const loc = Math.max(0, Math.min(1, (p - i * seg) / seg));
-          const active = i === idx;
-          panel.style.opacity   = active ? 1 : (i < idx ? 0 : (i === idx + 1 ? 0.25 : 0));
-          panel.style.transform = `scale(${active ? 1 : (i < idx ? 0.94 : 1.03)})`;
-          panel.style.transition = 'opacity .3s,transform .3s';
-        });
+  // Animiamo i passaggi in sequenza millimetrica
+  panels.forEach((panel, i) => {
+    if (i === 0) return; // Il primo è già visibile di default
 
-        words.forEach((w, i) => { w.style.opacity = i === idx ? 0.55 : 0; });
-        dots.forEach((d, i) => { d.classList.toggle('active', i === idx); });
-      }
-    });
-  }
+    const label = `slide_${i}`;
+    
+    // Dissolvenza del pannello precedente e comparsa di quello nuovo
+    kitTl.to(panels[i - 1], { opacity: 0, scale: 0.94, duration: 1 }, label)
+         .fromTo(panel, { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 1 }, label);
 
-  setupKitPin();
-  window.addEventListener('resize', () => {
-    ScrollTrigger.refresh();
-    setupKitPin();
-  }, { passive: true });
+    // Gestione della parola gigante di sfondo
+    if (words[i - 1] && words[i]) {
+      kitTl.to(words[i - 1], { opacity: 0, duration: 0.4 }, label)
+           .to(words[i], { opacity: 0.55, duration: 0.4 }, label);
+    }
+
+    // Aggiornamento dei pallini indicatori laterali
+    if (dots.length) {
+      kitTl.call(() => {
+        dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+      }, null, label);
+    }
+  });
 }
+
+// Avvio della logica e listener per il cambio di orientamento o resize dello schermo
+setupKitPin();
+window.addEventListener('resize', () => {
+  ScrollTrigger.refresh();
+  setupKitPin();
+}, { passive: true });
 
 // ============================================================
 // FADE-IN su scroll (IntersectionObserver)
