@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -34,14 +32,14 @@
 html{
   -webkit-text-size-adjust:100%;
   scroll-behavior:auto;
-  overflow-x:hidden; 
-  max-width:100vw; 
+  overflow-x:hidden; /* Garantisce l'assenza di overflow orizzontale sul documento */
+  max-width:100vw; /* Assicura che la larghezza massima sia la viewport */
 }
 body{
   font-family:'Barlow',sans-serif; color:var(--body-c); background:var(--ink);
-  overflow-x:hidden; 
-  max-width:100vw; 
-  position:relative; 
+  overflow-x:hidden; /* Garantisce l'assenza di overflow orizzontale sul body */
+  max-width:100vw; /* Assicura che la larghezza massima sia la viewport */
+  position:relative; /* Necessario per alcuni posizionamenti assoluti */
 }
 img{max-width:100%;height:auto;display:block;}
 a{color:inherit;text-decoration:none;}
@@ -127,6 +125,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 ============================================================ */
 #scene1-wrapper{
   position:relative;
+  /* height gestita da GSAP pinning */
 }
 #scene1{
   position:relative;
@@ -334,7 +333,6 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 .rdot.laterale::before{background:#4ECDC4;}
 .rdot.pivot::before{background:#FF6B8A;}
 .rdot.staff::before{background:#B0A0FF;}
-
 .squad-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(158px,1fr));
@@ -391,7 +389,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   position:absolute;inset:0;z-index:5;border-radius:3px;
   pointer-events:none;opacity:0;
   transition:opacity .3s;
-  background:radial-gradient(circle at 50% 50%, rgba(255,80,120,.28) 0%, rgba(80,80,255,.22) 25%, rgba(200,16,46,.18) 50%, rgba(0,48,135,.12) 70%, transparent 90%);
+  background:radial-gradient(circle at 50% 50%, rgba(255,80,120,.28) 0%, rgba(80,80,255,.22) 25%, rgba(80,220,200,.18) 50%, rgba(255,200,80,.12) 70%, transparent 90%);
   mix-blend-mode:screen;
 }
 .pc:hover .pc-foil{opacity:1;}
@@ -422,8 +420,9 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   color:var(--ink);margin-bottom:1rem;
   padding-bottom:.5rem;border-bottom:2px solid var(--red);
 }
+/* FIX: iframe scroll su mobile */
 .mc-iframe-scroll{
-  overflow-x:auto; 
+  overflow-x:auto; /* Permette lo scroll orizzontale solo per l'iframe su mobile */
   -webkit-overflow-scrolling:touch;
   width:100%;
 }
@@ -435,7 +434,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 .iw-marcatori{height:720px;}
 .iw iframe{
   width:100%;
-  min-width:300px; 
+  min-width:300px; /* Larghezza minima per evitare che si stringa troppo */
   height:100%;border:0;display:block;
 }
 .mc-tabs-nav{display:flex;flex-wrap:wrap;gap:0;margin-bottom:12px;border-bottom:1.5px solid rgba(0,0,0,.08);}
@@ -604,7 +603,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 }
 .kp-dot.active{background:var(--red);width:22px;border-radius:3px;}
 
-/* ---------- KIT PANEL — layout statico ---------- */
+/* ---------- KIT PANEL — layout statico (default / fallback no-motion) ---------- */
 .kit-panel{
   position:relative;display:grid;grid-template-columns:1fr 1fr;
   gap:2.5rem;align-items:center;max-width:1080px;margin:0 auto;
@@ -637,12 +636,12 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 }
 .kmc-text{font-size:.78rem;line-height:1.6;color:rgba(255,255,255,.55);max-width:320px;}
 
-/* accenti colore per kit */
+/* accenti colore per kit (rosso / blu / oro) */
 .kit-panel[data-kit="0"] .kit-macro::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(200,16,46,.25),transparent 55%);mix-blend-mode:screen;pointer-events:none;}
 .kit-panel[data-kit="1"] .kit-macro::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,48,135,.22),transparent 55%);mix-blend-mode:screen;pointer-events:none;}
 .kit-panel[data-kit="2"] .kit-macro::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,200,80,.2),transparent 55%);mix-blend-mode:screen;pointer-events:none;}
 
-/* ---------- PIN MODE — layout assoluto ---------- */
+/* ---------- PIN MODE — layout assoluto full-bleed, animato da GSAP ---------- */
 .kit-pin-mode .kit-panel{
   position:absolute;inset:0;display:block;max-width:none;padding:0;margin:0;
 }
@@ -773,7 +772,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 .footer-designer strong{color:rgba(255,255,255,.42);font-weight:800;}
 
 /* ============================================================
-   RESPONSIVE & SQUADRA MOBILE RE-DESIGN (TASK 2)
+   RESPONSIVE
 ============================================================ */
 @media(max-width:1050px){
   .news-grid{grid-template-columns:1fr;}
@@ -787,93 +786,16 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   .hamburger{display:flex;}
   .nav-links{display:none;}
 
-  /* --- SEZIONE SQUADRA MOBILE PREMIUM EA SPORTS --- */
-  #scene3 { padding: 4rem 1.25rem; }
-  .squad-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-  .pc {
-    display: flex;
-    flex-direction: row; 
-    height: 140px; 
-    padding: 0;
-    overflow: visible; 
-    background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
-    border: 1px solid rgba(255,255,255,0.1);
-    transform: none !important; 
-    align-items: center;
-  }
-  .pc::after {
-    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-    background: var(--red); z-index: 5;
-  }
-  .pc-num {
-    position: absolute;
-    left: 10px;
-    bottom: -10px;
-    font-size: 8.5rem !important;
-    line-height: 1;
-    opacity: 0.12;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.4);
-    z-index: 1;
-    pointer-events: none;
-    margin: 0;
-    letter-spacing: -0.05em;
-  }
-  .pc-name {
-    position: relative;
-    z-index: 3;
-    text-align: left;
-    margin: 2.5rem 0 0 1.5rem;
-    font-size: 1.4rem;
-    letter-spacing: 0.02em;
-    max-width: 55%;
-  }
-  .pc-role {
-    position: relative;
-    z-index: 3;
-    text-align: left;
-    margin-left: 1.5rem;
-    font-size: 0.65rem;
-    margin-top: 4px;
-    opacity: 0.8;
-  }
-  .pc-photo-wrap {
-    flex: 1;
-    height: 100%;
-    margin-bottom: 0;
-    display: flex;
-    align-items: flex-end; 
-    justify-content: flex-end;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 48%;
-    overflow: visible;
-  }
-  .pc-photo {
-    height: 155px; 
-    width: auto;
-    object-fit: contain; 
-    filter: drop-shadow(-10px 0 15px rgba(0,0,0,0.5));
-    z-index: 4;
-    transform: scale(1.15);
-    transform-origin: bottom center;
-  }
-  .pc-staff { height: 90px; }
-  .pc-staff .pc-name { margin-top: 0; font-size: 1.2rem; }
-  .pc-staff .pc-num { font-size: 3.5rem !important; bottom: 5px; left: auto; right: 15px; opacity: 0.08; }
-  /* --- FINE SQUADRA MOBILE PREMIUM --- */
-
+  /* Kit & Design — mobile (vertical slide, dentro i margini) */
   .kit-panel{grid-template-columns:1fr;gap:1.4rem;}
   .kit-full-img{max-width:200px;}
   .kit-pin-mode .kit-full-img{max-width:min(220px,55vw);}
-  .kit-pin-mode .kit-macro{top:auto;bottom:0;left:0;right:0;width:100%;height:50%;}
-  .kit-macro.cut-a,.kit-macro.cut-b,.kit-macro.cut-c{clip-path:polygon(0 9%,100% 0,100% 100%,0 100%);}
+  .kit-pin-mode .kit-macro{
+    top:auto;bottom:0;left:0;right:0;width:100%;height:50%;
+  }
+  .kit-macro.cut-a,.kit-macro.cut-b,.kit-macro.cut-c{
+    clip-path:polygon(0 9%,100% 0,100% 100%,0 100%);
+  }
   .kbt-word{font-size:clamp(50px,19vw,108px);}
   .kit-progress{bottom:1.1rem;}
 
@@ -882,10 +804,16 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   .sq-tab::after{display:none;}
   .sq-tab.active{color:var(--red);}
 
-  .mc-iframe-scroll .iw iframe {width: 300px; margin: 0 auto; display: block;}
+  /* Match Center iframe width fix */
+  .mc-iframe-scroll .iw iframe {
+    width: 300px; /* Imposta una larghezza fissa per gli iframe su schermi piccoli */
+    margin: 0 auto; /* Centra l'iframe se il contenitore è più largo */
+    display: block;
+  }
 }
 @media(max-width:600px){
   .news-sb{grid-template-columns:1fr;}
+  .squad-grid{grid-template-columns:repeat(2,1fr);}
   .contacts-grid{grid-template-columns:1fr;}
   .footer-top,.footer-bottom{flex-direction:column;}
   .hero-panel::before{width:100%;clip-path:polygon(0 56%,100% 47%,100% 100%,0 100%);}
@@ -893,6 +821,9 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   .hero-stats{gap:1.2rem 1.8rem;}
   .kc-item:not(:last-child){border-right:none;margin-right:0;padding-right:0;}
   .kit-credit-bar{flex-direction:column;}
+}
+@media(max-width:420px){
+  .squad-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -903,7 +834,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 ══════════════════════════════════════════════ -->
 <nav class="main-nav" id="mainNav" aria-label="Navigazione principale">
   <a href="#hero" class="nav-logo" aria-label="San Biagio 1995 A.S.D. – Homepage">
-    <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="San Biagio 1995 A.S.D." class="nav-logo-img" width="44" height="44">
+    <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="San Biagio 1995 A.S.D." class="nav-logo-img" width="44" height="44" onerror="this.style.opacity='.3'">
     <div class="nav-brand">San Biagio 1995<small>A.S.D. · Futsal</small></div>
   </a>
   <ul class="nav-links" role="list">
@@ -943,7 +874,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 
     <div class="hero-content" id="heroContent">
       <div class="hero-logo-wrap" id="heroLogo">
-        <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="San Biagio 1995 A.S.D." class="hero-logo" width="80" height="80">
+        <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="San Biagio 1995 A.S.D." class="hero-logo" width="80" height="80" onerror="this.style.display='none'">
       </div>
       <p class="hero-eyebrow" id="heroEyebrow">Verano Brianza · Futsal · Dal 1995</p>
       <div class="hero-title-wrap" id="heroTitleWrap">
@@ -1098,7 +1029,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
     <div class="fi">
       <p class="mc-col-title">⚽ Serie C2 Girone A</p>
       
-      <div class="mc-iframe-scroll"> 
+      <div class="mc-iframe-scroll"> <!-- Contenitore per lo scroll orizzontale su mobile -->
         <div class="match-focus-grid">
           <div class="iw iw-focus">
             <iframe src="https://www.tuttocampo.it/WidgetV2/Partita/d41c0700-615d-42f3-87cb-681f333839cf" width="500" height="340" scrolling="no" frameborder="0" loading="lazy" title="Ultima Partita"></iframe>
@@ -1116,21 +1047,21 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       </div>
 
       <div id="mct-classifica" class="mc-tab-content active">
-        <div class="mc-iframe-scroll"> 
+        <div class="mc-iframe-scroll"> <!-- Contenitore per lo scroll orizzontale su mobile -->
           <div class="iw iw-classifica">
             <iframe src="https://www.tuttocampo.it/WidgetV2/Classifica/d41c0700-615d-42f3-87cb-681f333839cf" width="500" height="800" scrolling="no" frameborder="0" loading="lazy" title="Classifica C2 Girone A"></iframe>
           </div>
         </div>
       </div>
       <div id="mct-risultati" class="mc-tab-content">
-        <div class="mc-iframe-scroll"> 
+        <div class="mc-iframe-scroll"> <!-- Contenitore per lo scroll orizzontale su mobile -->
           <div class="iw iw-risultati">
             <iframe src="https://www.tuttocampo.it/WidgetV2/Marcatori/d41c0700-615d-42f3-87cb-681f333839cf" width="500" height="700" scrolling="no" frameborder="0" loading="lazy" title="Risultati C2 Girone A"></iframe>
           </div>
         </div>
       </div>
       <div id="mct-marcatori" class="mc-tab-content">
-        <div class="mc-iframe-scroll"> 
+        <div class="mc-iframe-scroll"> <!-- Contenitore per lo scroll orizzontale su mobile -->
           <div class="iw iw-marcatori">
             <iframe src="https://www.tuttocampo.it/WidgetV2/Marcatori/4a1d8ca0-be13-41f4-b448-17905479c6e0" scrolling="no" frameborder="0" loading="lazy" title="Marcatori Campionato Serie D" style="width:100%;height:720px;border:0;display:block;"></iframe>
           </div>
@@ -1220,7 +1151,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
         </figure>
         <div class="kit-macro cut-a">
           <div class="kit-macro-media">
-            <img src="home-macro.webp" alt="Dettaglio macro" class="kit-macro-img" loading="lazy">
+            <img src="home-macro.webp" alt="Dettaglio macro del tessuto tecnico della maglia Home" class="kit-macro-img" loading="lazy" decoding="async">
           </div>
           <div class="kit-macro-caption">
             <span class="kmc-idx">01 — 03</span>
@@ -1233,11 +1164,11 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       <!-- KIT 1 — AWAY -->
       <article class="kit-panel fi" data-kit="1" data-side="left" style="transition-delay:.08s">
         <figure class="kit-full">
-          <img src="divisa_away_sanbiagio_web.png" alt="Seconda divisa San Biagio 1995 – maglia Away bianca, vista frontale completa" class="kit-full-img" loading="lazy">
+          <img src="divisa_away_sanbiagio_web.png" alt="Seconda divisa San Biagio 1995 – maglia Away bianca, vista frontale completa" class="kit-full-img" loading="lazy" decoding="async">
         </figure>
         <div class="kit-macro cut-b">
           <div class="kit-macro-media">
-            <img src="away-macro.webp" alt="Dettaglio macro" class="kit-macro-img" loading="lazy">
+            <img src="away-macro.webp" alt="Dettaglio macro del tessuto tecnico della maglia Away" class="kit-macro-img" loading="lazy" decoding="async">
           </div>
           <div class="kit-macro-caption">
             <span class="kmc-idx">02 — 03</span>
@@ -1250,11 +1181,11 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       <!-- KIT 2 — THIRD -->
       <article class="kit-panel fi" data-kit="2" data-side="right" style="transition-delay:.16s">
         <figure class="kit-full">
-          <img src="divisa_third_sanbiagio_web.png" alt="Terza divisa San Biagio 1995 – maglia Third nera, vista frontale completa" class="kit-full-img" loading="lazy">
+          <img src="divisa_third_sanbiagio_web.png" alt="Terza divisa San Biagio 1995 – maglia Third nera, vista frontale completa" class="kit-full-img" loading="lazy" decoding="async">
         </figure>
         <div class="kit-macro cut-c">
           <div class="kit-macro-media">
-            <img src="third-macro.webp" alt="Dettaglio macro" class="kit-macro-img" loading="lazy">
+            <img src="third-macro.webp" alt="Dettaglio macro del tessuto tecnico della maglia Third" class="kit-macro-img" loading="lazy" decoding="async">
           </div>
           <div class="kit-macro-caption">
             <span class="kmc-idx">03 — 03</span>
@@ -1412,7 +1343,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
-      <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="" class="footer-logo-img" width="26" height="26">
+      <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="" class="footer-logo-img" width="26" height="26" onerror="this.style.opacity='0'" aria-hidden="true">
       San <span class="rb">Biagio</span> <span class="rb">1995</span> A.S.D. Futsal
     </div>
     <ul class="footer-links" role="list">
@@ -1441,10 +1372,15 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 (function () {
   'use strict';
 
+  // ── GSAP Registration ────────────────────────────────────────
   gsap.registerPlugin(ScrollTrigger);
+
+  // ── Reduced motion check ──────────────────────────────────────
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // 1. Hero Entrance
+  // ────────────────────────────────────────────────────────────
+  // 1. HERO ENTRANCE ANIMATION
+  // ────────────────────────────────────────────────────────────
   function heroEntrance() {
     var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
     tl.to('#heroLogo', { opacity: 1, y: 0, duration: .9, delay: .15 })
@@ -1457,7 +1393,10 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   }
   heroEntrance();
 
-  // 2. SCENA 1 → TUNNEL GSAP Pinning
+  // ────────────────────────────────────────────────────────────
+  // 2. SCENA 1 → SCENA 2: TUNNEL TIPOGRAFICO (GSAP pin)
+  //    La "telecamera" zooma dentro il titolo.
+  // ────────────────────────────────────────────────────────────
   if (!reducedMotion) {
     var tunnelTL = gsap.timeline({
       scrollTrigger: {
@@ -1469,31 +1408,55 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
         anticipatePin: 1,
       }
     });
+
     tunnelTL
-      .to('#heroLogo, #heroEyebrow, #heroBar, #heroSub, #heroStats, #heroBadge, .hero-scroll, .hero-panel, .field-grid, .field-circle, .hero-orb', { opacity: 0, duration: .4 }, 0)
-      .to('#heroTitleWrap', { scale: 38, opacity: 0, duration: .65, ease: 'power2.in', transformOrigin: 'center center' }, 0.20)
-      .to('#tunnel-overlay', { opacity: 1, duration: .4 }, 0.58)
-      .to('#tunnel-overlay', { opacity: 0, duration: .2 }, 0.86);
+      .to('#heroLogo', { opacity: 0, y: -30, duration: .35 }, 0)
+      .to('#heroEyebrow', { opacity: 0, y: -20, duration: .3 }, 0)
+      .to('#heroBar', { opacity: 0, duration: .3 }, 0)
+      .to('#heroSub', { opacity: 0, y: -15, duration: .3 }, 0)
+      .to('#heroStats', { opacity: 0, y: -10, duration: .3 }, 0)
+      .to('#heroBadge', { opacity: 0, duration: .25 }, 0)
+      .to('.hero-scroll', { opacity: 0, duration: .2  }, 0)
+      .to('.hero-panel', { opacity: 0, duration: .4 }, 0)
+      .to('.field-grid', { opacity: 0, duration: .5 }, 0.05)
+      .to('.field-circle',{ opacity: 0, duration: .3 }, 0.05)
+      .to('.hero-orb', { opacity: 0, duration: .4 }, 0);
+
+    tunnelTL
+      .to('#heroTitleWrap', {
+        scale: 38,
+        opacity: 0,
+        duration: .65,
+        ease: 'power2.in',
+        transformOrigin: 'center center',
+      }, 0.20);
+
+    tunnelTL
+      .to('#tunnel-overlay', {
+        opacity: 1,
+        duration: .4,
+        ease: 'power2.inOut',
+      }, 0.58);
+
+    tunnelTL
+      .to('#tunnel-overlay', {
+        opacity: 0,
+        duration: .2,
+      }, 0.86);
   }
 
-  // 3. SQUADRA - Fan Animation (ADATTATO MOBILE EA SPORTS)
+  // ────────────────────────────────────────────────────────────
+  // 3. SCENA 2 — Player Cards: fan entry + holographic foil (ADATTATO PER NUOVO ORDINE -> SCENA 3)
+  // ────────────────────────────────────────────────────────────
   function animateFan(gridId) {
     var cards = document.querySelectorAll('#' + gridId + ' .pc');
-    var isMobile = window.innerWidth <= 800;
+    var total = cards.length;
 
-    if (!isMobile) {
-      var total = cards.length;
-      cards.forEach(function (c, i) {
-        var mid = (total - 1) / 2;
-        var fanAngle = (i - mid) * 2.8;
-        c.style.setProperty('--fan-rot', fanAngle + 'deg');
-      });
-    } else {
-      cards.forEach(function (c) {
-        c.style.setProperty('--fan-rot', '0deg');
-        gsap.set(c, { rotate: 0 });
-      });
-    }
+    cards.forEach(function (c, i) {
+      var mid = (total - 1) / 2;
+      var fanAngle = (i - mid) * 2.8;
+      c.style.setProperty('--fan-rot', fanAngle + 'deg');
+    });
 
     ScrollTrigger.create({
       trigger: '#' + gridId,
@@ -1502,9 +1465,9 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       onEnter: function () {
         gsap.to(cards, {
           opacity: 1, y: 0, rotate: 0,
-          duration: 0.9,
-          stagger: isMobile ? 0.1 : { amount: 1.1, from: 'center' },
-          ease: isMobile ? 'power4.out' : 'back.out(1.4)',
+          duration: .9,
+          stagger: { amount: 1.1, from: 'center' },
+          ease: 'back.out(1.4)',
         });
       }
     });
@@ -1512,122 +1475,295 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   animateFan('gridPrima');
   animateFan('gridSeconda');
 
-  // Logic Foil Cards (Solo Desktop)
   document.querySelectorAll('.pc:not(.pc-staff)').forEach(function (card) {
     var foil = document.createElement('div');
     foil.className = 'pc-foil';
     card.appendChild(foil);
 
+    var eaOv = document.createElement('div');
+    eaOv.className = 'pc-ea-overlay';
+    card.insertBefore(eaOv, card.firstChild);
+
+    var vid = document.createElement('video');
+    vid.className = 'pc-bg-media';
+    vid.muted = true;
+    vid.loop = true;
+    vid.playsInline = true;
+    card.insertBefore(vid, card.firstChild);
+
     card.addEventListener('mousemove', function (e) {
-      if (window.innerWidth <= 800) return;
       var r = card.getBoundingClientRect();
       var px = ((e.clientX - r.left) / r.width * 100).toFixed(1);
       var py = ((e.clientY - r.top) / r.height * 100).toFixed(1);
-      foil.style.background = 'radial-gradient(circle at ' + px + '% ' + py + '%, rgba(255,80,120,.28) 0%, rgba(80,80,255,.22) 25%, rgba(200,16,46,.18) 50%, rgba(0,48,135,.12) 70%, transparent 90%)';
+      foil.style.background = 'radial-gradient(circle at ' + px + '% ' + py + '%, ' +
+        'rgba(255,80,120,.28) 0%, ' +
+        'rgba(80,80,255,.22) 25%, ' +
+        'rgba(80,220,200,.18) 50%, ' +
+        'rgba(255,200,80,.12) 70%, ' +
+        'transparent 90%)';
       var rx = ((e.clientY - r.top) / r.height - .5) * -14;
       var ry = ((e.clientX - r.left) / r.width - .5) * 14;
-      gsap.to(card, { rotateX: rx, rotateY: ry, duration: .3, ease: 'power2.out', transformPerspective: 500 });
+      gsap.to(card, {
+        rotateX: rx, rotateY: ry, duration: .3, ease: 'power2.out',
+        transformPerspective: 500, transformOrigin: 'center center',
+      });
     });
     card.addEventListener('mouseleave', function () {
       foil.style.background = '';
       gsap.to(card, { rotateX: 0, rotateY: 0, duration: .5, ease: 'elastic.out(1,.6)' });
     });
+
+    card.addEventListener('click', function () {
+      if (window.matchMedia('(hover:hover)').matches) return;
+      card.classList.toggle('t-hover');
+    });
+
+    card.addEventListener('mouseenter', function () {
+      if (vid.src && vid.src !== window.location.href) vid.play().catch(function(){});
+    });
+    card.addEventListener('mouseleave', function () {
+      if (vid.readyState > 0) { vid.pause(); vid.currentTime = 0; }
+    });
   });
 
-  // 4. Kit Showcase Logic
+  // ────────────────────────────────────────────────────────────
+  // 4. SCENA 2 — KIT & DESIGN: showcase editoriale
+  //    Pinning GSAP "slide & zoom" asimmetrico, con
+  //    gsap.matchMedia() per adattare desktop ↔ mobile.
+  // ────────────────────────────────────────────────────────────
   (function initKitShowcase () {
     var kitWrapper = document.getElementById('kitPinWrapper');
     var kitStage = document.getElementById('kitPinStage');
-    if (!kitWrapper || !kitStage || reducedMotion) return;
+    if (!kitWrapper || !kitStage) return;
+
+    // Reduced motion → niente pin: resta il layout statico (CSS default)
+    // e la rivelazione generica ".fi" (sezione 5) si occupa del reveal.
+    if (reducedMotion) return;
 
     kitStage.classList.add('kit-pin-mode');
+
     var panels = gsap.utils.toArray('.kit-panel', kitStage);
     var bgWords = gsap.utils.toArray('.kbt-word', kitStage);
     var dots = gsap.utils.toArray('.kp-dot', kitStage);
 
+    function setActiveDot(idx) {
+      dots.forEach(function (d, i) { d.classList.toggle('active', i === idx); });
+    }
+
     var mm = gsap.matchMedia();
-    mm.add({ isDesktop: '(min-width: 801px)', isMobile: '(max-width: 800px)' }, function (context) {
+
+    mm.add({
+      isDesktop: '(min-width: 801px)',
+      isMobile: '(max-width: 800px)'
+    }, function (context) {
       var isMobile = context.conditions.isMobile;
-      var tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: kitWrapper, start: 'top top', end: '+=' + (panels.length * 200) + '%',
-          pin: true, scrub: 1, anticipatePin: 1
-        }
-      });
+
+      // ── stato iniziale ──
+      gsap.set(bgWords, { opacity: 0, scale: 1.08 });
+      gsap.set(bgWords[0], { opacity: 1, scale: 1 });
+      setActiveDot(0);
+
       panels.forEach(function (panel, i) {
         var full = panel.querySelector('.kit-full-img');
         var macro = panel.querySelector('.kit-macro');
         var caption = panel.querySelector('.kit-macro-caption');
         var dir = panel.dataset.side === 'left' ? -1 : 1;
-        var bg = bgWords[i];
-        if(i > 0) {
-          tl.to(full, { y: 0, x: 0, scale: 1, opacity: 1, duration: .3 }, i);
-          tl.to(bg, { opacity: 1, scale: 1, duration: .3 }, i);
+
+        if (i === 0) {
+          gsap.set(full, { opacity: 1, scale: 1, x: 0, y: 0 });
+        } else if (isMobile) {
+          gsap.set(full, { opacity: 0, scale: .86, y: '12vh', x: 0 });
+        } else {
+          gsap.set(full, { opacity: 0, scale: .86, x: 0, y: 0 });
         }
-        var p1 = i + .35;
-        tl.to(full, isMobile ? { y: '-16vh', scale: .74 } : { x: (dir * -22) + 'vw', scale: 1.12 }, p1);
-        tl.to(macro, isMobile ? { yPercent: 0 } : { xPercent: 0 }, p1);
-        tl.to(caption, { opacity: 1, y: 0 }, p1 + .1);
+
+        gsap.set(caption, { opacity: 0, y: 16 });
+        gsap.set(macro, isMobile
+          ? { yPercent: 100, opacity: 1 }
+          : { xPercent: dir * 100, opacity: 1 });
+      });
+
+      // ── timeline pinnata e scrubbata ──
+      var tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: kitWrapper,
+          start: 'top top',
+          end: '+=' + (panels.length * 200) + '%',
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: function (self) {
+            var idx = Math.min(panels.length - 1, Math.floor(self.progress * panels.length));
+            setActiveDot(idx);
+          }
+        }
+      });
+
+      panels.forEach(function (panel, i) {
+        var base = i; // ogni maglia occupa 1 unità della timeline
+        var full = panel.querySelector('.kit-full-img');
+        var macro = panel.querySelector('.kit-macro');
+        var caption = panel.querySelector('.kit-macro-caption');
+        var dir = panel.dataset.side === 'left' ? -1 : 1;
+        var bg = bgWords[i];
+        var hasNext = !!panels[i + 1];
+
+        // ── ENTRATA: la maglia fronte intera fluttua al centro
+        //    con la scritta tipografica gigante di sfondo ──
+        if (i > 0) {
+          tl.to(full,
+            isMobile
+              ? { y: 0, scale: 1, opacity: 1, duration: .3, ease: 'power2.out' }
+              : { x: 0, y: 0, scale: 1, opacity: 1, duration: .3, ease: 'power2.out' },
+            base);
+          tl.to(bg, { opacity: 1, scale: 1, duration: .3, ease: 'power2.out' }, base);
+        }
+
+        // ── SLIDE & ZOOM + comparsa del pannello macro asimmetrico ──
+        var p1 = base + .35;
+        if (isMobile) {
+          tl.to(full, { y: '-16vh', scale: .74, duration: .3, ease: 'power2.inOut' }, p1);
+          tl.to(macro, { yPercent: 0, duration: .34, ease: 'power3.out' }, p1 + .02);
+        } else {
+          tl.to(full, { x: (dir * -22) + 'vw', scale: 1.12, duration: .3, ease: 'power2.inOut' }, p1);
+          tl.to(macro, { xPercent: 0, duration: .34, ease: 'power3.out' }, p1 + .02);
+        }
+        tl.to(caption, { opacity: 1, y: 0, duration: .26, ease: 'power2.out' }, p1 + .16);
+        tl.to(bg, { opacity: .32, scale: 1.05, duration: .3, ease: 'power2.inOut' }, p1);
+
+        // ── TRANSIZIONE NETTA: esce la maglia corrente,
+        //    entra la successiva ──
+        if (hasNext) {
+          var p2 = base + .82;
+          if (isMobile) {
+            tl.to(full, { y: '-28vh', scale: .6, opacity: 0, duration: .16, ease: 'power1.in' }, p2);
+          } else {
+            tl.to(full, { x: (dir * -34) + 'vw', scale: 1.22, opacity: 0, duration: .16, ease: 'power1.in' }, p2);
+          }
+          tl.to([macro, caption], { opacity: 0, duration: .15, ease: 'power1.in' }, p2);
+          tl.to(bg, { opacity: 0, duration: .14 }, p2);
+        }
       });
     });
   })();
 
-  // 5. Scroll Reveal
+  // ────────────────────────────────────────────────────────────
+  // 5. SCROLL REVEAL generico (.fi)
+  // ────────────────────────────────────────────────────────────
   var revealObs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('on'); revealObs.unobserve(e.target); } });
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('on');
+        revealObs.unobserve(e.target);
+      }
+    });
   }, { threshold: 0.08 });
-  document.querySelectorAll('.fi').forEach(function (el) { revealObs.observe(el); });
+  document.querySelectorAll('.fi').forEach(function (el) {
+    revealObs.observe(el);
+  });
 
-  // 6. Navigation Logic
-  window.addEventListener('scroll', function () { document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60); }, { passive: true });
+  // ────────────────────────────────────────────────────────────
+  // 6. NAV scroll tint
+  // ────────────────────────────────────────────────────────────
+  var mainNav = document.getElementById('mainNav');
+  window.addEventListener('scroll', function () {
+    mainNav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // ────────────────────────────────────────────────────────────
+  // 7. HAMBURGER + mobile overlay
+  // ────────────────────────────────────────────────────────────
   var ham = document.getElementById('ham');
   var overlay = document.getElementById('mobOverlay');
-  ham.addEventListener('click', function () { 
-    var open = !ham.classList.contains('open');
+  function toggleMenu(open) {
     ham.classList.toggle('open', open);
+    ham.setAttribute('aria-expanded', String(open));
+    ham.setAttribute('aria-label', open ? 'Chiudi menu' : 'Apri menu');
     overlay.classList.toggle('open', open);
+    overlay.setAttribute('aria-hidden', String(!open));
     document.body.style.overflow = open ? 'hidden' : '';
+  }
+  ham.addEventListener('click', function () {
+    toggleMenu(!ham.classList.contains('open'));
   });
-  overlay.addEventListener('click', function(e) { if (e.target === overlay || e.target.closest('[data-close]')) { ham.classList.remove('open'); overlay.classList.remove('open'); document.body.style.overflow = ''; } });
+  // Modificato per chiudere il menu cliccando su qualsiasi parte dell'overlay
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay || e.target.closest('[data-close]')) {
+      toggleMenu(false);
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) toggleMenu(false);
+  });
 
-  // 7. Counter Animation
+  // ────────────────────────────────────────────────────────────
+  // 8. COUNTER ANIMATION
+  // ────────────────────────────────────────────────────────────
+  function animCount(el, target, dur) {
+    var start = performance.now();
+    (function step(now) {
+      var p = Math.min((now - start) / dur, 1);
+      var ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(ease * target);
+      if (p < 1) requestAnimationFrame(step);
+    })(performance.now());
+  }
+  var counterObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        animCount(e.target, parseInt(e.target.dataset.to, 10), 1600);
+        counterObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
   document.querySelectorAll('.count').forEach(function (el) {
-    ScrollTrigger.create({
-      trigger: el, onEnter: function() {
-        var target = +el.dataset.to, curr = 0, dur = 1600, start = performance.now();
-        (function step(now) {
-          var p = Math.min((now - start) / dur, 1);
-          el.textContent = Math.round(p * target);
-          if (p < 1) requestAnimationFrame(step);
-        })(performance.now());
+    counterObs.observe(el);
+  });
+
+  // ────────────────────────────────────────────────────────────
+  // 9. SQUAD TABS
+  // ────────────────────────────────────────────────────────────
+  var sqTabs = document.querySelectorAll('.sq-tab');
+  var sqPanels = document.querySelectorAll('.tab-panel');
+  sqTabs.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('aria-controls');
+      sqTabs.forEach(function (b) { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      sqPanels.forEach(function (p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected','true');
+      var panel = document.getElementById(targetId);
+      if (panel) {
+        panel.classList.add('active');
+        var gridId = targetId === 'panel-seconda' ? 'gridSeconda' : 'gridPrima';
+        animateFan(gridId);
       }
     });
   });
 
-  // 8. Tabs Squadra
-  document.querySelectorAll('.sq-tab').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      document.querySelectorAll('.sq-tab').forEach(function (b) { b.classList.remove('active'); });
-      document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
-      btn.classList.add('active');
-      var panel = document.getElementById(btn.getAttribute('aria-controls'));
-      panel.classList.add('active');
-      animateFan(panel.querySelector('.squad-grid').id);
+  // ────────────────────────────────────────────────────────────
+  // 10. MATCH CENTER TABS
+  // ────────────────────────────────────────────────────────────
+  (function () {
+    var btns = document.querySelectorAll('.mc-tab-btn');
+    var contents = document.querySelectorAll('.mc-tab-content');
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = btn.getAttribute('data-target');
+        btns.forEach(function (b) { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+        contents.forEach(function (c) { c.classList.remove('active'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected','true');
+        var el = document.getElementById(target);
+        if (el) el.classList.add('active');
+      });
     });
-  });
+  })();
 
-  // 9. Match Center Tabs
-  document.querySelectorAll('.mc-tab-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var target = btn.getAttribute('data-target');
-      document.querySelectorAll('.mc-tab-btn').forEach(function (b) { b.classList.remove('active'); });
-      document.querySelectorAll('.mc-tab-content').forEach(function (c) { c.classList.remove('active'); });
-      btn.classList.add('active');
-      document.getElementById(target).classList.add('active');
-    });
-  });
-
-  // 10. STATS DATA (INTEGRALE)
+  // ────────────────────────────────────────────────────────────
+  // 11. STATISTICHE GIOCATORI
+  // ────────────────────────────────────────────────────────────
   (function () {
     var statsData = {
       prima: [
@@ -1662,19 +1798,61 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
         [12,'Neri Edoardo','Pivot',11,3,2,0]
       ]
     };
+    var team = 'prima', sortIdx = 4, sortDir = -1;
+
     function renderTable(t) {
-      var tbody = document.getElementById('statsTbody'); if (!tbody) return;
-      tbody.innerHTML = statsData[t].map(function(r){
+      var tbody = document.getElementById('statsTbody');
+      if (!tbody) return;
+      var maxGol = Math.max.apply(null, statsData[t].map(function(r){return r[4];}));
+      var sorted = statsData[t].slice().sort(function(a,b){
+        var av=a[sortIdx],bv=b[sortIdx];
+        return av===bv?0:(av>bv?1:-1)*sortDir;
+      });
+      tbody.innerHTML = sorted.map(function(r){
+        var top = r[4]===maxGol && r[4]>0;
         var ini = r[1].split(' ').map(function(n){return n[0];}).join('').slice(0,2);
-        return '<tr><td><div class="p-cell"><div class="p-avatar">'+ini+'</div><span class="p-cell-name">'+r[1]+'</span></div></td><td>'+r[3]+'</td><td><span class="sv gol">'+r[4]+'</span></td><td>'+r[5]+'</td><td>'+r[6]+'</td></tr>';
+        var gcls = r[4]>0?'sv gol':'sv zero';
+        var acls = r[6]>=3?'sv amm-r':'';
+        return '<tr'+(top?' class="is-top"':'')+'>'+
+          '<td><div class="p-cell"><div class="p-avatar">'+ini+'</div>'+
+          '<span class="p-cell-name">'+r[1]+'</span>'+
+          '<span class="p-num-badge">#'+String(r[0]).padStart(2,'0')+'</span></div></td>'+
+          '<td>'+r[3]+'</td>'+
+          '<td><span class="'+gcls+'">'+r[4]+'</span></td>'+
+          '<td>'+r[5]+'</td>'+
+          '<td>'+(acls?'<span class="'+acls+'">'+r[6]+'</span>':r[6])+'</td></tr>';
       }).join('');
     }
-    var sel = document.getElementById('statsTeamSel');
-    if(sel) sel.addEventListener('change', function(){ renderTable(sel.value); });
-    renderTable('prima');
+
+    document.querySelectorAll('.stats-tbl th').forEach(function(th){
+      th.addEventListener('click', function(){
+        var col=parseInt(th.dataset.idx,10);
+        sortDir = col===sortIdx?sortDir*-1:-1;
+        sortIdx=col;
+        document.querySelectorAll('.stats-tbl th').forEach(function(t){t.classList.remove('s-asc','s-desc');});
+        th.classList.add(sortDir===-1?'s-desc':'s-asc');
+        renderTable(team);
+      });
+    });
+
+    var sel=document.getElementById('statsTeamSel');
+    if(sel) sel.addEventListener('change',function(){team=sel.value;renderTable(team);});
+
+    var thGol=document.querySelector('.stats-tbl th[data-idx="4"]');
+    if(thGol) thGol.classList.add('s-desc');
+
+    renderTable(team);
   })();
 
 })();
 </script>
-</body>
-</html>
+<script>
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('[SW] Registrato con successo:', reg.scope))
+      .catch(err => console.warn('[SW] Registrazione fallita:', err));
+  });
+}
+</script>
