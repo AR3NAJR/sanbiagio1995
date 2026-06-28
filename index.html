@@ -285,7 +285,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 ============================================================ */
 #scene3{
   position:relative;
-  background:var(--ink);
+  background:var(--ink2);
   padding:8rem clamp(1.5rem,5vw,4.5rem) 7rem;
   overflow:hidden;
 }
@@ -333,69 +333,160 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 .rdot.laterale::before{background:#4ECDC4;}
 .rdot.pivot::before{background:#FF6B8A;}
 .rdot.staff::before{background:#B0A0FF;}
+/* ============================================================
+   ROSA — Full-card Figurina (estetica premium)
+============================================================ */
 .squad-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(158px,1fr));
-  gap:1rem;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:1.25rem;
+  max-width:1200px;
+  margin:0 auto;
 }
+
+/* Carta verticale 3:4, foto di sfondo, testo a fondo carta */
 .pc{
-  background:rgba(255,255,255,.04);
+  background:rgba(6,6,14,.85);
   border:1px solid rgba(255,255,255,.06);
-  border-radius:3px;
-  padding:1.2rem 1rem 1rem;
-  position:relative;overflow:hidden;
-  transition:background .3s,border-color .3s,transform .3s;
+  border-radius:6px;
+  position:relative;
+  overflow:hidden;
   cursor:default;
-  opacity:0;transform:translateY(80px) rotate(var(--fan-rot,0deg));
+  width:100%;
+  aspect-ratio:3/4;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  /* entry animation starting state */
+  opacity:0;
+  transform:translateY(80px) rotate(var(--fan-rot,0deg));
+  /* transizioni idle/hover */
+  transition:opacity .4s var(--ease), transform .35s var(--ease),
+             border-color .3s, box-shadow .3s;
 }
+/* Gradiente leggibilità testo (bottom → top) */
 .pc::before{
-  content:'';position:absolute;top:0;left:0;
-  width:2px;height:0;
-  background:linear-gradient(to bottom,var(--red),var(--blue-md));
-  transition:height .35s;z-index:4;
+  content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(to top,rgba(6,6,14,.97) 0%,rgba(6,6,14,.65) 38%,rgba(6,6,14,.05) 100%);
+  pointer-events:none;
 }
-.pc:hover{
-  background:rgba(255,255,255,.07);
-  border-color:rgba(200,16,46,.25);
-  transform:translateY(-4px) rotate(0deg) !important;
+/* Stato di riposo post-animazione: 55% opacità (GSAP fa clearProps, CSS prende il controllo) */
+.pc{
+  --pc-idle-opacity: 0.55; /* modifica questo valore per cambiare l'opacità a riposo */
 }
-.pc:hover::before{height:100%;}
+/* NB: l'opacity iniziale per l'entry animation è impostata via GSAP (parte da 0).
+   Dopo clearProps, il browser usa questa regola CSS come stato di riposo. */
+.squad-grid .pc:not(:hover):not(:focus-within):not(.t-hover){
+  opacity:0.55;
+}
+
+/* Hover / Touch: opacità piena 100% + lift + bordo rosso */
+.pc:hover,
+.pc:focus-within,
+.pc.t-hover{
+  opacity:1 !important;
+  border-color:rgba(200,16,46,.42);
+  transform:translateY(-5px) rotate(0deg) !important;
+  box-shadow:0 22px 56px rgba(0,0,0,.6);
+}
+
+/* Striscia colorata per ruolo in cima (iniettata via JS) */
+.pc-accent{
+  position:absolute;top:0;left:0;right:0;
+  height:3px;z-index:4;
+  transition:height .3s;
+}
+.pc:hover .pc-accent,.pc.t-hover .pc-accent{height:4px;}
+.pc-accent.portiere{background:linear-gradient(90deg,#FFD700 0%,transparent 80%);}
+.pc-accent.centrale{background:linear-gradient(90deg,var(--blue-md) 0%,transparent 80%);}
+.pc-accent.laterale{background:linear-gradient(90deg,#4ECDC4 0%,transparent 80%);}
+.pc-accent.pivot   {background:linear-gradient(90deg,#FF6B8A 0%,transparent 80%);}
+.pc-accent.staff   {background:linear-gradient(90deg,#B0A0FF 0%,transparent 80%);}
+
+/* Foto: riempie l'intera card */
+.pc-photo-wrap{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  overflow:hidden;
+  border-radius:0;
+}
+.pc-photo{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover;
+  object-position:center top;
+  filter:brightness(.7) saturate(1.1);
+  transition:filter .42s, transform .55s var(--ease);
+}
+.pc:hover .pc-photo,.pc.t-hover .pc-photo{
+  filter:brightness(1) saturate(1.24);
+  transform:scale(1.05);
+}
+/* Overlay foto disabilitato: ::before gestisce la leggibilità */
+.pc-photo-overlay{display:none;}
+
+/* Numero: watermark top-right */
 .pc-num{
+  position:absolute;
+  top:.42rem;right:.72rem;
   font-family:'Barlow Condensed',sans-serif;font-weight:900;
-  font-size:2.5rem;line-height:1;
-  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.1);
-  margin-bottom:.5rem;letter-spacing:-.02em;
-  position:relative;z-index:3;transition:-webkit-text-stroke-color .3s;
+  font-size:3.5rem;line-height:1;
+  color:transparent;
+  -webkit-text-stroke:1.5px rgba(255,255,255,.14);
+  z-index:2;
+  transition:-webkit-text-stroke-color .3s, transform .3s;
+  letter-spacing:-.02em;
+  pointer-events:none;
 }
-.pc:hover .pc-num{-webkit-text-stroke-color:rgba(255,255,255,.26);}
-.pc-staff .pc-num{font-size:1.4rem;letter-spacing:.04em;margin-bottom:.4rem;}
+.pc:hover .pc-num,.pc.t-hover .pc-num{
+  -webkit-text-stroke-color:rgba(255,255,255,.42);
+  transform:translateY(2px);
+}
+.pc-staff .pc-num{
+  font-size:1.3rem;letter-spacing:.04em;
+  -webkit-text-stroke:1px rgba(255,255,255,.22);
+  top:.75rem;
+}
+
+/* Nome + ruolo: testo a fondo carta */
 .pc-name{
-  font-family:'Barlow Condensed',sans-serif;font-weight:800;
-  font-size:.9rem;color:var(--white);text-transform:uppercase;
-  letter-spacing:.04em;line-height:1.1;margin-bottom:3px;
   position:relative;z-index:3;
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:1.02rem;color:var(--white);
+  text-transform:uppercase;
+  letter-spacing:.04em;line-height:1.1;
+  margin:0;
+  padding:0 .88rem .1rem;
 }
-.pc-role{font-size:.58rem;text-transform:uppercase;letter-spacing:.14em;position:relative;z-index:3;}
+.pc-role{
+  position:relative;z-index:3;
+  font-size:.58rem;text-transform:uppercase;
+  letter-spacing:.14em;font-weight:600;
+  padding:0 .88rem .9rem;
+}
 .pc-role.portiere{color:#FFD700;}
 .pc-role.centrale{color:var(--blue-md);}
 .pc-role.laterale{color:#4ECDC4;}
-.pc-role.pivot{color:#FF6B8A;}
-.pc-role.staff{color:#B0A0FF;}
-.pc-photo-wrap{position:relative;width:100%;margin-bottom:.8rem;overflow:hidden;border-radius:2px;}
-.pc-photo{width:100%;height:128px;object-fit:cover;filter:brightness(.82) saturate(1.1);transition:filter .4s;}
-.pc:hover .pc-photo{filter:brightness(1) saturate(1.2);}
-.pc-photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,6,14,.85) 0%,transparent 60%);}
+.pc-role.pivot   {color:#FF6B8A;}
+.pc-role.staff   {color:#B0A0FF;}
+
+/* Foil olografico (mantenuto) */
 .pc-foil{
-  position:absolute;inset:0;z-index:5;border-radius:3px;
+  position:absolute;inset:0;z-index:5;border-radius:6px;
   pointer-events:none;opacity:0;
   transition:opacity .3s;
   background:radial-gradient(circle at 50% 50%, rgba(255,80,120,.28) 0%, rgba(80,80,255,.22) 25%, rgba(80,220,200,.18) 50%, rgba(255,200,80,.12) 70%, transparent 90%);
   mix-blend-mode:screen;
 }
 .pc:hover .pc-foil{opacity:1;}
+
+/* EA overlay + bg-media (mantenuti per compatibilità) */
 .pc-ea-overlay{
   position:absolute;inset:0;z-index:1;
-  background:linear-gradient(165deg,rgba(0,20,70,.6) 0%,rgba(6,6,14,.5) 50%,rgba(90,4,18,.35) 100%);
+  background:linear-gradient(165deg,rgba(0,20,70,.55) 0%,rgba(6,6,14,.45) 50%,rgba(90,4,18,.32) 100%);
   opacity:0;transition:opacity .5s;
 }
 .pc-bg-media{
@@ -743,19 +834,98 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 .sp-slot .sp-slot-txt{color:rgba(0,48,135,.26);font-size:.64rem;}
 
 /* ============================================================
-   CONTATTI
+   CONTATTI — Premium card-style (dal vecchio file)
 ============================================================ */
-#contatti{background:var(--blue-dk);padding:7rem clamp(1.5rem,5vw,4.5rem);position:relative;overflow:hidden;}
-#contatti::after{content:'';position:absolute;bottom:-80px;right:-80px;width:480px;height:480px;background:radial-gradient(ellipse,rgba(200,16,46,.18) 0%,transparent 65%);pointer-events:none;}
-#contatti .sec-label{color:rgba(255,255,255,.36);}
-#contatti .sec-title{color:var(--white);}
-.contacts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2.5rem 3rem;max-width:960px;position:relative;z-index:1;}
-.ci{display:flex;flex-direction:column;}
-.ci-icon{width:38px;height:38px;border:1px solid rgba(255,255,255,.11);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:.85rem;}
-.ci-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.57rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:.35rem;}
-.ci-val{font-weight:500;font-size:.9rem;color:var(--white);margin-bottom:.22rem;transition:color .2s;}
+#contatti{
+  background:var(--blue-dk);
+  padding:8rem clamp(1.5rem,5vw,4.5rem) 7rem;
+  position:relative;overflow:hidden;
+  text-align:center;
+}
+/* Doppio alone decorativo */
+#contatti::before{
+  content:'';position:absolute;
+  top:-100px;left:-100px;width:560px;height:560px;
+  background:radial-gradient(ellipse,rgba(0,80,204,.22) 0%,transparent 65%);
+  pointer-events:none;
+}
+#contatti::after{
+  content:'';position:absolute;
+  bottom:-80px;right:-80px;width:500px;height:500px;
+  background:radial-gradient(ellipse,rgba(200,16,46,.2) 0%,transparent 65%);
+  pointer-events:none;
+}
+#contatti .sec-label{color:rgba(255,255,255,.36);justify-content:center;}
+#contatti .sec-title{
+  color:var(--white);
+  font-size:clamp(40px,5.5vw,78px);
+  margin-bottom:.8rem;
+}
+.contatti-sub{
+  font-size:clamp(.9rem,1.5vw,1.08rem);
+  color:rgba(255,255,255,.38);
+  max-width:560px;margin:0 auto 3.5rem;
+  line-height:1.78;
+}
+/* Grid: 3 col desktop → 2 col tablet → 1 col mobile */
+.contacts-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.5rem;
+  max-width:1100px;
+  margin:0 auto;
+  position:relative;z-index:1;
+}
+/* Card contatto */
+.ci{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+  padding:2.2rem 1.5rem;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:8px;
+  transition:background .3s,border-color .3s,transform .3s,box-shadow .3s;
+}
+.ci:hover{
+  background:rgba(255,255,255,.09);
+  border-color:rgba(255,255,255,.22);
+  transform:translateY(-5px);
+  box-shadow:0 18px 44px rgba(0,0,0,.32);
+}
+/* Icona circolare */
+.ci-icon{
+  width:56px;height:56px;
+  border:1.5px solid rgba(255,255,255,.15);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.2rem;
+  background:rgba(200,16,46,.12);
+  transition:border-color .3s,background .3s;
+  flex-shrink:0;
+}
+.ci:hover .ci-icon{
+  border-color:rgba(200,16,46,.5);
+  background:rgba(200,16,46,.22);
+}
+.ci-icon svg{
+  width:22px;height:22px;
+  stroke:rgba(255,255,255,.78);
+  fill:none;stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.ci-lbl{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;
+  color:rgba(255,255,255,.28);margin-bottom:.55rem;
+}
+.ci-val{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:1.12rem;color:var(--white);
+  line-height:1.3;margin-bottom:.28rem;
+  transition:color .2s;
+}
 a.ci-val:hover{color:#FF8098;}
-.ci-sub{font-size:.72rem;color:rgba(255,255,255,.25);}
+.ci-sub{font-size:.72rem;color:rgba(255,255,255,.26);line-height:1.55;}
 
 footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:2.2rem clamp(1.5rem,5vw,4.5rem);}
 .footer-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.25rem;margin-bottom:1.8rem;}
@@ -777,6 +947,8 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 @media(max-width:1050px){
   .news-grid{grid-template-columns:1fr;}
   .news-sb{display:grid;grid-template-columns:repeat(2,1fr);}
+  /* Contatti: 2 colonne su tablet/laptop piccoli */
+  .contacts-grid{grid-template-columns:repeat(2,1fr);}
 }
 @media(max-width:850px){
   .mc-grid{grid-template-columns:1fr;}
@@ -804,16 +976,19 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   .sq-tab::after{display:none;}
   .sq-tab.active{color:var(--red);}
 
+  /* Squad: 2 colonne su mobile, rapporto carta leggermente meno slanciato */
+  .squad-grid{grid-template-columns:repeat(2,1fr);}
+  .pc{aspect-ratio:3/4.2;}
+
   /* Match Center iframe width fix */
   .mc-iframe-scroll .iw iframe {
-    width: 300px; /* Imposta una larghezza fissa per gli iframe su schermi piccoli */
-    margin: 0 auto; /* Centra l'iframe se il contenitore è più largo */
+    width: 300px;
+    margin: 0 auto;
     display: block;
   }
 }
 @media(max-width:600px){
   .news-sb{grid-template-columns:1fr;}
-  .squad-grid{grid-template-columns:repeat(2,1fr);}
   .contacts-grid{grid-template-columns:1fr;}
   .footer-top,.footer-bottom{flex-direction:column;}
   .hero-panel::before{width:100%;clip-path:polygon(0 56%,100% 47%,100% 100%,0 100%);}
@@ -823,69 +998,11 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   .kit-credit-bar{flex-direction:column;}
 }
 @media(max-width:420px){
-  .squad-grid{grid-template-columns:1fr;}
+  .squad-grid{grid-template-columns:repeat(2,1fr);}
+  .pc{aspect-ratio:2/3;}
 }
 
-   /* ════════════════════════════════════════════════
-   BLOCCO 2 — Squad cards: vertical portrait redesign
-   Sovrascrive / estende le regole .pc esistenti
-════════════════════════════════════════════════ */
-
-/* Grid: colonne leggermente più larghe */
-.squad-grid { grid-template-columns: repeat(auto-fill, minmax(182px, 1fr)); }
-
-/* Foto: più alta, face in primo piano, zoom su hover */
-.pc-photo-wrap { overflow: hidden; } /* garantisce clip dello zoom */
-.pc-photo {
-  height: 200px;                     /* era 128px */
-  object-position: top center;       /* mostra il volto */
-  transition: filter .4s, transform .5s var(--ease);
-}
-.pc:hover .pc-photo { transform: scale(1.05); } /* leggero zoom */
-
-/* ── CARTE CON FOTO: portrait, numero in overlay ── */
-.pc:has(.pc-photo-wrap) { padding: 0; } /* la foto tocca i bordi */
-
-/* Numero: badge glassmorphism top-left sopra la foto */
-.pc:has(.pc-photo-wrap) .pc-num {
-  position: absolute; top: 8px; left: 8px; z-index: 10;
-  font-size: .8rem; font-weight: 900;
-  color: var(--white); -webkit-text-stroke: 0;
-  background: rgba(6,6,14,.62);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  border-radius: 2px; padding: 2px 8px;
-  letter-spacing: .08em; line-height: 1.75;
-  margin-bottom: 0;
-}
-
-/* Nome + ruolo: area testo sotto la foto */
-.pc:has(.pc-photo-wrap) .pc-name { padding: .72rem .85rem .08rem; }
-.pc:has(.pc-photo-wrap) .pc-role { padding: 0 .85rem .85rem; }
-
-/* ── CARTE SENZA FOTO: numero watermark, nome in basso ── */
-.pc:not(:has(.pc-photo-wrap)):not(.pc-staff) {
-  min-height: 130px;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: .9rem .9rem .88rem;
-}
-.pc:not(:has(.pc-photo-wrap)):not(.pc-staff) .pc-num {
-  position: absolute; top: -.05em; right: .3rem;
-  font-size: 5.6rem; line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255,255,255,.07);
-  margin-bottom: 0; pointer-events: none;
-}
-
-/* Accento bordo per ruolo → rinforza identità visiva senza foto */
-.pc:not(:has(.pc-photo-wrap)):has(.pc-role.portiere){ border-color:rgba(255,215,0,.16); }
-.pc:not(:has(.pc-photo-wrap)):has(.pc-role.centrale){ border-color:rgba(0,80,204,.16); }
-.pc:not(:has(.pc-photo-wrap)):has(.pc-role.laterale){ border-color:rgba(78,205,196,.16); }
-.pc:not(:has(.pc-photo-wrap)):has(.pc-role.pivot)   { border-color:rgba(255,107,138,.16); }
-
-/* Responsive: foto meno alta su mobile 2-col */
-@media(max-width:600px){ .pc-photo{ height:160px; } }
-
-   /* Fix centering: le grid avevano max-width ma mancava margin:auto */
+/* Fix centering */
 .mc-grid, .news-grid { margin-left: auto; margin-right: auto; }
 .contacts-grid { margin-left: auto; margin-right: auto; }
 </style>
@@ -1348,53 +1465,97 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 </section>
 
 <!-- ══════════════════════════════════════════════
-     CONTATTI
+     CONTATTI — Premium card-style
 ══════════════════════════════════════════════ -->
 <section id="contatti" aria-labelledby="contatti-h">
-  <p class="sec-label">Vieni a trovarci</p>
-  <h2 class="sec-title" id="contatti-h">Contatti</h2>
+  <p class="sec-label fi">Dove Siamo</p>
+  <h2 class="sec-title fi" id="contatti-h">Contatti</h2>
+  <p class="contatti-sub fi">Vieni a trovarci o scrivici. Siamo sempre disponibili per collaborazioni, sponsorizzazioni e nuovi tesseramenti.</p>
 
-  <div class="contacts-grid fi">
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">📍</div>
+  <div class="contacts-grid">
+
+    <!-- Palazzetto -->
+    <div class="ci fi">
+      <div class="ci-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
       <span class="ci-lbl">Palazzetto</span>
-      <a href="https://www.google.com/maps/search/?api=1&query=Sportitalia+Village+Via+Dante+Alighieri+18+Verano+Brianza" target="_blank" rel="noopener noreferrer" class="ci-val">
-        Sportitalia Village – Via Dante Alighieri 18
+      <a href="https://www.google.com/maps/search/?api=1&query=Sportitalia+Village+Via+Dante+Alighieri+18+Verano+Brianza"
+         target="_blank" rel="noopener noreferrer" class="ci-val">
+        Sportitalia Village
       </a>
-      <span class="ci-sub">Verano Brianza (MB), 20843</span>
+      <span class="ci-sub">Via Dante Alighieri 18<br>Verano Brianza (MB) 20843</span>
     </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">📧</div>
+
+    <!-- Email -->
+    <div class="ci fi" style="transition-delay:.07s">
+      <div class="ci-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </div>
       <span class="ci-lbl">Email</span>
       <a href="mailto:info@sanbiagiomonza.it" class="ci-val">info@sanbiagiomonza.it</a>
       <span class="ci-sub">Risposta entro 48 ore</span>
     </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">📱</div>
+
+    <!-- Telefono / WhatsApp -->
+    <div class="ci fi" style="transition-delay:.14s">
+      <div class="ci-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14z"/>
+        </svg>
+      </div>
       <span class="ci-lbl">Telefono / WhatsApp</span>
       <a href="tel:+393331234567" class="ci-val">+39 333 123 4567</a>
       <span class="ci-sub">Segreteria: lun–ven 17–20</span>
     </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">⚽</div>
+
+    <!-- Allenamenti -->
+    <div class="ci fi" style="transition-delay:.21s">
+      <div class="ci-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12,6 12,12 16,14"/>
+        </svg>
+      </div>
       <span class="ci-lbl">Allenamenti</span>
-      <span class="ci-val">Lunedì – Mercoledì</span>
+      <span class="ci-val">Lun &amp; Mer</span>
       <span class="ci-sub">Ore 21:30 – 23:00</span>
     </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">🏆</div>
+
+    <!-- Affiliazione -->
+    <div class="ci fi" style="transition-delay:.28s">
+      <div class="ci-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="8" r="6"/>
+          <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+        </svg>
+      </div>
       <span class="ci-lbl">Affiliazione</span>
       <span class="ci-val">FIGC – LNFS</span>
       <span class="ci-sub">Serie C2 &amp; Serie D · Lombardia</span>
     </div>
-    <div class="ci">
-      <div class="ci-icon" aria-hidden="true">📷</div>
+
+    <!-- Instagram -->
+    <div class="ci fi" style="transition-delay:.35s">
+      <div class="ci-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+        </svg>
+      </div>
       <span class="ci-lbl">Instagram</span>
-      <a href="https://www.instagram.com/sanbiagiomonza1995/" target="_blank" rel="noopener noreferrer" class="ci-val">
-        @sanbiagiomonza1995
-      </a>
+      <a href="https://www.instagram.com/sanbiagiomonza1995/"
+         target="_blank" rel="noopener noreferrer" class="ci-val">@sanbiagiomonza1995</a>
       <span class="ci-sub">Segui la pagina ufficiale del club</span>
     </div>
+
   </div>
 </section>
 
@@ -1523,17 +1684,37 @@ if (!reducedMotion) {
       start: 'top 85%',
       once: true,
       onEnter: function () {
+        // Anima a 0.55 (stato riposo); CSS :hover porta poi a 1 via !important
         gsap.to(cards, {
-          opacity: 1, y: 0, rotate: 0,
+          opacity: 0.55, y: 0, rotate: 0,
           duration: .9,
           stagger: { amount: 1.1, from: 'center' },
           ease: 'back.out(1.4)',
+          onComplete: function () {
+            // Rimuove l'opacity inline di GSAP: da qui è CSS a gestire riposo→hover
+            cards.forEach(function (c) { gsap.set(c, { clearProps: 'opacity' }); });
+          }
         });
       }
     });
   }
   animateFan('gridPrima');
   animateFan('gridSeconda');
+
+  // ── Inietta .pc-accent (striscia colorata per ruolo) ──────────
+  // Fatto via JS per non toccare ogni singola card nell'HTML
+  document.querySelectorAll('.pc').forEach(function (card) {
+    var roleEl = card.querySelector('.pc-role');
+    if (!roleEl) return;
+    var roleClass = ['portiere','centrale','laterale','pivot','staff'].find(function (r) {
+      return roleEl.classList.contains(r);
+    });
+    if (roleClass) {
+      var accent = document.createElement('div');
+      accent.className = 'pc-accent ' + roleClass;
+      card.insertBefore(accent, card.firstChild);
+    }
+  });
 
   document.querySelectorAll('.pc:not(.pc-staff)').forEach(function (card) {
     var foil = document.createElement('div');
