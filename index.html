@@ -825,6 +825,69 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 @media(max-width:420px){
   .squad-grid{grid-template-columns:1fr;}
 }
+
+   /* ════════════════════════════════════════════════
+   BLOCCO 2 — Squad cards: vertical portrait redesign
+   Sovrascrive / estende le regole .pc esistenti
+════════════════════════════════════════════════ */
+
+/* Grid: colonne leggermente più larghe */
+.squad-grid { grid-template-columns: repeat(auto-fill, minmax(182px, 1fr)); }
+
+/* Foto: più alta, face in primo piano, zoom su hover */
+.pc-photo-wrap { overflow: hidden; } /* garantisce clip dello zoom */
+.pc-photo {
+  height: 200px;                     /* era 128px */
+  object-position: top center;       /* mostra il volto */
+  transition: filter .4s, transform .5s var(--ease);
+}
+.pc:hover .pc-photo { transform: scale(1.05); } /* leggero zoom */
+
+/* ── CARTE CON FOTO: portrait, numero in overlay ── */
+.pc:has(.pc-photo-wrap) { padding: 0; } /* la foto tocca i bordi */
+
+/* Numero: badge glassmorphism top-left sopra la foto */
+.pc:has(.pc-photo-wrap) .pc-num {
+  position: absolute; top: 8px; left: 8px; z-index: 10;
+  font-size: .8rem; font-weight: 900;
+  color: var(--white); -webkit-text-stroke: 0;
+  background: rgba(6,6,14,.62);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-radius: 2px; padding: 2px 8px;
+  letter-spacing: .08em; line-height: 1.75;
+  margin-bottom: 0;
+}
+
+/* Nome + ruolo: area testo sotto la foto */
+.pc:has(.pc-photo-wrap) .pc-name { padding: .72rem .85rem .08rem; }
+.pc:has(.pc-photo-wrap) .pc-role { padding: 0 .85rem .85rem; }
+
+/* ── CARTE SENZA FOTO: numero watermark, nome in basso ── */
+.pc:not(:has(.pc-photo-wrap)):not(.pc-staff) {
+  min-height: 130px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: .9rem .9rem .88rem;
+}
+.pc:not(:has(.pc-photo-wrap)):not(.pc-staff) .pc-num {
+  position: absolute; top: -.05em; right: .3rem;
+  font-size: 5.6rem; line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255,255,255,.07);
+  margin-bottom: 0; pointer-events: none;
+}
+
+/* Accento bordo per ruolo → rinforza identità visiva senza foto */
+.pc:not(:has(.pc-photo-wrap)):has(.pc-role.portiere){ border-color:rgba(255,215,0,.16); }
+.pc:not(:has(.pc-photo-wrap)):has(.pc-role.centrale){ border-color:rgba(0,80,204,.16); }
+.pc:not(:has(.pc-photo-wrap)):has(.pc-role.laterale){ border-color:rgba(78,205,196,.16); }
+.pc:not(:has(.pc-photo-wrap)):has(.pc-role.pivot)   { border-color:rgba(255,107,138,.16); }
+
+/* Responsive: foto meno alta su mobile 2-col */
+@media(max-width:600px){ .pc-photo{ height:160px; } }
+
+   /* Fix centering: le grid avevano max-width ma mancava margin:auto */
+.mc-grid, .news-grid { margin-left: auto; margin-right: auto; }
+.contacts-grid { margin-left: auto; margin-right: auto; }
 </style>
 </head>
 <body>
@@ -1379,71 +1442,70 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ────────────────────────────────────────────────────────────
-  // 1. HERO ENTRANCE ANIMATION
-  // ────────────────────────────────────────────────────────────
-  function heroEntrance() {
-    var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.to('#heroLogo', { opacity: 1, y: 0, duration: .9, delay: .15 })
-      .to('#heroEyebrow', { opacity: 1, y: 0, duration: .8 }, '-=.55')
-      .to('#heroTitle', { opacity: 1, y: 0, duration: 1.0 }, '-=.55')
-      .to('#heroBar', { opacity: 1, duration: .7 }, '-=.5')
-      .to('#heroSub', { opacity: 1, y: 0, duration: .8 }, '-=.55')
-      .to('#heroStats', { opacity: 1, duration: .7 }, '-=.4')
-      .to('#heroBadge', { opacity: 1, duration: .7 }, '-=.3');
-  }
-  heroEntrance();
+// 1. HERO ENTRANCE — ref esposta per il tunnel
+// ────────────────────────────────────────────────────────────
+var heroEntranceTL; 
 
-  // ────────────────────────────────────────────────────────────
-  // 2. SCENA 1 → SCENA 2: TUNNEL TIPOGRAFICO (GSAP pin)
-  //    La "telecamera" zooma dentro il titolo.
-  // ────────────────────────────────────────────────────────────
-  if (!reducedMotion) {
-    var tunnelTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#scene1-wrapper',
-        start: 'top top',
-        end: '+=220%',
-        pin: true,
-        scrub: 1.2,
-        anticipatePin: 1,
+function heroEntrance() {
+  var els = ['#heroLogo','#heroEyebrow','#heroTitle',
+             '#heroBar','#heroSub','#heroStats','#heroBadge'];
+
+  if (window.scrollY > 20) {
+    gsap.set(els, { opacity: 1, y: 0 });
+    return;
+  }
+
+  heroEntranceTL = gsap.timeline({ defaults: { ease: 'power3.out' } });
+  heroEntranceTL
+    .to('#heroLogo',    { opacity: 1, y: 0, duration: .9, delay: .15 })
+    .to('#heroEyebrow', { opacity: 1, y: 0, duration: .8 }, '-=.55')
+    .to('#heroTitle',   { opacity: 1, y: 0, duration: 1.0 }, '-=.55')
+    .to('#heroBar',     { opacity: 1, duration: .7 }, '-=.5')
+    .to('#heroSub',     { opacity: 1, y: 0, duration: .8 }, '-=.55')
+    .to('#heroStats',   { opacity: 1, duration: .7 }, '-=.4')
+    .to('#heroBadge',   { opacity: 1, duration: .7 }, '-=.3');
+}
+heroEntrance();
+
+// ────────────────────────────────────────────────────────────
+// 2. TUNNEL TIPOGRAFICO — fix fast-scroll instability
+// ────────────────────────────────────────────────────────────
+if (!reducedMotion) {
+  var tunnelTL = gsap.timeline({
+    scrollTrigger: {
+      trigger: '#scene1-wrapper',
+      start: 'top top',
+      end: '+=220%',
+      pin: true,
+      scrub: 0.8,
+      anticipatePin: 1,
+      fastScrollEnd: true,
+      preventOverlaps: true,
+      onEnter: function() {
+        if (heroEntranceTL && heroEntranceTL.isActive()) {
+          heroEntranceTL.progress(1, false);
+        }
       }
-    });
+    }
+  });
 
-    tunnelTL
-      .to('#heroLogo', { opacity: 0, y: -30, duration: .35 }, 0)
-      .to('#heroEyebrow', { opacity: 0, y: -20, duration: .3 }, 0)
-      .to('#heroBar', { opacity: 0, duration: .3 }, 0)
-      .to('#heroSub', { opacity: 0, y: -15, duration: .3 }, 0)
-      .to('#heroStats', { opacity: 0, y: -10, duration: .3 }, 0)
-      .to('#heroBadge', { opacity: 0, duration: .25 }, 0)
-      .to('.hero-scroll', { opacity: 0, duration: .2  }, 0)
-      .to('.hero-panel', { opacity: 0, duration: .4 }, 0)
-      .to('.field-grid', { opacity: 0, duration: .5 }, 0.05)
-      .to('.field-circle',{ opacity: 0, duration: .3 }, 0.05)
-      .to('.hero-orb', { opacity: 0, duration: .4 }, 0);
-
-    tunnelTL
-      .to('#heroTitleWrap', {
-        scale: 38,
-        opacity: 0,
-        duration: .65,
-        ease: 'power2.in',
-        transformOrigin: 'center center',
-      }, 0.20);
-
-    tunnelTL
-      .to('#tunnel-overlay', {
-        opacity: 1,
-        duration: .4,
-        ease: 'power2.inOut',
-      }, 0.58);
-
-    tunnelTL
-      .to('#tunnel-overlay', {
-        opacity: 0,
-        duration: .2,
-      }, 0.86);
-  }
+  // Qui sotto riporto le tue righe originali che devono rimanere:
+  tunnelTL
+    .to('#heroLogo', { opacity: 0, y: -30, duration: .35 }, 0)
+    .to('#heroEyebrow', { opacity: 0, y: -20, duration: .3 }, 0)
+    .to('#heroBar', { opacity: 0, duration: .3 }, 0)
+    .to('#heroSub', { opacity: 0, y: -15, duration: .3 }, 0)
+    .to('#heroStats', { opacity: 0, y: -10, duration: .3 }, 0)
+    .to('#heroBadge', { opacity: 0, duration: .25 }, 0)
+    .to('.hero-scroll', { opacity: 0, duration: .2  }, 0)
+    .to('.hero-panel', { opacity: 0, duration: .4 }, 0)
+    .to('.field-grid', { opacity: 0, duration: .5 }, 0.05)
+    .to('.field-circle',{ opacity: 0, duration: .3 }, 0.05)
+    .to('.hero-orb', { opacity: 0, duration: .4 }, 0)
+    .to('#heroTitleWrap', { scale: 38, opacity: 0, duration: .65, ease: 'power2.in', transformOrigin: 'center center' }, 0.20)
+    .to('#tunnel-overlay', { opacity: 1, duration: .4, ease: 'power2.inOut' }, 0.58)
+    .to('#tunnel-overlay', { opacity: 0, duration: .2 }, 0.86);
+}
 
   // ────────────────────────────────────────────────────────────
   // 3. SCENA 2 — Player Cards: fan entry + holographic foil (ADATTATO PER NUOVO ORDINE -> SCENA 3)
