@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sito ufficiale San Biagio 1995 A.S.D. – Futsal. Prima Squadra in Serie C2 Girone A, Seconda Squadra in Serie D.">
+<title>San Biagio 1995 A.S.D. – Futsal</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- GSAP CDN + ScrollTrigger (UMD stabile) — DEVONO precedere il nostro script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+/* ============================================================
+   RESET & TOKENS
+============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#06060E; --ink2:#0C0C1C; --ink3:#121228;
+  --red:#C8102E; --red-dk:#9E0B24; --red-gl:rgba(200,16,46,.18);
+  --blue:#003087; --blue-dk:#001540; --blue-md:#0050CC;
+  --off:#F3F3FB; --white:#FFFFFF; --muted:#5A6A9A; --muted2:#8090B8;
+  --body-c:#2A2A45; --nav-h:70px;
+  --ease:cubic-bezier(.25,.46,.45,.94); --ease2:cubic-bezier(.77,0,.175,1);
+}
+html{-webkit-text-size-adjust:100%;scroll-behavior:auto;overflow-x:hidden;}
+body{font-family:'Barlow',sans-serif;color:var(--body-c);background:var(--ink);overflow-x:hidden;max-width:100vw;}
+img{max-width:100%;height:auto;display:block;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:inherit;border:none;background:none;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--ink);}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px;}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+.sec-label{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--red);margin-bottom:.7rem;
+}
+.sec-label::before{content:'';width:24px;height:2px;background:var(--red);flex-shrink:0;}
+.sec-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  line-height:.9;text-transform:uppercase;
+  font-size:clamp(36px,5.5vw,72px);color:var(--white);margin-bottom:1.2rem;
+}
+
+/*
+ * DEFENSIVE DESIGN: .fi non ha opacity:0 nel CSS.
+ * GSAP si occupa dello stato iniziale via gsap.set() — in modo "additivo".
+ * Se JS non si carica o va in errore, tutto il contenuto resta visibile.
+ * La transition è usata solo per le rivelazioni CSS class-based (se necessario).
+ */
+.fi { transition: opacity .75s var(--ease), transform .75s var(--ease); }
+
+/* ============================================================
+   NAVIGAZIONE
+============================================================ */
+.main-nav{
+  position:fixed;inset:0 0 auto 0;z-index:900;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1.25rem,5vw,4rem);
+  background:rgba(6,6,14,0);
+  backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);
+  border-bottom:1.5px solid transparent;
+  transition:background .4s,border-color .4s,backdrop-filter .4s;
+}
+.main-nav.scrolled{
+  background:rgba(6,6,14,.96);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border-bottom-color:rgba(200,16,46,.35);
+}
+.nav-logo{display:flex;align-items:center;gap:11px;flex-shrink:0;}
+.nav-logo-img{width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.55));}
+.nav-brand{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.06rem;letter-spacing:.04em;text-transform:uppercase;color:var(--white);line-height:1.06;}
+.nav-brand small{display:block;font-size:.58rem;font-weight:700;letter-spacing:.22em;color:var(--red);margin-top:1px;}
+.nav-links{list-style:none;display:flex;gap:2rem;}
+.nav-links a{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);position:relative;padding-bottom:4px;transition:color .2s;}
+.nav-links a::after{content:'';position:absolute;bottom:-1px;left:0;width:0;height:1.5px;background:var(--red);transition:width .25s;}
+.nav-links a:hover{color:var(--white);}
+.nav-links a:hover::after{width:100%;}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:8px;z-index:1100;}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(--white);border-radius:2px;transition:transform .35s var(--ease),opacity .25s;}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+
+/* ============================================================
+   MOBILE OVERLAY
+============================================================ */
+.mob-overlay{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(6,6,14,.97);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  pointer-events:none;opacity:0;transition:opacity .38s var(--ease);
+}
+.mob-overlay.open{pointer-events:all;opacity:1;}
+.mob-close-btn{
+  position:absolute;top:1.2rem;right:1.2rem;
+  width:44px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.12);border-radius:3px;
+  background:none;cursor:pointer;
+  opacity:0;transition:opacity .3s,border-color .2s,background .2s;
+}
+.mob-overlay.open .mob-close-btn{opacity:1;}
+.mob-close-btn:hover{border-color:rgba(200,16,46,.5);background:rgba(200,16,46,.08);}
+.mob-close-btn svg{stroke:rgba(255,255,255,.7);transition:stroke .2s;}
+.mob-close-btn:hover svg{stroke:var(--white);}
+.mob-div{width:36px;height:1.5px;background:rgba(200,16,46,.3);margin:1.1rem 0;}
+.mob-link{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:clamp(2rem,9vw,3.5rem);letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(255,255,255,.8);padding:.3rem 0;
+  opacity:0;transform:translateY(12px);
+  transition:color .2s,opacity .3s,transform .3s;
+}
+.mob-overlay.open .mob-link{opacity:1;transform:none;}
+.mob-overlay.open .mob-link:nth-child(3){transition-delay:.05s;}
+.mob-overlay.open .mob-link:nth-child(4){transition-delay:.10s;}
+.mob-overlay.open .mob-link:nth-child(5){transition-delay:.15s;}
+.mob-overlay.open .mob-link:nth-child(6){transition-delay:.20s;}
+.mob-overlay.open .mob-link:nth-child(7){transition-delay:.25s;}
+.mob-overlay.open .mob-link:nth-child(8){transition-delay:.30s;}
+.mob-link:hover{color:var(--red);}
+
+/* ============================================================
+   SEZIONE 1 — HERO (pin container)
+============================================================ */
+#scene1-wrapper{position:relative;}
+#scene1{
+  position:relative;width:100%;height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--ink);overflow:hidden;
+}
+.field-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,48,135,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,48,135,.08) 1px,transparent 1px);
+  background-size:60px 60px;transform-origin:center center;opacity:.6;
+}
+.field-circle{
+  position:absolute;top:50%;left:50%;
+  width:280px;height:280px;
+  border:1px solid rgba(0,80,204,.14);border-radius:50%;
+  transform:translate(-50%,-50%);pointer-events:none;
+}
+.field-circle::before{
+  content:'';position:absolute;top:50%;left:50%;
+  width:14px;height:14px;background:rgba(200,16,46,.3);border-radius:50%;
+  transform:translate(-50%,-50%);
+}
+.hero-orb{
+  position:absolute;top:-20%;left:-12%;
+  width:80vmax;height:80vmax;
+  background:radial-gradient(ellipse at 28% 28%,rgba(200,16,46,.10) 0%,rgba(0,48,135,.07) 38%,transparent 62%);
+  pointer-events:none;will-change:transform;
+}
+.hero-panel{position:absolute;inset:0;pointer-events:none;}
+.hero-panel::before{
+  content:'';position:absolute;top:0;right:0;width:46%;height:100%;
+  background:linear-gradient(154deg,#0040C8 0%,var(--blue-dk) 100%);
+  clip-path:polygon(17% 0,100% 0,100% 100%,0 100%);opacity:.72;
+}
+.hero-panel::after{
+  content:'';position:absolute;top:0;right:0;width:46%;height:100%;
+  background:var(--red);
+  clip-path:polygon(17% 0,22.5% 0,7.5% 100%,2% 100%);
+}
+.hero-content{
+  position:relative;z-index:4;text-align:center;
+  will-change:transform,opacity;transform-origin:center center;
+  padding:0 1rem;pointer-events:none;
+}
+/* Hero entrance: elementi nascosti via CSS perché l'animazione
+   di ingresso li rivela in sequenza. Questo è un comportamento
+   voluto (non uguale al problema di .fi). */
+.hero-logo-wrap{display:flex;justify-content:center;margin-bottom:1.6rem;opacity:0;transform:translateY(20px);}
+.hero-logo{width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 6px 28px rgba(200,16,46,.5));}
+.hero-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.68rem;letter-spacing:.38em;text-transform:uppercase;
+  color:var(--red);margin-bottom:1.2rem;opacity:0;transform:translateY(14px);
+}
+.hero-title-wrap{
+  position:relative;will-change:transform,opacity;
+  transform-origin:center center;
+  display:flex;justify-content:center;
+}
+/* SVG inline per titolo vettoriale crispo su ogni scala */
+.hero-title-svg{
+  display:block;width:min(90vw,900px);height:auto;
+  overflow:visible;opacity:0;transform:translateY(24px);
+  will-change:transform,opacity;
+}
+.svt-main{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:178px;fill:var(--white);text-anchor:middle;letter-spacing:-0.015em;}
+.svt-sub{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:88px;fill:var(--white);text-anchor:middle;}
+.svt-yr{fill:var(--red);}
+.svt-asd{fill:var(--white);}
+.svt-outline{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:34px;fill:none;stroke:rgba(200,16,46,.6);stroke-width:1.5;text-anchor:middle;letter-spacing:.26em;}
+.hero-bar{width:72px;height:3px;margin:.8rem auto;background:linear-gradient(90deg,var(--red) 0%,var(--blue-md) 100%);opacity:0;}
+.hero-sub{font-weight:300;font-size:clamp(.84rem,1.5vw,1rem);color:rgba(255,255,255,.42);line-height:1.7;margin-bottom:2rem;opacity:0;transform:translateY(10px);}
+.hero-stats{display:flex;justify-content:center;flex-wrap:wrap;gap:1.5rem 3rem;margin-bottom:1.8rem;opacity:0;}
+.stat{display:flex;flex-direction:column;gap:3px;text-align:center;}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(1.6rem,3vw,2.6rem);line-height:1;color:var(--white);}
+.stat-num sup{font-size:.4em;color:var(--red);vertical-align:super;}
+.stat-lbl{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.28);}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(200,16,46,.08);border:1px solid rgba(200,16,46,.28);
+  border-radius:3px;padding:9px 16px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.88rem;letter-spacing:.05em;color:rgba(255,255,255,.8);opacity:0;
+}
+.pdot{width:7px;height:7px;background:var(--red);border-radius:50%;flex-shrink:0;animation:pdot 2s ease-in-out infinite;}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.2;transform:scale(1.7);}}
+.hero-scroll{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:5;
+  display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;
+}
+.hero-scroll span{font-family:'Barlow Condensed',sans-serif;font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.18);}
+.scl{width:1px;height:40px;background:linear-gradient(to bottom,rgba(255,255,255,.3),transparent);animation:scl 2.2s ease-in-out infinite;transform-origin:top;}
+@keyframes scl{0%{transform:scaleY(0);opacity:1;}55%{transform:scaleY(1);opacity:1;}100%{transform:scaleY(1);opacity:0;}}
+#tunnel-overlay{position:absolute;inset:0;z-index:5;background:var(--ink);opacity:0;pointer-events:none;}
+
+/* ============================================================
+   SEZIONE 2 — SQUADRA (#scene3)
+   4 colonne desktop. Mobile: card figurina stile Panini.
+============================================================ */
+#scene3{
+  position:relative;background:var(--ink);
+  padding:8rem clamp(1.5rem,5vw,4.5rem) 7rem;overflow:hidden;
+}
+#scene3::before{
+  content:'ROSA';position:absolute;right:-.03em;top:50%;
+  transform:translateY(-50%);
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22vw;line-height:1;
+  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.02);
+  user-select:none;pointer-events:none;
+}
+.scene3-header{position:relative;z-index:2;text-align:center;margin-bottom:1.5rem;}
+#scene3 .sec-title{color:var(--white);}
+
+/* Tab squadra */
+.squad-tabs{display:flex;width:fit-content;margin:0 auto 2.5rem;border-bottom:1.5px solid rgba(255,255,255,.07);position:relative;z-index:2;}
+.sq-tab{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:clamp(.76rem,1.6vw,.96rem);letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.32);padding:.8rem 2rem .9rem;position:relative;transition:color .25s;
+}
+.sq-tab::after{content:'';position:absolute;bottom:-1.5px;left:0;width:0;height:1.5px;background:var(--red);transition:width .3s;}
+.sq-tab.active{color:var(--white);}
+.sq-tab.active::after{width:100%;}
+.sq-tab:hover:not(.active){color:rgba(255,255,255,.65);}
+.tab-panel{display:none;position:relative;z-index:2;}
+.tab-panel.active{display:block;animation:tabIn .4s ease;}
+@keyframes tabIn{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+
+/* Legenda ruoli */
+.role-leg{display:flex;gap:1.2rem 2rem;flex-wrap:wrap;margin-bottom:2rem;justify-content:center;}
+.rdot{display:flex;align-items:center;gap:6px;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.32);}
+.rdot::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.rdot.portiere::before{background:#FFD700;}
+.rdot.centrale::before{background:var(--blue-md);}
+.rdot.laterale::before{background:#4ECDC4;}
+.rdot.pivot::before{background:#FF6B8A;}
+.rdot.staff::before{background:#B0A0FF;}
+
+/* Griglia squadra: 4 colonne desktop */
+.squad-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;max-width:1300px;margin:0 auto;}
+
+/*
+ * DEFENSIVE DESIGN: .pc NON ha opacity:0 nel CSS.
+ * animateFan() imposta lo stato iniziale via gsap.set() (additivo).
+ * Se JS fallisce: le card sono visibili e leggibili immediatamente.
+ */
+.pc{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:3px;padding:1.2rem 1rem 1rem;
+  position:relative;overflow:hidden;
+  transition:background .3s,border-color .3s,transform .3s;
+  cursor:default;
+}
+.pc::before{
+  content:'';position:absolute;top:0;left:0;
+  width:2px;height:0;background:linear-gradient(to bottom,var(--red),var(--blue-md));
+  transition:height .35s;z-index:4;
+}
+.pc:hover{background:rgba(255,255,255,.07);border-color:rgba(200,16,46,.25);transform:translateY(-4px);}
+.pc:hover::before{height:100%;}
+.pc-num{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:2.5rem;line-height:1;
+  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.1);
+  margin-bottom:.5rem;letter-spacing:-.02em;
+  position:relative;z-index:3;transition:-webkit-text-stroke-color .3s;
+}
+.pc:hover .pc-num{-webkit-text-stroke-color:rgba(255,255,255,.26);}
+.pc-staff .pc-num{font-size:1.4rem;letter-spacing:.04em;margin-bottom:.4rem;}
+.pc-name{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:.9rem;color:var(--white);text-transform:uppercase;
+  letter-spacing:.04em;line-height:1.1;margin-bottom:3px;
+  position:relative;z-index:3;
+}
+.pc-role{font-size:.58rem;text-transform:uppercase;letter-spacing:.14em;position:relative;z-index:3;}
+.pc-role.portiere{color:#FFD700;}
+.pc-role.centrale{color:var(--blue-md);}
+.pc-role.laterale{color:#4ECDC4;}
+.pc-role.pivot{color:#FF6B8A;}
+.pc-role.staff{color:#B0A0FF;}
+.pc-photo-wrap{position:relative;width:100%;margin-bottom:.8rem;overflow:hidden;border-radius:2px;}
+.pc-photo{width:100%;height:128px;object-fit:cover;filter:brightness(.82) saturate(1.1);transition:filter .4s;}
+.pc:hover .pc-photo{filter:brightness(1) saturate(1.2);}
+.pc-photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,6,14,.85) 0%,transparent 60%);}
+.pc-foil{
+  position:absolute;inset:0;z-index:5;border-radius:3px;
+  pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(circle at 50% 50%,rgba(200,16,46,0) 0%,rgba(0,80,204,0) 40%,transparent 70%);
+  mix-blend-mode:screen;
+}
+.pc:hover .pc-foil{opacity:1;}
+.pc-ea-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(165deg,rgba(0,20,70,.6) 0%,rgba(6,6,14,.5) 50%,rgba(90,4,18,.35) 100%);opacity:0;transition:opacity .5s;}
+.pc-bg-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .65s;pointer-events:none;z-index:0;filter:blur(1.5px) brightness(.5) saturate(1.4);}
+.pc:hover .pc-ea-overlay,.pc.t-hover .pc-ea-overlay{opacity:1;}
+.pc:hover .pc-bg-media,.pc.t-hover .pc-bg-media{opacity:1;}
+
+/* ============================================================
+   SEZIONE 3 — MATCH CENTER (#match-center / Risultati)
+============================================================ */
+#match-center{background:var(--off);padding:7rem clamp(1.5rem,5vw,4.5rem);}
+#match-center .sec-label{color:var(--red);}
+#match-center .sec-title{color:var(--ink);}
+.mc-header{text-align:center;margin-bottom:3rem;}
+.mc-content{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr;gap:2.5rem;align-items:start;}
+.mc-col-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:1.05rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid var(--red);
+}
+.match-focus-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.iw{width:100%;background:var(--white);border-radius:3px;overflow:hidden;border:1px solid rgba(0,0,0,.08);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.iw iframe{width:100%;min-width:320px;height:100%;border:0;display:block;}
+.iw-focus{height:340px;}
+.iw-classifica{height:800px;}
+.iw-risultati{height:620px;}
+.iw-marcatori{height:720px;}
+.mc-tabs-nav{display:flex;flex-wrap:wrap;gap:0;margin-bottom:12px;border-bottom:1.5px solid rgba(0,0,0,.08);}
+.mc-tab-btn{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.86rem;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;padding:8px 16px 10px;color:var(--muted);position:relative;transition:color .2s;
+}
+.mc-tab-btn::after{content:'';position:absolute;bottom:-1.5px;left:0;width:0;height:1.5px;background:var(--red);transition:width .25s;}
+.mc-tab-btn.active{color:var(--ink);}
+.mc-tab-btn.active::after{width:100%;}
+.mc-tab-content{display:none;}
+.mc-tab-content.active{display:block;}
+.stats-box{background:var(--white);border-radius:3px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.07);}
+.stats-box-header{background:var(--ink2);padding:.7rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;}
+.stats-box-header>span{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.stats-sel{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.64rem;letter-spacing:.08em;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:2px;color:var(--white);padding:3px 8px;cursor:pointer;}
+.stats-scroll{overflow-x:auto;}
+.stats-tbl{width:100%;border-collapse:collapse;font-size:.81rem;min-width:360px;}
+.stats-tbl th{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);padding:.7rem .85rem;border-bottom:1px solid rgba(0,0,0,.06);text-align:center;cursor:pointer;white-space:nowrap;user-select:none;transition:color .2s;}
+.stats-tbl th:first-child{text-align:left;}
+.stats-tbl th:hover{color:var(--red);}
+.stats-tbl th.s-desc::after{content:' ↓';color:var(--red);font-size:.8em;}
+.stats-tbl th.s-asc::after{content:' ↑';color:var(--red);font-size:.8em;}
+.stats-tbl td{padding:.56rem .85rem;border-bottom:1px solid rgba(0,0,0,.04);text-align:center;color:var(--body-c);transition:background .15s;}
+.stats-tbl td:first-child{text-align:left;}
+.stats-tbl tr:last-child td{border-bottom:none;}
+.stats-tbl tr:nth-child(even) td{background:rgba(0,0,0,.015);}
+.stats-tbl tr.is-top td{background:rgba(200,16,46,.055)!important;}
+.stats-tbl tr.is-top td:first-child{border-left:3px solid var(--red);}
+.p-cell{display:flex;align-items:center;gap:.5rem;white-space:nowrap;}
+.p-avatar{width:25px;height:25px;border-radius:50%;background:linear-gradient(135deg,var(--blue) 0%,var(--red-dk) 100%);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.58rem;color:white;}
+.p-cell-name{font-weight:500;}
+.p-num-badge{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;color:var(--muted);margin-left:2px;}
+.sv{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1rem;}
+.sv.gol{color:var(--red);}
+.sv.zero{color:#C4C4D8;font-weight:400;font-size:.85rem;}
+.sv.amm-r{color:#E67E00;}
+.stats-footer-note{padding:.65rem 1rem;font-size:.68rem;color:#A0A0B8;border-top:1px solid rgba(0,0,0,.05);display:flex;align-items:center;gap:6px;}
+.live-dot{width:6px;height:6px;background:#4CAF50;border-radius:50%;flex-shrink:0;}
+
+/* ============================================================
+   SEZIONE 4 — KIT & DESIGN (#scene2 — Editorial Showcase)
+============================================================ */
+#scene2{position:relative;background:var(--ink2);padding:8rem clamp(1.5rem,5vw,4.5rem) 5rem;overflow:hidden;max-width:100vw;}
+#scene2::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,80,204,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,80,204,.05) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+#scene2::after{content:'KIT';position:absolute;right:-.02em;bottom:-.05em;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28vw;line-height:.88;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.016);user-select:none;pointer-events:none;}
+#scene2 .sec-title{color:var(--white);}
+.scene2-header{position:relative;z-index:2;max-width:800px;margin:0 auto;text-align:center;margin-bottom:3rem;}
+.scene2-sub{font-size:.9rem;color:rgba(255,255,255,.38);line-height:1.7;}
+.kit-credit-bar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;justify-content:center;
+  margin-bottom:4rem;padding:1rem 1.5rem;
+  background:rgba(255,255,255,.033);border:1px solid rgba(255,255,255,.055);
+  border-left:2.5px solid var(--red);border-radius:3px;
+  width:fit-content;max-width:100%;margin-left:auto;margin-right:auto;
+  position:relative;z-index:2;
+}
+.kc-item{display:flex;align-items:baseline;gap:8px;padding:0 1.4rem 0 0;}
+.kc-item:not(:last-child){border-right:1px solid rgba(255,255,255,.07);margin-right:1.4rem;}
+.kc-lbl{font-size:.57rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.kc-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.95rem;letter-spacing:.05em;}
+.kc-val.designer{color:var(--red);}
+.kc-val.maker{color:var(--white);}
+.kit-pin-wrapper{position:relative;width:100%;max-width:100vw;}
+.kit-pin-stage{position:relative;width:100%;max-width:100vw;overflow:hidden;display:flex;flex-direction:column;gap:4rem;padding:1rem 0 2rem;}
+.kit-pin-stage.kit-pin-mode{height:100vh;padding:0;display:block;border-radius:3px;}
+.kit-stage-grid{position:absolute;inset:0;opacity:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:42px 42px;}
+.kit-pin-mode .kit-stage-grid{opacity:1;}
+.kit-bg-type{display:none;}
+.kit-pin-mode .kit-bg-type{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;pointer-events:none;z-index:0;}
+.kbt-word{position:absolute;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(64px,15vw,220px);line-height:.86;text-align:center;text-transform:uppercase;letter-spacing:-.01em;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.055);opacity:0;max-width:100%;padding:0 4vw;}
+.kit-progress{display:none;}
+.kit-pin-mode .kit-progress{display:flex;gap:9px;position:absolute;left:50%;bottom:2.2rem;transform:translateX(-50%);z-index:6;}
+.kp-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.18);transition:background .3s,width .3s;}
+.kp-dot.active{background:var(--red);width:22px;border-radius:3px;}
+.kit-panel{
+  position:relative;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;
+  align-items:center;max-width:1080px;margin:0 auto;
+  padding:0 clamp(1rem,3vw,2rem);z-index:2;
+}
+.kit-full{display:flex;align-items:center;justify-content:center;}
+.kit-full-img{max-width:280px;width:100%;filter:drop-shadow(0 18px 50px rgba(0,0,0,.55));}
+.kit-macro{position:relative;border-radius:3px;overflow:hidden;aspect-ratio:4/5;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);}
+.kit-macro-media{position:absolute;inset:0;}
+.kit-macro-img{width:100%;height:100%;object-fit:cover;}
+.kit-macro-caption{position:absolute;left:0;right:0;bottom:0;padding:1.4rem 1.4rem 1.2rem;background:linear-gradient(to top,rgba(6,6,14,.92) 12%,transparent 100%);}
+.kmc-idx{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.22em;color:var(--red);}
+.kmc-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.5rem;color:var(--white);text-transform:uppercase;margin:.25rem 0 .4rem;letter-spacing:.02em;}
+.kmc-text{font-size:.78rem;line-height:1.6;color:rgba(255,255,255,.55);max-width:320px;}
+.kit-panel[data-kit="0"] .kit-macro::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(200,16,46,.25),transparent 55%);mix-blend-mode:screen;pointer-events:none;}
+.kit-panel[data-kit="1"] .kit-macro::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,48,135,.22),transparent 55%);mix-blend-mode:screen;pointer-events:none;}
+.kit-panel[data-kit="2"] .kit-macro::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,200,80,.2),transparent 55%);mix-blend-mode:screen;pointer-events:none;}
+.kit-pin-mode .kit-panel{position:absolute;inset:0;display:block;max-width:none;padding:0;margin:0;}
+.kit-pin-mode .kit-full{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;}
+.kit-pin-mode .kit-full-img{max-width:min(360px,36vw);}
+.kit-pin-mode .kit-macro{position:absolute;top:9%;right:6%;width:36%;height:82%;aspect-ratio:auto;z-index:3;box-shadow:0 30px 80px rgba(0,0,0,.55);}
+.kit-pin-mode .kit-panel[data-side="left"] .kit-macro{right:auto;left:6%;}
+.kit-macro.cut-a{clip-path:polygon(14% 0,100% 0,100% 100%,0 100%);}
+.kit-macro.cut-b{clip-path:polygon(0 0,100% 0,86% 100%,0 100%);}
+.kit-macro.cut-c{clip-path:polygon(8% 0,100% 0,100% 100%,0 100%);}
+.kit-pin-mode .kit-macro-caption{padding:1.6rem 1.7rem 1.5rem;}
+
+/* ============================================================
+   SEZIONE 5 — NEWS
+   Sfondo obliquo via clip-path. 3 colonne desktop.
+============================================================ */
+#news{position:relative;background:transparent;padding:calc(7rem + 70px) clamp(1.5rem,5vw,4.5rem);overflow:visible;}
+#news::before{content:'';position:absolute;inset:0;background:var(--off);clip-path:polygon(0 70px,100% 0,100% calc(100% - 70px),0 100%);z-index:0;pointer-events:none;}
+#news>*{position:relative;z-index:1;}
+#news .sec-label{color:var(--red);}
+#news .sec-title{color:var(--ink);}
+.news-header{margin-bottom:2.5rem;}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1300px;margin:0 auto;}
+.card{background:var(--white);border-radius:3px;overflow:hidden;box-shadow:0 2px 22px rgba(0,0,0,.07);display:flex;flex-direction:column;transition:transform .32s,box-shadow .32s;}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 52px rgba(0,0,0,.13);}
+.card-acc{height:3px;background:linear-gradient(90deg,var(--red) 0%,var(--blue-md) 100%);flex-shrink:0;}
+.card-vis{aspect-ratio:16/7;background:linear-gradient(128deg,var(--blue-dk) 0%,#080818 45%,var(--red-dk) 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;flex-shrink:0;}
+.card-vis::before{content:'';position:absolute;inset:0;background:var(--red);clip-path:polygon(0 0,25% 0,17% 100%,0 100%);opacity:.4;}
+.card-vis-txt{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(68px,11vw,130px);color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.1);letter-spacing:-.03em;position:relative;z-index:1;}
+.card-vis-lbl{position:absolute;bottom:1rem;right:1.2rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.57rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);z-index:1;}
+.card-body{padding:1.5rem 1.8rem 1.8rem;flex:1;display:flex;flex-direction:column;}
+.card-tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.57rem;letter-spacing:.2em;text-transform:uppercase;color:var(--white);background:var(--red);padding:3px 9px;margin-bottom:.6rem;align-self:flex-start;}
+.card-date{font-size:.7rem;color:#9090B4;letter-spacing:.04em;margin-bottom:.4rem;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(1.05rem,2.2vw,1.55rem);line-height:1.06;color:var(--ink);margin-bottom:.8rem;}
+.card-excerpt{font-size:.84rem;line-height:1.72;color:#55557A;margin-bottom:1rem;flex:1;}
+.card-link{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--red);display:inline-flex;align-items:center;gap:7px;align-self:flex-start;transition:gap .2s;}
+.card-link::after{content:'→';}
+.card-link:hover{gap:13px;}
+.card.featured{grid-column:1 / span 2;flex-direction:row;}
+.card.featured .card-vis{width:42%;flex-shrink:0;aspect-ratio:unset;}
+.card.featured .card-vis-txt{font-size:clamp(48px,7vw,110px);}
+.card.featured .card-body{padding:2rem 2.2rem 2rem;}
+.card.featured .card-title{font-size:clamp(1.2rem,2.4vw,1.75rem);}
+.card.mini .card-body{padding:1.1rem 1.35rem 1.35rem;}
+.card.mini .card-title{font-size:1.05rem;}
+.card.mini .card-excerpt{font-size:.8rem;margin-bottom:.7rem;}
+
+/* ============================================================
+   SEZIONE 6 — SPONSOR (infinite ticker)
+============================================================ */
+#sponsor{background:var(--white);padding:5rem 0 4rem;overflow:hidden;}
+#sponsor .sec-label{color:var(--red);}
+#sponsor .sec-title{color:var(--ink);}
+.sponsor-header{padding:0 clamp(1.5rem,5vw,4.5rem);text-align:center;margin-bottom:3rem;}
+.sponsor-intro{font-size:.9rem;color:var(--muted);line-height:1.7;max-width:560px;margin:0 auto;}
+.ticker-outer{width:100%;overflow:hidden;border-top:1px solid rgba(0,0,0,.07);border-bottom:1px solid rgba(0,0,0,.07);background:var(--off);position:relative;}
+.ticker-outer::before,.ticker-outer::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none;}
+.ticker-outer::before{left:0;background:linear-gradient(to right,var(--off),transparent);}
+.ticker-outer::after{right:0;background:linear-gradient(to left,var(--off),transparent);}
+.ticker-track{display:flex;width:max-content;animation:ticker-move 28s linear infinite;padding:0;}
+.ticker-track:hover{animation-play-state:paused;}
+@keyframes ticker-move{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ticker-item{flex-shrink:0;display:flex;align-items:center;justify-content:center;flex-direction:column;height:90px;padding:0 3rem;border-right:1px solid rgba(0,48,135,.1);min-width:180px;gap:4px;text-decoration:none;color:var(--ink);transition:background .2s;}
+.ticker-item:hover{background:rgba(200,16,46,.03);}
+.ti-main{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;}
+.ti-main.ti-red{color:rgba(200,16,46,.45);}
+.ti-main.ti-blue{color:rgba(0,48,135,.3);}
+.ti-sub{font-size:.58rem;letter-spacing:.1em;color:#A0A0C0;text-transform:uppercase;}
+.sponsor-cta{padding:2.5rem clamp(1.5rem,5vw,4.5rem) 0;text-align:center;}
+.sponsor-cta p{font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;}
+.btn-cta{display:inline-flex;align-items:center;gap:9px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--white);background:var(--red);padding:10px 22px;border-radius:3px;transition:background .2s,transform .2s;}
+.btn-cta:hover{background:var(--red-dk);transform:translateY(-2px);}
+
+/* ============================================================
+   SEZIONE 7 — CONTATTI
+============================================================ */
+#contatti{background:var(--blue-dk);padding:7rem clamp(1.5rem,5vw,4.5rem);position:relative;overflow:hidden;text-align:center;}
+#contatti::after{content:'';position:absolute;bottom:-80px;right:-80px;width:480px;height:480px;background:radial-gradient(ellipse,rgba(200,16,46,.18) 0%,transparent 65%);pointer-events:none;}
+#contatti .sec-label{color:rgba(255,255,255,.36);}
+#contatti .sec-title{color:var(--white);}
+.contatti-header{margin-bottom:3.5rem;}
+.contatti-sub{font-size:.95rem;color:rgba(255,255,255,.35);max-width:480px;margin:0 auto;line-height:1.65;}
+.contacts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3rem 2rem;max-width:920px;margin:0 auto;position:relative;z-index:1;}
+.ci{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.3rem;}
+.ci-icon-wrap{width:52px;height:52px;border:1px solid rgba(255,255,255,.13);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;background:rgba(255,255,255,.04);transition:border-color .25s,background .25s;}
+.ci:hover .ci-icon-wrap{border-color:rgba(200,16,46,.45);background:rgba(200,16,46,.07);}
+.ci-icon-wrap svg{flex-shrink:0;}
+.ci-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:.2rem;}
+.ci-val{font-weight:500;font-size:1.05rem;color:var(--white);line-height:1.3;transition:color .2s;}
+a.ci-val:hover{color:#FF8098;}
+.ci-sub{font-size:.78rem;color:rgba(255,255,255,.28);}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:2.2rem clamp(1.5rem,5vw,4.5rem);}
+.footer-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.25rem;margin-bottom:1.8rem;}
+.footer-brand{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.9rem;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.32);}
+.footer-logo-img{width:26px;height:26px;object-fit:contain;filter:brightness(.6);flex-shrink:0;}
+.footer-brand .rb{color:var(--red);}
+.footer-links{list-style:none;display:flex;gap:1.5rem;flex-wrap:wrap;}
+.footer-links a{font-size:.7rem;letter-spacing:.07em;color:rgba(255,255,255,.18);transition:color .2s;}
+.footer-links a:hover{color:rgba(255,255,255,.52);}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.05);}
+.footer-copy{font-size:.67rem;color:rgba(255,255,255,.15);letter-spacing:.04em;}
+.footer-designer{display:inline-flex;align-items:center;gap:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.67rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.18);}
+.footer-designer .fd-dot{width:5px;height:5px;background:var(--red);border-radius:50%;flex-shrink:0;}
+.footer-designer strong{color:rgba(255,255,255,.42);font-weight:800;}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media(max-width:1050px){
+  .news-grid{grid-template-columns:repeat(2,1fr);}
+  .card.featured{grid-column:1 / -1;flex-direction:row;}
+  .squad-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media(max-width:900px){
+  .mc-content{grid-template-columns:1fr;}
+  .match-focus-grid{grid-template-columns:1fr;}
+  .kit-panel{grid-template-columns:1fr;gap:1.4rem;}
+  .kit-full-img{max-width:200px;}
+  .kit-pin-mode .kit-full-img{max-width:min(220px,55vw);}
+  .kit-pin-mode .kit-macro{top:auto;bottom:0;left:0;right:0;width:100%;height:50%;}
+  .kit-macro.cut-a,.kit-macro.cut-b,.kit-macro.cut-c{clip-path:polygon(0 9%,100% 0,100% 100%,0 100%);}
+  .kbt-word{font-size:clamp(50px,19vw,108px);}
+  .kit-progress{bottom:1.1rem;}
+}
+@media(max-width:800px){
+  .hamburger{display:flex;}
+  .nav-links{display:none;}
+  .squad-tabs{width:100%;flex-direction:column;}
+  .sq-tab{padding:.82rem 0;width:100%;}
+  .sq-tab::after{display:none;}
+  .sq-tab.active{color:var(--red);}
+  .hero-panel::before{width:100%;clip-path:polygon(0 56%,100% 47%,100% 100%,0 100%);}
+  .hero-panel::after{width:100%;clip-path:polygon(0 56%,5% 56%,5% 100%,0 100%);}
+  .hero-stats{gap:1.2rem 1.8rem;}
+}
+@media(max-width:700px){
+  .news-grid{grid-template-columns:1fr;}
+  .card.featured{grid-column:1;flex-direction:column;}
+  .card.featured .card-vis{width:100%;aspect-ratio:16/7;}
+  .contacts-grid{grid-template-columns:repeat(2,1fr);gap:2rem 1.5rem;}
+  .footer-top,.footer-bottom{flex-direction:column;align-items:flex-start;}
+  .kc-item:not(:last-child){border-right:none;margin-right:0;padding-right:0;}
+  .kit-credit-bar{flex-direction:column;}
+  .squad-grid{grid-template-columns:repeat(2,1fr);gap:.75rem;}
+  .pc{padding:0;min-height:110px;display:grid;grid-template-columns:1fr 72px;grid-template-rows:auto auto auto 1fr;grid-template-areas:"num photo" "name photo" "role photo" "gap photo";align-items:start;gap:0;}
+  .pc-num{grid-area:num;font-size:2.6rem;line-height:1;padding:.7rem 0 .15rem .8rem;margin-bottom:0;}
+  .pc-name{grid-area:name;font-size:.75rem;padding:0 .5rem 0 .8rem;white-space:normal;word-break:break-word;}
+  .pc-role{grid-area:role;padding:0 .5rem .7rem .8rem;}
+  .pc-photo-wrap{grid-area:photo;width:72px;height:100%;min-height:110px;margin-bottom:0;border-radius:0 3px 3px 0;overflow:hidden;position:relative;}
+  .pc-photo{width:100%;height:100%;min-height:110px;object-fit:cover;object-position:top center;}
+  .pc-photo-overlay{display:none;}
+  .pc.pc-staff{grid-template-columns:1fr;grid-template-areas:"num" "name" "role";padding:.9rem 1rem;min-height:auto;}
+  .pc.pc-staff .pc-num{padding:0 0 .35rem 0;}
+  .pc.pc-staff .pc-name{padding:0;}
+  .pc.pc-staff .pc-role{padding:0;}
+  .pc:not(:has(.pc-photo-wrap)){grid-template-columns:1fr;grid-template-areas:"num" "name" "role" "gap";padding:.8rem 1rem;}
+  .pc:not(:has(.pc-photo-wrap)) .pc-num{padding:0 0 .15rem 0;}
+  .pc:not(:has(.pc-photo-wrap)) .pc-name{padding:0;}
+  .pc:not(:has(.pc-photo-wrap)) .pc-role{padding:0;}
+}
+@media(max-width:600px){
+  .sec-label::before{display:none;}
+  .contacts-grid{grid-template-columns:1fr;}
+}
+@media(max-width:420px){
+  .squad-grid{grid-template-columns:1fr;}
+  .pc{grid-template-columns:1fr 60px;}
+  .pc-photo-wrap{width:60px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     NAVIGAZIONE
+══════════════════════════════════════════════ -->
+<nav class="main-nav" id="mainNav" aria-label="Navigazione principale">
+  <a href="#scene1" class="nav-logo" aria-label="San Biagio 1995 A.S.D. – Homepage">
+    <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="San Biagio 1995 A.S.D." class="nav-logo-img" width="44" height="44" onerror="this.style.opacity='.3'">
+    <div class="nav-brand">San Biagio 1995<small>A.S.D. · Futsal</small></div>
+  </a>
+  <ul class="nav-links" role="list">
+    <li><a href="#scene3">Squadra</a></li>
+    <li><a href="#match-center">Risultati</a></li>
+    <li><a href="#scene2">Kit</a></li>
+    <li><a href="#news">News</a></li>
+    <li><a href="#sponsor">Sponsor</a></li>
+    <li><a href="#contatti">Contatti</a></li>
+  </ul>
+  <button class="hamburger" id="ham" aria-label="Apri menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     MOBILE OVERLAY
+══════════════════════════════════════════════ -->
+<div class="mob-overlay" id="mobOverlay" aria-hidden="true" role="dialog" aria-label="Menu principale">
+  <button class="mob-close-btn" id="mobCloseBtn" aria-label="Chiudi menu" data-close>
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="2" y1="2" x2="16" y2="16" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="16" y1="2" x2="2" y2="16" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <div class="mob-div"></div>
+  <a href="#scene3"       class="mob-link" data-close>Squadra</a>
+  <a href="#match-center" class="mob-link" data-close>Risultati</a>
+  <a href="#scene2"       class="mob-link" data-close>Kit</a>
+  <a href="#news"         class="mob-link" data-close>News</a>
+  <a href="#sponsor"      class="mob-link" data-close>Sponsor</a>
+  <a href="#contatti"     class="mob-link" data-close>Contatti</a>
+  <div class="mob-div"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SEZIONE 1 — HERO + TUNNEL
+     Titolo SVG vettoriale → nessun sgranamento in zoom.
+══════════════════════════════════════════════ -->
+<div id="scene1-wrapper">
+  <section id="scene1" aria-label="Hero">
+    <div class="hero-panel"   aria-hidden="true"></div>
+    <div class="field-grid"   aria-hidden="true"></div>
+    <div class="field-circle" aria-hidden="true"></div>
+    <div class="hero-orb"     aria-hidden="true"></div>
+    <div id="tunnel-overlay"  aria-hidden="true"></div>
+
+    <div class="hero-content" id="heroContent">
+      <div class="hero-logo-wrap" id="heroLogo">
+        <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="San Biagio 1995 A.S.D." class="hero-logo" width="80" height="80" onerror="this.style.display='none'">
+      </div>
+
+      <p class="hero-eyebrow" id="heroEyebrow">Verano Brianza · Futsal · Dal 1995</p>
+
+      <div class="hero-title-wrap" id="heroTitleWrap">
+        <svg id="heroTitle" class="hero-title-svg"
+             viewBox="0 0 1000 310" xmlns="http://www.w3.org/2000/svg"
+             role="img" aria-label="San Biagio 1995 A.S.D. Futsal Club">
+          <title>San Biagio 1995 A.S.D.</title>
+          <defs>
+            <filter id="heroGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="12" result="blur1"/>
+              <feColorMatrix in="blur1" type="matrix"
+                values="1 0 0 0 0.784
+                        0 0 0 0 0.063
+                        0 0 0 0 0.114
+                        0 0 0 0.18 0" result="redGlow"/>
+              <feMerge><feMergeNode in="redGlow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <text class="svt-main" x="500" y="172" filter="url(#heroGlow)">SAN BIAGIO</text>
+          <text class="svt-sub" x="500" y="258">
+            <tspan class="svt-yr">1995</tspan><tspan class="svt-asd"> A.S.D.</tspan>
+          </text>
+          <text class="svt-outline" x="500" y="299">FUTSAL CLUB</text>
+        </svg>
+      </div>
+
+      <div class="hero-bar" id="heroBar" aria-hidden="true"></div>
+
+      <p class="hero-sub" id="heroSub">
+        30 Anni di storia...<br>Una bellissima storia.
+      </p>
+
+      <div class="hero-stats" id="heroStats" aria-label="Statistiche stagione">
+        <div class="stat"><div class="stat-num"><span class="count" data-to="5">5</span></div><div class="stat-lbl">Vittorie consecutive</div></div>
+        <div class="stat"><div class="stat-num"><span class="count" data-to="2">2</span><sup>pts</sup></div><div class="stat-lbl">Dalla vetta C1</div></div>
+        <div class="stat"><div class="stat-num"><span class="count" data-to="14">14</span></div><div class="stat-lbl">Vittorie in stagione</div></div>
+        <div class="stat"><div class="stat-num"><span class="count" data-to="4">4</span></div><div class="stat-lbl">Giornate al termine</div></div>
+      </div>
+
+      <div class="hero-badge" id="heroBadge">
+        <span class="pdot" aria-hidden="true"></span>
+        C2 Lombardia · Stagione 2025/26 — C1 nel mirino
+      </div>
+    </div>
+
+    <div class="hero-scroll" aria-hidden="true">
+      <span>Scorri</span>
+      <div class="scl"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SEZIONE 2 — SQUADRA (La Rosa)
+══════════════════════════════════════════════ -->
+<section id="scene3" aria-labelledby="squadra-h">
+  <div class="scene3-header">
+    <p class="sec-label">Rosa 2026/27</p>
+    <h2 class="sec-title" id="squadra-h">Squadra</h2>
+  </div>
+
+  <div class="squad-tabs" role="tablist" aria-label="Scegli la squadra">
+    <button class="sq-tab active" role="tab" aria-selected="true" aria-controls="panel-prima" id="tab-prima">
+      Prima Squadra <span style="font-weight:600;opacity:.52;font-size:.8em;margin-left:5px;">C2</span>
+    </button>
+    <button class="sq-tab" role="tab" aria-selected="false" aria-controls="panel-seconda" id="tab-seconda">
+      Seconda Squadra <span style="font-weight:600;opacity:.52;font-size:.8em;margin-left:5px;">Serie D</span>
+    </button>
+  </div>
+
+  <!-- ── Prima Squadra ── -->
+  <div class="tab-panel active" id="panel-prima" role="tabpanel" aria-labelledby="tab-prima">
+    <div class="role-leg">
+      <span class="rdot portiere">Portiere</span>
+      <span class="rdot centrale">Centrale</span>
+      <span class="rdot laterale">Laterale</span>
+      <span class="rdot pivot">Pivot</span>
+      <span class="rdot staff">Staff</span>
+    </div>
+    <div class="squad-grid" id="gridPrima">
+      <div class="pc pc-staff"><div class="pc-num">PRES</div><div class="pc-name">Federico Morrone</div><div class="pc-role staff">Presidente</div></div>
+      <div class="pc pc-staff"><div class="pc-num">MIST</div><div class="pc-name">Marcello Galbiati</div><div class="pc-role staff">Mister</div></div>
+      <div class="pc pc-staff"><div class="pc-num">P.P</div><div class="pc-name">Emanuele Marchetti</div><div class="pc-role staff">Prep. Portieri</div></div>
+      <div class="pc"><div class="pc-num">01</div><div class="pc-name">Niccolò Renna</div><div class="pc-role portiere">Portiere · Cap.</div></div>
+      <div class="pc"><div class="pc-num">12</div><div class="pc-name">Matteo Petro</div><div class="pc-role portiere">Portiere</div></div>
+      <div class="pc">
+        <div class="pc-num">77</div>
+        <div class="pc-photo-wrap">
+          <picture>
+            <source srcset="amos_arena.png" type="image/png">
+            <img src="amos_arena.png" alt="Amos Arena" class="pc-photo">
+          </picture>
+          <div class="pc-photo-overlay"></div>
+        </div>
+        <div class="pc-name">Amos Arena</div>
+        <div class="pc-role portiere">Portiere</div>
+      </div>
+      <div class="pc"><div class="pc-num">03</div><div class="pc-name">Alessandro Porta</div><div class="pc-role centrale">Centrale</div></div>
+      <div class="pc"><div class="pc-num">04</div><div class="pc-name">Roberto Martini</div><div class="pc-role centrale">Centrale</div></div>
+      <div class="pc"><div class="pc-num">05</div><div class="pc-name">Luca Ferrari</div><div class="pc-role centrale">Centrale</div></div>
+      <div class="pc"><div class="pc-num">07</div><div class="pc-name">Andrea Colombo</div><div class="pc-role centrale">Centrale</div></div>
+      <div class="pc"><div class="pc-num">08</div><div class="pc-name">Federico Gallo</div><div class="pc-role laterale">Laterale</div></div>
+      <div class="pc"><div class="pc-num">09</div><div class="pc-name">Davide Conti</div><div class="pc-role laterale">Laterale</div></div>
+      <div class="pc"><div class="pc-num">11</div><div class="pc-name">Matteo Romano</div><div class="pc-role laterale">Laterale</div></div>
+      <div class="pc"><div class="pc-num">14</div><div class="pc-name">Simone Villa</div><div class="pc-role laterale">Laterale</div></div>
+      <div class="pc"><div class="pc-num">06</div><div class="pc-name">Alessandro Bruno</div><div class="pc-role pivot">Pivot</div></div>
+      <div class="pc"><div class="pc-num">10</div><div class="pc-name">Simone Ricci</div><div class="pc-role pivot">Pivot · V.Cap.</div></div>
+      <div class="pc"><div class="pc-num">13</div><div class="pc-name">Thomas Greco</div><div class="pc-role pivot">Pivot</div></div>
+    </div>
+  </div>
+
+  <!-- ── Seconda Squadra ── -->
+  <div class="tab-panel" id="panel-seconda" role="tabpanel" aria-labelledby="tab-seconda">
+    <div class="role-leg">
+      <span class="rdot portiere">Portiere</span>
+      <span class="rdot centrale">Centrale</span>
+      <span class="rdot laterale">Laterale</span>
+      <span class="rdot pivot">Pivot</span>
+      <span class="rdot staff">Staff</span>
+    </div>
+    <div class="squad-grid" id="gridSeconda">
+      <div class="pc pc-staff"><div class="pc-num">MIST</div><div class="pc-name">Antonio Sala</div><div class="pc-role staff">Mister</div></div>
+      <div class="pc pc-staff"><div class="pc-num">P.P</div><div class="pc-name">Marco Neri</div><div class="pc-role staff">Prep. Portieri</div></div>
+      <div class="pc">
+        <div class="pc-num">01</div>
+        <div class="pc-photo-wrap">
+          <picture>
+            <source srcset="amos_arena.png" type="image/png">
+            <img src="amos_arena.png" alt="Amos Arena" class="pc-photo">
+          </picture>
+          <div class="pc-photo-overlay"></div>
+        </div>
+        <div class="pc-name">Amos Arena</div>
+        <div class="pc-role portiere">Portiere · Cap.</div>
+      </div>
+      <div class="pc"><div class="pc-num">16</div><div class="pc-name">Diego Fusi</div><div class="pc-role portiere">Portiere</div></div>
+      <div class="pc"><div class="pc-num">03</div><div class="pc-name">Alberto Conti</div><div class="pc-role centrale">Centrale</div></div>
+      <div class="pc"><div class="pc-num">04</div><div class="pc-name">Marco Sanna</div><div class="pc-role centrale">Centrale</div></div>
+      <div class="pc"><div class="pc-num">05</div><div class="pc-name">Paolo Rizzo</div><div class="pc-role centrale">Centrale</div></div>
+      <div class="pc"><div class="pc-num">07</div><div class="pc-name">Cristian Moreno</div><div class="pc-role centrale">Centrale</div></div>
+      <div class="pc"><div class="pc-num">08</div><div class="pc-name">Lorenzo Ricci</div><div class="pc-role laterale">Laterale</div></div>
+      <div class="pc"><div class="pc-num">09</div><div class="pc-name">Mattia Greco</div><div class="pc-role laterale">Laterale</div></div>
+      <div class="pc"><div class="pc-num">11</div><div class="pc-name">Giovanni Ferrari</div><div class="pc-role laterale">Laterale</div></div>
+      <div class="pc"><div class="pc-num">14</div><div class="pc-name">Filippo Bruno</div><div class="pc-role laterale">Laterale</div></div>
+      <div class="pc"><div class="pc-num">06</div><div class="pc-name">Kevin Sala</div><div class="pc-role pivot">Pivot</div></div>
+      <div class="pc"><div class="pc-num">10</div><div class="pc-name">Jacopo Arena</div><div class="pc-role pivot">Pivot · V.Cap.</div></div>
+      <div class="pc"><div class="pc-num">12</div><div class="pc-name">Edoardo Neri</div><div class="pc-role pivot">Pivot</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SEZIONE 3 — MATCH CENTER (Risultati)
+══════════════════════════════════════════════ -->
+<section id="match-center" aria-labelledby="mc-h">
+  <div class="mc-header">
+    <p class="sec-label">Aggiornamenti live</p>
+    <h2 class="sec-title" id="mc-h">Match Center</h2>
+  </div>
+
+  <div class="mc-content">
+    <div class="fi">
+      <p class="mc-col-title">⚽ Serie C2 Girone A</p>
+      <div class="match-focus-grid">
+        <div class="iw iw-focus">
+          <iframe src="https://www.tuttocampo.it/WidgetV2/Partita/d41c0700-615d-42f3-87cb-681f333839cf"
+            scrolling="no" frameborder="0" loading="lazy" title="Ultima Partita"
+            sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+        </div>
+        <div class="iw iw-focus">
+          <iframe src="https://www.tuttocampo.it/WidgetV2/ProssimaPartita/d41c0700-615d-42f3-87cb-681f333839cf"
+            scrolling="no" frameborder="0" loading="lazy" title="Prossima Partita"
+            sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+        </div>
+      </div>
+
+      <div class="mc-tabs-nav" role="tablist">
+        <button class="mc-tab-btn active" role="tab" data-target="mct-classifica" aria-selected="true">Classifica</button>
+        <button class="mc-tab-btn" role="tab" data-target="mct-risultati" aria-selected="false">Risultati</button>
+        <button class="mc-tab-btn" role="tab" data-target="mct-marcatori" aria-selected="false">Marcatori</button>
+      </div>
+
+      <div id="mct-classifica" class="mc-tab-content active">
+        <div class="iw iw-classifica">
+          <iframe src="https://www.tuttocampo.it/WidgetV2/Classifica/d41c0700-615d-42f3-87cb-681f333839cf"
+            scrolling="no" frameborder="0" loading="lazy" title="Classifica C2 Girone A"
+            sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+        </div>
+      </div>
+      <div id="mct-risultati" class="mc-tab-content">
+        <div class="iw iw-risultati">
+          <iframe src="https://www.tuttocampo.it/WidgetV2/Calendario/d41c0700-615d-42f3-87cb-681f333839cf"
+            scrolling="no" frameborder="0" loading="lazy" title="Risultati C2 Girone A"
+            sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+        </div>
+      </div>
+      <div id="mct-marcatori" class="mc-tab-content">
+        <div class="iw iw-marcatori">
+          <iframe src="https://www.tuttocampo.it/WidgetV2/Marcatori/4a1d8ca0-be13-41f4-b448-17905479c6e0"
+            scrolling="no" frameborder="0" loading="lazy" title="Marcatori Campionato Serie D"
+            sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="fi" style="transition-delay:.14s">
+      <p class="mc-col-title">📊 Statistiche Giocatori</p>
+      <div class="stats-box">
+        <div class="stats-box-header">
+          <span>⚽ Stagione 2024/25</span>
+          <select class="stats-sel" id="statsTeamSel" aria-label="Seleziona squadra">
+            <option value="prima">Prima Squadra – C2</option>
+            <option value="seconda">Seconda Squadra – Serie D</option>
+          </select>
+        </div>
+        <div class="stats-scroll">
+          <table class="stats-tbl" id="statsTbl" aria-label="Statistiche giocatori">
+            <thead>
+              <tr>
+                <th data-idx="1" style="min-width:155px">Giocatore</th>
+                <th data-idx="3">Pres.</th>
+                <th data-idx="4">Gol</th>
+                <th data-idx="5">Assist</th>
+                <th data-idx="6">Amm.</th>
+              </tr>
+            </thead>
+            <tbody id="statsTbody"></tbody>
+          </table>
+        </div>
+        <div class="stats-footer-note">
+          <span class="live-dot" aria-hidden="true"></span> Dati aggiornati manualmente
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SEZIONE 4 — KIT & DESIGN (Editorial Showcase)
+══════════════════════════════════════════════ -->
+<section id="scene2" aria-labelledby="kit-h">
+  <div class="scene2-header">
+    <p class="sec-label">Collezione Ufficiale 2026/27</p>
+    <h2 class="sec-title" id="kit-h">Kit &amp; Design</h2>
+    <p class="scene2-sub">Progettato da Amos Arena · Prodotto da Erreà Sport</p>
+  </div>
+
+  <div class="kit-credit-bar fi">
+    <div class="kc-item"><span class="kc-lbl">Grafica ideata da</span><span class="kc-val designer">Amos Arena</span></div>
+    <div class="kc-item"><span class="kc-lbl">Produzione</span><span class="kc-val maker">Erreà Sport</span></div>
+    <div class="kc-item"><span class="kc-lbl">Stagione</span><span class="kc-val maker">2026 / 27</span></div>
+  </div>
+
+  <div class="kit-pin-wrapper" id="kitPinWrapper">
+    <div class="kit-pin-stage" id="kitPinStage">
+      <div class="kit-stage-grid" aria-hidden="true"></div>
+      <div class="kit-bg-type" id="kitBgType" aria-hidden="true">
+        <span class="kbt-word" data-kit="0">HOME<br>KIT</span>
+        <span class="kbt-word" data-kit="1">AWAY<br>KIT</span>
+        <span class="kbt-word" data-kit="2">THIRD<br>KIT</span>
+      </div>
+      <div class="kit-progress" id="kitProgress" aria-hidden="true">
+        <span class="kp-dot active" data-idx="0"></span>
+        <span class="kp-dot" data-idx="1"></span>
+        <span class="kp-dot" data-idx="2"></span>
+      </div>
+
+      <!-- KIT 0 — HOME -->
+      <article class="kit-panel fi" data-kit="0" data-side="right">
+        <figure class="kit-full">
+          <img src="divisa_home_sanbiagio_web.png" alt="Prima divisa San Biagio 1995 – maglia Home rossa" class="kit-full-img" loading="lazy" decoding="async">
+        </figure>
+        <div class="kit-macro cut-a">
+          <div class="kit-macro-media">
+            <img src="home-macro.webp" alt="Dettaglio tessuto maglia Home" class="kit-macro-img" loading="lazy" decoding="async">
+          </div>
+          <div class="kit-macro-caption">
+            <span class="kmc-idx">01 — 03</span>
+            <h3 class="kmc-title">Home</h3>
+            <p class="kmc-text">Il rosso che da sempre rappresenta il quartiere. Texture tecnica a nido d'ape, colletto a polo e inserti bianchi sulle maniche.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- KIT 1 — AWAY -->
+      <article class="kit-panel fi" data-kit="1" data-side="left" style="transition-delay:.08s">
+        <figure class="kit-full">
+          <img src="divisa_away_sanbiagio_web.png" alt="Seconda divisa San Biagio 1995 – maglia Away bianca" class="kit-full-img" loading="lazy" decoding="async">
+        </figure>
+        <div class="kit-macro cut-b">
+          <div class="kit-macro-media">
+            <img src="away-macro.webp" alt="Dettaglio tessuto maglia Away" class="kit-macro-img" loading="lazy" decoding="async">
+          </div>
+          <div class="kit-macro-caption">
+            <span class="kmc-idx">02 — 03</span>
+            <h3 class="kmc-title">Away</h3>
+            <p class="kmc-text">Bianco essenziale per le gare in trasferta. Profili blu e rossi a richiamare i colori sociali, taglio sartoriale slim-fit.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- KIT 2 — THIRD -->
+      <article class="kit-panel fi" data-kit="2" data-side="right" style="transition-delay:.16s">
+        <figure class="kit-full">
+          <img src="divisa_third_sanbiagio_web.png" alt="Terza divisa San Biagio 1995 – maglia Third nera" class="kit-full-img" loading="lazy" decoding="async">
+        </figure>
+        <div class="kit-macro cut-c">
+          <div class="kit-macro-media">
+            <img src="third-macro.webp" alt="Dettaglio tessuto maglia Third" class="kit-macro-img" loading="lazy" decoding="async">
+          </div>
+          <div class="kit-macro-caption">
+            <span class="kmc-idx">03 — 03</span>
+            <h3 class="kmc-title">Third</h3>
+            <p class="kmc-text">Nero opaco con dettagli oro, special edition. Una divisa fuori dagli schemi per le occasioni speciali.</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SEZIONE 5 — NEWS
+══════════════════════════════════════════════ -->
+<section id="news" aria-labelledby="news-h">
+  <div class="news-header">
+    <p class="sec-label">Ultime notizie</p>
+    <h2 class="sec-title" id="news-h">News</h2>
+  </div>
+
+  <div class="news-grid">
+    <article class="card featured fi">
+      <div class="card-acc"></div>
+      <div class="card-vis" aria-hidden="true">
+        <span class="card-vis-txt">C1</span>
+        <span class="card-vis-lbl">Aggiornamento campionato</span>
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Campionato</span>
+        <p class="card-date">12 Giugno 2025</p>
+        <h3 class="card-title">La C1 è a due punti: il San Biagio 1995 A.S.D. non si ferma più</h3>
+        <p class="card-excerpt">Cinque vittorie consecutive, un girone di ritorno da manuale e una classifica che, per la prima volta nella storia del club, sorride davvero. I rossoblu si trovano a soli due punti dalla promozione diretta in C1 — il traguardo inseguito da tre stagioni.</p>
+        <a href="#" class="card-link">Leggi tutto</a>
+      </div>
+    </article>
+
+    <article class="card mini fi" style="transition-delay:.1s">
+      <div class="card-acc"></div>
+      <div class="card-body">
+        <span class="card-tag">Risultato</span>
+        <p class="card-date">8 Giugno 2025</p>
+        <h3 class="card-title">San Biagio 5–2 Lissone</h3>
+        <p class="card-excerpt">Quinta vittoria di fila. Doppietta di Conti, reti di Gallo, Romano e Martini. Domenica al PalaMonza da tutto esaurito.</p>
+        <a href="#" class="card-link">Leggi tutto</a>
+      </div>
+    </article>
+
+    <article class="card mini fi" style="transition-delay:.2s">
+      <div class="card-acc"></div>
+      <div class="card-body">
+        <span class="card-tag">Kit Ufficiale</span>
+        <p class="card-date">3 Giugno 2025</p>
+        <h3 class="card-title">Svelate le nuove divise 2026/27</h3>
+        <p class="card-excerpt">Presentato il nuovo kit ufficiale progettato da Amos Arena e prodotto da Erreà Sport. Design che richiama l'identità storica del quartiere.</p>
+        <a href="#scene2" class="card-link">Scopri il Kit</a>
+      </div>
+    </article>
+
+    <article class="card mini fi" style="transition-delay:.3s">
+      <div class="card-acc"></div>
+      <div class="card-body">
+        <span class="card-tag">Settore Giovanile</span>
+        <p class="card-date">25 Maggio 2025</p>
+        <h3 class="card-title">Under 17 ai quarti regionali</h3>
+        <p class="card-excerpt">Il vivaio cresce. La Seconda Squadra e l'Under 17 staccano il biglietto per i quarti del Campionato Regionale Lombardo.</p>
+        <a href="#" class="card-link">Leggi tutto</a>
+      </div>
+    </article>
+
+    <article class="card mini fi" style="transition-delay:.4s">
+      <div class="card-acc"></div>
+      <div class="card-body">
+        <span class="card-tag">Club</span>
+        <p class="card-date">18 Maggio 2025</p>
+        <h3 class="card-title">Media Kit sponsorizzazioni 2026/27</h3>
+        <p class="card-excerpt">Disponibile il nuovo media kit per i potenziali sponsor della stagione 2026/27. Contattaci per maggiori informazioni.</p>
+        <a href="#contatti" class="card-link">Contattaci</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SEZIONE 6 — SPONSOR (infinite ticker)
+══════════════════════════════════════════════ -->
+<section id="sponsor" aria-labelledby="sponsor-h">
+  <div class="sponsor-header">
+    <p class="sec-label">I nostri partner</p>
+    <h2 class="sec-title" id="sponsor-h">Sponsor</h2>
+    <p class="sponsor-intro">Grazie a chi crede in noi ogni stagione. Sei interessato a diventare sponsor del San Biagio 1995 A.S.D.? Contattaci per ricevere il media kit.</p>
+  </div>
+
+  <!-- Ticker: due copie identiche → translateX(-50%) = loop seamless -->
+  <div class="ticker-outer" aria-hidden="true">
+    <div class="ticker-track">
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-red">Sponsor Principale</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Sponsor Tecnico</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+      <!-- Set 2 — duplicato per il loop -->
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-red">Sponsor Principale</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Sponsor Tecnico</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+      <a href="#contatti" class="ticker-item"><span class="ti-main ti-blue">Partner</span><span class="ti-sub">Spazio disponibile</span></a>
+    </div>
+  </div>
+
+  <div class="sponsor-cta">
+    <p>Vuoi far crescere il tuo brand associandolo a San Biagio 1995 A.S.D.?</p>
+    <a href="#contatti" class="btn-cta">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 7L7 13M13 7H1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Richiedi il Media Kit
+    </a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SEZIONE 7 — CONTATTI
+══════════════════════════════════════════════ -->
+<section id="contatti" aria-labelledby="contatti-h">
+  <div class="contatti-header fi">
+    <p class="sec-label">Vieni a trovarci</p>
+    <h2 class="sec-title" id="contatti-h">Contatti</h2>
+    <p class="contatti-sub">San Biagio 1995 A.S.D. · Futsal · Verano Brianza (MB)</p>
+  </div>
+
+  <div class="contacts-grid fi" style="transition-delay:.1s">
+    <div class="ci">
+      <div class="ci-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2C7.69 2 5 4.69 5 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.31-2.69-6-6-6z" stroke="rgba(255,255,255,.7)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="8" r="2" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/></svg>
+      </div>
+      <span class="ci-lbl">Palazzetto</span>
+      <a href="https://www.google.com/maps/search/?api=1&query=Sportitalia+Village+Via+Dante+Alighieri+18+Verano+Brianza" target="_blank" rel="noopener noreferrer" class="ci-val">Sportitalia Village</a>
+      <span class="ci-sub">Via Dante Alighieri 18, Verano Brianza (MB) 20843</span>
+    </div>
+    <div class="ci">
+      <div class="ci-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="5" width="18" height="13" rx="2" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/><path d="M2 7l9 6 9-6" stroke="rgba(255,255,255,.7)" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+      <span class="ci-lbl">Email</span>
+      <a href="mailto:info@sanbiagiomonza.it" class="ci-val">info@sanbiagiomonza.it</a>
+      <span class="ci-sub">Risposta entro 48 ore</span>
+    </div>
+    <div class="ci">
+      <div class="ci-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M6.5 2h3l1.5 4-2 1.2A11.1 11.1 0 0014.8 14l1.2-2 4 1.5v3C20 17.9 18 20 16 20 8.3 20 2 13.7 2 6c0-2 2.1-4 4.5-4z" stroke="rgba(255,255,255,.7)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="ci-lbl">Telefono / WhatsApp</span>
+      <a href="tel:+393331234567" class="ci-val">+39 333 123 4567</a>
+      <span class="ci-sub">Segreteria: lun–ven 17–20</span>
+    </div>
+    <div class="ci">
+      <div class="ci-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/><polygon points="11,5 13.5,8.5 17.5,8.5 15.5,12 17,16 11,13.5 5,16 6.5,12 4.5,8.5 8.5,8.5" stroke="rgba(255,255,255,.7)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="ci-lbl">Allenamenti</span>
+      <span class="ci-val">Lunedì – Mercoledì</span>
+      <span class="ci-sub">Ore 21:30 – 23:00</span>
+    </div>
+    <div class="ci">
+      <div class="ci-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M6 2h10v8a5 5 0 01-10 0V2z" stroke="rgba(255,255,255,.7)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 5H3.5A2.5 2.5 0 016 7.5M16 5h2.5A2.5 2.5 0 0116 7.5" stroke="rgba(255,255,255,.7)" stroke-width="1.4" stroke-linecap="round"/><path d="M11 15v3M8 20h6" stroke="rgba(255,255,255,.7)" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+      <span class="ci-lbl">Affiliazione</span>
+      <span class="ci-val">FIGC – LNFS</span>
+      <span class="ci-sub">Serie C2 &amp; Serie D · Lombardia</span>
+    </div>
+    <div class="ci">
+      <div class="ci-icon-wrap" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="18" height="18" rx="5" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/><circle cx="11" cy="11" r="4" stroke="rgba(255,255,255,.7)" stroke-width="1.4"/><circle cx="16.5" cy="5.5" r="1" fill="rgba(255,255,255,.7)"/></svg>
+      </div>
+      <span class="ci-lbl">Instagram</span>
+      <a href="https://www.instagram.com/sanbiagiomonza1995/" target="_blank" rel="noopener noreferrer" class="ci-val">@sanbiagiomonza1995</a>
+      <span class="ci-sub">Segui la pagina ufficiale del club</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="" class="footer-logo-img" width="26" height="26" onerror="this.style.display='none'" aria-hidden="true">
+      San <span class="rb">Biagio</span> <span class="rb">1995</span> A.S.D. Futsal
+    </div>
+    <ul class="footer-links" role="list">
+      <li><a href="#scene3">Squadra</a></li>
+      <li><a href="#match-center">Risultati</a></li>
+      <li><a href="#scene2">Kit</a></li>
+      <li><a href="#news">News</a></li>
+      <li><a href="#sponsor">Sponsor</a></li>
+      <li><a href="#contatti">Contatti</a></li>
+      <li><a href="#">Privacy</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2026 A.S.D. San Biagio 1995 &middot; Tutti i diritti riservati &middot; P.IVA 00000000000</div>
+    <div class="footer-designer" aria-label="Sito progettato da Amos Arena">
+      <span class="fd-dot" aria-hidden="true"></span>
+      Design &amp; Kit concept <strong>Amos Arena</strong>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT — senza sw.js, senza manifest.json
+══════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  // ── Registrazione GSAP plugins ─────────────────────────────
+  gsap.registerPlugin(ScrollTrigger);
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ────────────────────────────────────────────────────────────
+  // 1. HERO ENTRANCE ANIMATION
+  //    Gli elementi hero partono opacity:0 in CSS (scelta deliberata:
+  //    serve l'animazione di ingresso sequenziale). GSAP li rivela.
+  // ────────────────────────────────────────────────────────────
+  (function heroEntrance() {
+    var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl.to('#heroLogo',   { opacity: 1, y: 0, duration: .9, delay: .15 })
+      .to('#heroEyebrow',{ opacity: 1, y: 0, duration: .8 }, '-=.55')
+      .to('#heroTitle',  { opacity: 1, y: 0, duration: 1.0 }, '-=.55')
+      .to('#heroBar',    { opacity: 1, duration: .7 }, '-=.5')
+      .to('#heroSub',    { opacity: 1, y: 0, duration: .8 }, '-=.55')
+      .to('#heroStats',  { opacity: 1, duration: .7 }, '-=.4')
+      .to('#heroBadge',  { opacity: 1, duration: .7 }, '-=.3');
+  })();
+
+  // ────────────────────────────────────────────────────────────
+  // 2. TUNNEL TIPOGRAFICO (GSAP pin su scroll)
+  //    La "telecamera" zooma dentro al titolo SVG.
+  // ────────────────────────────────────────────────────────────
+  if (!reducedMotion) {
+    var tunnelTL = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#scene1-wrapper',
+        start: 'top top',
+        end: '+=220%',
+        pin: true,
+        scrub: 1.2,
+        anticipatePin: 1
+      }
+    });
+    tunnelTL
+      .to('#heroLogo',    { opacity: 0, y: -30, duration: .35 }, 0)
+      .to('#heroEyebrow', { opacity: 0, y: -20, duration: .30 }, 0)
+      .to('#heroBar',     { opacity: 0,         duration: .30 }, 0)
+      .to('#heroSub',     { opacity: 0, y: -15, duration: .30 }, 0)
+      .to('#heroStats',   { opacity: 0, y: -10, duration: .30 }, 0)
+      .to('#heroBadge',   { opacity: 0,         duration: .25 }, 0)
+      .to('.hero-scroll', { opacity: 0,         duration: .20 }, 0)
+      .to('.hero-panel',  { opacity: 0,         duration: .40 }, 0)
+      .to('.field-grid',  { opacity: 0,         duration: .50 }, 0.05)
+      .to('.field-circle',{ opacity: 0,         duration: .30 }, 0.05)
+      .to('.hero-orb',    { opacity: 0,         duration: .40 }, 0);
+    tunnelTL
+      .to('#heroTitleWrap', {
+        scale: 38, opacity: 0, duration: .65, ease: 'power2.in', transformOrigin: 'center center'
+      }, 0.20);
+    tunnelTL
+      .to('#tunnel-overlay', { opacity: 1, duration: .4, ease: 'power2.inOut' }, 0.58);
+  }
+
+  // ────────────────────────────────────────────────────────────
+  // 3. KIT SHOWCASE (pin + scroll orizzontale con matchMedia)
+  // ────────────────────────────────────────────────────────────
+  (function initKitShowcase() {
+    var kitWrapper = document.getElementById('kitPinWrapper');
+    var kitStage   = document.getElementById('kitPinStage');
+    if (!kitWrapper || !kitStage) return;
+    if (reducedMotion) return;
+
+    kitStage.classList.add('kit-pin-mode');
+
+    var panels  = gsap.utils.toArray('.kit-panel', kitStage);
+    var bgWords = gsap.utils.toArray('.kbt-word',  kitStage);
+    var dots    = gsap.utils.toArray('.kp-dot',    kitStage);
+
+    function setActiveDot(idx) {
+      dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+    }
+
+    var mm = gsap.matchMedia();
+    mm.add({ isDesktop: '(min-width: 801px)', isMobile: '(max-width: 800px)' }, function(ctx) {
+      var isMobile = ctx.conditions.isMobile;
+
+      gsap.set(bgWords, { opacity: 0, scale: 1.08 });
+      gsap.set(bgWords[0], { opacity: 1, scale: 1 });
+      setActiveDot(0);
+
+      panels.forEach(function(panel, i) {
+        var full    = panel.querySelector('.kit-full-img');
+        var macro   = panel.querySelector('.kit-macro');
+        var caption = panel.querySelector('.kit-macro-caption');
+        var dir     = panel.dataset.side === 'left' ? -1 : 1;
+        if (i === 0) {
+          gsap.set(full, { opacity: 1, scale: 1, x: 0, y: 0 });
+        } else if (isMobile) {
+          gsap.set(full, { opacity: 0, scale: .86, y: '12vh', x: 0 });
+        } else {
+          gsap.set(full, { opacity: 0, scale: .86, x: 0, y: 0 });
+        }
+        gsap.set(caption, { opacity: 0, y: 16 });
+        gsap.set(macro, isMobile ? { yPercent: 100, opacity: 1 } : { xPercent: dir * 100, opacity: 1 });
+      });
+
+      var tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: kitWrapper, start: 'top top',
+          end: '+=' + (panels.length * 200) + '%',
+          pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true,
+          onUpdate: function(self) {
+            var idx = Math.min(panels.length - 1, Math.floor(self.progress * panels.length));
+            setActiveDot(idx);
+          }
+        }
+      });
+
+      panels.forEach(function(panel, i) {
+        var base    = i;
+        var full    = panel.querySelector('.kit-full-img');
+        var macro   = panel.querySelector('.kit-macro');
+        var caption = panel.querySelector('.kit-macro-caption');
+        var dir     = panel.dataset.side === 'left' ? -1 : 1;
+        var bg      = bgWords[i];
+        var hasNext = !!panels[i + 1];
+
+        if (i > 0) {
+          tl.to(full, isMobile
+            ? { y: 0, scale: 1, opacity: 1, duration: .3, ease: 'power2.out' }
+            : { x: 0, y: 0, scale: 1, opacity: 1, duration: .3, ease: 'power2.out' }, base);
+          tl.to(bg, { opacity: 1, scale: 1, duration: .3, ease: 'power2.out' }, base);
+        }
+
+        var p1 = base + .35;
+        if (isMobile) {
+          tl.to(full,  { y: '-16vh', scale: .74, duration: .3, ease: 'power2.inOut' }, p1);
+          tl.to(macro, { yPercent: 0, duration: .34, ease: 'power3.out' }, p1 + .02);
+        } else {
+          tl.to(full,  { x: (dir * -22) + 'vw', scale: 1.12, duration: .3, ease: 'power2.inOut' }, p1);
+          tl.to(macro, { xPercent: 0, duration: .34, ease: 'power3.out' }, p1 + .02);
+        }
+        tl.to(caption, { opacity: 1, y: 0, duration: .26, ease: 'power2.out' }, p1 + .16);
+        tl.to(bg, { opacity: .32, scale: 1.05, duration: .3, ease: 'power2.inOut' }, p1);
+
+        if (hasNext) {
+          var p2 = base + .82;
+          if (isMobile) {
+            tl.to(full, { y: '-28vh', scale: .6, opacity: 0, duration: .16, ease: 'power1.in' }, p2);
+          } else {
+            tl.to(full, { x: (dir * -34) + 'vw', scale: 1.22, opacity: 0, duration: .16, ease: 'power1.in' }, p2);
+          }
+          tl.to([macro, caption], { opacity: 0, duration: .15, ease: 'power1.in' }, p2);
+          tl.to(bg, { opacity: 0, duration: .14 }, p2);
+        }
+      });
+    });
+  })();
+
+  // ────────────────────────────────────────────────────────────
+  // 4. PLAYER CARDS — Fan Entry + Holographic Foil
+  //    DEFENSIVE DESIGN: .pc non ha opacity:0 in CSS.
+  //    gsap.set() imposta lo stato iniziale PRIMA che le card
+  //    siano visibili a schermo (sono sotto il fold).
+  //    Se GSAP non funziona → card visibili per default ✓
+  // ────────────────────────────────────────────────────────────
+  function animateFan(gridId) {
+    var cards = document.querySelectorAll('#' + gridId + ' .pc');
+    var total = cards.length;
+
+    // Calcola angoli fan e imposta stato iniziale via GSAP (non CSS)
+    cards.forEach(function(c, i) {
+      var mid = (total - 1) / 2;
+      var fanAngle = (i - mid) * 2.8;
+      c.style.setProperty('--fan-rot', fanAngle + 'deg');
+    });
+    gsap.set(cards, { opacity: 0, y: 80, rotate: 'var(--fan-rot)' });
+
+    ScrollTrigger.create({
+      trigger: '#' + gridId,
+      start: 'top 85%',
+      once: true,
+      onEnter: function() {
+        gsap.to(cards, {
+          opacity: 1, y: 0, rotate: 0,
+          duration: .9,
+          stagger: { amount: 1.1, from: 'center' },
+          ease: 'back.out(1.4)'
+        });
+      }
+    });
+  }
+  animateFan('gridPrima');
+  animateFan('gridSeconda');
+
+  // Foil olografico e 3D tilt al passaggio del mouse
+  document.querySelectorAll('.pc:not(.pc-staff)').forEach(function(card) {
+    var foil = document.createElement('div');
+    foil.className = 'pc-foil';
+    card.appendChild(foil);
+
+    var eaOv = document.createElement('div');
+    eaOv.className = 'pc-ea-overlay';
+    card.insertBefore(eaOv, card.firstChild);
+
+    var vid = document.createElement('video');
+    vid.className = 'pc-bg-media';
+    vid.muted = true; vid.loop = true; vid.playsInline = true;
+    card.insertBefore(vid, card.firstChild);
+
+    card.addEventListener('mousemove', function(e) {
+      var r = card.getBoundingClientRect();
+      var px = ((e.clientX - r.left) / r.width * 100).toFixed(1);
+      var py = ((e.clientY - r.top)  / r.height * 100).toFixed(1);
+      foil.style.background = 'radial-gradient(circle at ' + px + '% ' + py + '%, ' +
+        'rgba(255,80,120,.28) 0%, rgba(80,80,255,.22) 25%, ' +
+        'rgba(80,220,200,.18) 50%, rgba(255,200,80,.12) 70%, transparent 90%)';
+      var rx = ((e.clientY - r.top)  / r.height - .5) * -14;
+      var ry = ((e.clientX - r.left) / r.width  - .5) *  14;
+      gsap.to(card, { rotateX: rx, rotateY: ry, duration: .3, ease: 'power2.out', transformPerspective: 500, transformOrigin: 'center center' });
+    });
+    card.addEventListener('mouseleave', function() {
+      foil.style.background = '';
+      gsap.to(card, { rotateX: 0, rotateY: 0, duration: .5, ease: 'elastic.out(1,.6)' });
+    });
+    card.addEventListener('click', function() {
+      if (window.matchMedia('(hover:hover)').matches) return;
+      card.classList.toggle('t-hover');
+    });
+    card.addEventListener('mouseenter', function() {
+      if (vid.src && vid.src !== window.location.href) vid.play().catch(function(){});
+    });
+    card.addEventListener('mouseleave', function() {
+      if (vid.readyState > 0) { vid.pause(); vid.currentTime = 0; }
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────
+  // 5. SCROLL REVEAL GENERICO (.fi)
+  //    DEFENSIVE DESIGN: lo stato iniziale è impostato via
+  //    gsap.set() (additivo), NON tramite CSS opacity:0.
+  //    Se GSAP fallisce → elementi visibili ✓
+  // ────────────────────────────────────────────────────────────
+  var revealEls = gsap.utils.toArray('.fi');
+  revealEls.forEach(function(el) {
+    gsap.set(el, { opacity: 0, y: 26 }); // stato iniziale via JS
+  });
+
+  var revealObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        gsap.to(e.target, { opacity: 1, y: 0, duration: .75, ease: 'power3.out', clearProps: 'transform' });
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  revealEls.forEach(function(el) { revealObs.observe(el); });
+
+  // ────────────────────────────────────────────────────────────
+  // 6. NAV SCROLL TINT
+  // ────────────────────────────────────────────────────────────
+  var mainNav = document.getElementById('mainNav');
+  window.addEventListener('scroll', function() {
+    mainNav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // ────────────────────────────────────────────────────────────
+  // 7. HAMBURGER + MOBILE OVERLAY
+  // ────────────────────────────────────────────────────────────
+  var ham        = document.getElementById('ham');
+  var mobOverlay = document.getElementById('mobOverlay');
+  var mobClose   = document.getElementById('mobCloseBtn');
+
+  function toggleMenu(open) {
+    ham.classList.toggle('open', open);
+    ham.setAttribute('aria-expanded', String(open));
+    ham.setAttribute('aria-label', open ? 'Chiudi menu' : 'Apri menu');
+    mobOverlay.classList.toggle('open', open);
+    mobOverlay.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  ham.addEventListener('click', function() { toggleMenu(!ham.classList.contains('open')); });
+  if (mobClose) mobClose.addEventListener('click', function() { toggleMenu(false); });
+  mobOverlay.querySelectorAll('[data-close]').forEach(function(l) {
+    l.addEventListener('click', function() { toggleMenu(false); });
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && mobOverlay.classList.contains('open')) toggleMenu(false);
+  });
+
+  // ────────────────────────────────────────────────────────────
+  // 8. COUNTER ANIMATION (hero stats)
+  // ────────────────────────────────────────────────────────────
+  function animCount(el, target, dur) {
+    var start = performance.now();
+    (function step(now) {
+      var p = Math.min((now - start) / dur, 1);
+      var ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(ease * target);
+      if (p < 1) requestAnimationFrame(step);
+    })(performance.now());
+  }
+  var counterObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        animCount(e.target, parseInt(e.target.dataset.to, 10), 1600);
+        counterObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.count').forEach(function(el) { counterObs.observe(el); });
+
+  // ────────────────────────────────────────────────────────────
+  // 9. SQUAD TABS
+  // ────────────────────────────────────────────────────────────
+  var sqTabs   = document.querySelectorAll('.sq-tab');
+  var sqPanels = document.querySelectorAll('.tab-panel');
+  sqTabs.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = btn.getAttribute('aria-controls');
+      sqTabs.forEach(function(b)  { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      sqPanels.forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected','true');
+      var panel = document.getElementById(targetId);
+      if (panel) {
+        panel.classList.add('active');
+        ScrollTrigger.refresh();
+      }
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────
+  // 10. MATCH CENTER TABS
+  // ────────────────────────────────────────────────────────────
+  var mcBtns     = document.querySelectorAll('.mc-tab-btn');
+  var mcContents = document.querySelectorAll('.mc-tab-content');
+  mcBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var target = btn.getAttribute('data-target');
+      mcBtns.forEach(function(b)    { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      mcContents.forEach(function(c){ c.classList.remove('active'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected','true');
+      var el = document.getElementById(target);
+      if (el) { el.classList.add('active'); ScrollTrigger.refresh(); }
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────
+  // 11. STATISTICHE GIOCATORI
+  //     Dati da index000.html (7 colonne: num,nome,ruolo,pres,gol,assist,amm)
+  //     Array chiuso e sintatticamente corretto.
+  // ────────────────────────────────────────────────────────────
+  (function() {
+    var statsData = {
+      prima: [
+        [ 1,'Renna Niccolò',  'Portiere',25, 2, 1, 0],
+        [12,'Petro Matteo',   'Portiere', 0, 0, 0, 0],
+        [77,'Arena Amos',     'Portiere', 1, 0, 0, 0],
+        [ 3,'Porta Alessandro','Centrale',16, 1, 2, 2],
+        [ 4,'Martini Roberto', 'Centrale',17, 3, 4, 1],
+        [ 5,'Ferrari Luca',   'Centrale',15, 2, 3, 3],
+        [ 7,'Colombo Andrea', 'Centrale',14, 1, 2, 2],
+        [ 8,'Gallo Federico', 'Laterale',17, 7, 5, 1],
+        [ 9,'Conti Davide',   'Laterale',18,11, 6, 2],
+        [11,'Romano Matteo',  'Laterale',16, 6, 4, 0],
+        [14,'Villa Simone',   'Laterale',10, 2, 1, 0],
+        [ 6,'Bruno Alessandro','Pivot',  17, 5, 7, 1],
+        [10,'Ricci Simone',   'Pivot',   18,14, 9, 1],
+        [13,'Greco Thomas',   'Pivot',   13, 4, 3, 0]
+      ],
+      seconda: [
+        [ 1,'Arena Amos',     'Portiere',14, 0, 0, 0],
+        [16,'Fusi Diego',     'Portiere', 6, 0, 0, 0],
+        [ 3,'Conti Alberto',  'Centrale',13, 1, 1, 1],
+        [ 4,'Sanna Marco',    'Centrale',12, 2, 3, 2],
+        [ 5,'Rizzo Paolo',    'Centrale',11, 0, 2, 1],
+        [ 7,'Moreno Cristian','Centrale',10, 1, 1, 3],
+        [ 8,'Ricci Lorenzo',  'Laterale',14, 5, 3, 0],
+        [ 9,'Greco Mattia',   'Laterale',13, 4, 2, 1],
+        [11,'Ferrari Giovanni','Laterale',12, 3, 4, 0],
+        [14,'Bruno Filippo',  'Laterale', 9, 2, 1, 0],
+        [ 6,'Sala Kevin',     'Pivot',   14, 6, 4, 0],
+        [10,'Arena Jacopo',   'Pivot',   13, 8, 5, 1],
+        [12,'Neri Edoardo',   'Pivot',   11, 3, 2, 0]
+      ]
+    };
+
+    var team = 'prima', sortIdx = 4, sortDir = -1;
+
+    function renderTable(t) {
+      var tbody = document.getElementById('statsTbody');
+      if (!tbody) return;
+      var maxGol = Math.max.apply(null, statsData[t].map(function(r){ return r[4]; }));
+      var sorted = statsData[t].slice().sort(function(a, b) {
+        var av = a[sortIdx], bv = b[sortIdx];
+        return av === bv ? 0 : (av > bv ? 1 : -1) * sortDir;
+      });
+      tbody.innerHTML = sorted.map(function(r) {
+        var top  = r[4] === maxGol && r[4] > 0;
+        var ini  = r[1].split(' ').map(function(n){ return n[0]; }).join('').slice(0,2);
+        var gcls = r[4] > 0 ? 'sv gol' : 'sv zero';
+        var acls = r[6] >= 3 ? 'sv amm-r' : '';
+        return '<tr' + (top ? ' class="is-top"' : '') + '>' +
+          '<td><div class="p-cell"><div class="p-avatar">' + ini + '</div>' +
+          '<span class="p-cell-name">' + r[1] + '</span>' +
+          '<span class="p-num-badge">#' + String(r[0]).padStart(2,'0') + '</span></div></td>' +
+          '<td>' + r[3] + '</td>' +
+          '<td><span class="' + gcls + '">' + r[4] + '</span></td>' +
+          '<td>' + r[5] + '</td>' +
+          '<td>' + (acls ? '<span class="' + acls + '">' + r[6] + '</span>' : r[6]) + '</td></tr>';
+      }).join('');
+    }
+
+    document.querySelectorAll('.stats-tbl th').forEach(function(th) {
+      th.addEventListener('click', function() {
+        var col = parseInt(th.dataset.idx, 10);
+        sortDir = col === sortIdx ? sortDir * -1 : -1;
+        sortIdx = col;
+        document.querySelectorAll('.stats-tbl th').forEach(function(t){ t.classList.remove('s-asc','s-desc'); });
+        th.classList.add(sortDir === -1 ? 's-desc' : 's-asc');
+        renderTable(team);
+      });
+    });
+
+    var sel = document.getElementById('statsTeamSel');
+    if (sel) sel.addEventListener('change', function() { team = sel.value; renderTable(team); });
+
+    var thGol = document.querySelector('.stats-tbl th[data-idx="4"]');
+    if (thGol) thGol.classList.add('s-desc');
+
+    renderTable(team);
+  })();
+
+})();
+</script>
+</body>
+</html>
