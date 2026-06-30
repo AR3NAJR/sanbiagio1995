@@ -235,16 +235,19 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 
 /* ============================================================
    SEZIONE 2 — SQUADRA (#scene3)
-   4 colonne desktop. Mobile: card figurina stile Panini.
+   Struttura da index_da_rivedere_dopo.html — copia conforme.
+   CSS responsive unificato (breakpoint conflicts risolti).
 ============================================================ */
 #scene3{
-  position:relative;background:var(--ink);
-  padding:8rem clamp(1.5rem,5vw,4.5rem) 7rem;overflow:hidden;
+  position:relative;
+  background:var(--ink2);
+  padding:8rem clamp(1.5rem,5vw,4.5rem) 7rem;
+  overflow:hidden;
 }
 #scene3::before{
-  content:'ROSA';position:absolute;right:-.03em;top:50%;
-  transform:translateY(-50%);
-  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22vw;line-height:1;
+  content:'ROSA';position:absolute;right:-.03em;top:50%;transform:translateY(-50%);
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:22vw;line-height:1;
   color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.02);
   user-select:none;pointer-events:none;
 }
@@ -252,13 +255,21 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 #scene3 .sec-title{color:var(--white);}
 
 /* Tab squadra */
-.squad-tabs{display:flex;width:fit-content;margin:0 auto 2.5rem;border-bottom:1.5px solid rgba(255,255,255,.07);position:relative;z-index:2;}
+.squad-tabs{
+  display:flex;width:fit-content;margin:0 auto 2.5rem;
+  border-bottom:1.5px solid rgba(255,255,255,.07);
+  position:relative;z-index:2;
+}
 .sq-tab{
   font-family:'Barlow Condensed',sans-serif;font-weight:800;
   font-size:clamp(.76rem,1.6vw,.96rem);letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(255,255,255,.32);padding:.8rem 2rem .9rem;position:relative;transition:color .25s;
+  color:rgba(255,255,255,.32);
+  padding:.8rem 2rem .9rem;position:relative;transition:color .25s;
 }
-.sq-tab::after{content:'';position:absolute;bottom:-1.5px;left:0;width:0;height:1.5px;background:var(--red);transition:width .3s;}
+.sq-tab::after{
+  content:'';position:absolute;bottom:-1.5px;left:0;
+  width:0;height:1.5px;background:var(--red);transition:width .3s;
+}
 .sq-tab.active{color:var(--white);}
 .sq-tab.active::after{width:100%;}
 .sq-tab:hover:not(.active){color:rgba(255,255,255,.65);}
@@ -268,7 +279,11 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 
 /* Legenda ruoli */
 .role-leg{display:flex;gap:1.2rem 2rem;flex-wrap:wrap;margin-bottom:2rem;justify-content:center;}
-.rdot{display:flex;align-items:center;gap:6px;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.32);}
+.rdot{
+  display:flex;align-items:center;gap:6px;
+  font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.32);
+}
 .rdot::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .rdot.portiere::before{background:#FFD700;}
 .rdot.centrale::before{background:var(--blue-md);}
@@ -276,62 +291,114 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 .rdot.pivot::before{background:#FF6B8A;}
 .rdot.staff::before{background:#B0A0FF;}
 
-/* Griglia squadra: 4 colonne desktop */
-.squad-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;max-width:1300px;margin:0 auto;}
-
 /*
- * DEFENSIVE DESIGN: .pc NON ha opacity:0 nel CSS.
+ * DEFENSIVE DESIGN: .pc non ha opacity:0 nel CSS.
  * animateFan() imposta lo stato iniziale via gsap.set() (additivo).
- * Se JS fallisce: le card sono visibili e leggibili immediatamente.
+ * Se JS fallisce le card restano visibili per default.
+ *
+ * Grid auto-fill: fluida da 4 a 3 col senza breakpoint rigidi.
  */
+.squad-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:1.25rem;
+  max-width:1200px;
+  margin:0 auto;
+}
+
+/* ---- Card figurina — aspect-ratio come fondamento ---- */
 .pc{
-  background:rgba(255,255,255,.04);
+  background:rgba(6,6,14,0.6);
   border:1px solid rgba(255,255,255,.06);
-  border-radius:3px;padding:1.2rem 1rem 1rem;
-  position:relative;overflow:hidden;
-  transition:background .3s,border-color .3s,transform .3s;
+  border-radius:6px;
+  position:relative;
+  overflow:hidden;
+  transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;
   cursor:default;
+  width:100%;
+  aspect-ratio:3/4;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+}
+.pc:hover{
+  border-color:rgba(200,16,46,.4);
+  transform:translateY(-5px);
+  box-shadow:0 20px 48px rgba(0,0,0,.55);
 }
 .pc::before{
   content:'';position:absolute;top:0;left:0;
-  width:2px;height:0;background:linear-gradient(to bottom,var(--red),var(--blue-md));
+  width:3px;height:0;
+  background:linear-gradient(to bottom,var(--red),var(--blue-md));
   transition:height .35s;z-index:4;
 }
-.pc:hover{background:rgba(255,255,255,.07);border-color:rgba(200,16,46,.25);transform:translateY(-4px);}
 .pc:hover::before{height:100%;}
-.pc-num{
-  font-family:'Barlow Condensed',sans-serif;font-weight:900;
-  font-size:2.5rem;line-height:1;
-  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.1);
-  margin-bottom:.5rem;letter-spacing:-.02em;
-  position:relative;z-index:3;transition:-webkit-text-stroke-color .3s;
+
+/* Foto di sfondo — aggiungere src="percorso/immagine.jpg" manualmente */
+.pc-bg-photo{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+  opacity:.28;
+  transition:opacity .4s,transform .4s;
+  pointer-events:none;z-index:0;
 }
-.pc:hover .pc-num{-webkit-text-stroke-color:rgba(255,255,255,.26);}
-.pc-staff .pc-num{font-size:1.4rem;letter-spacing:.04em;margin-bottom:.4rem;}
+.pc:hover .pc-bg-photo{opacity:.55;transform:scale(1.03);}
+
+/* Gradiente che garantisce sempre la leggibilità del testo */
+.pc-gradient{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(to top,rgba(6,6,14,.98) 0%,rgba(6,6,14,.7) 35%,rgba(6,6,14,.1) 100%);
+  pointer-events:none;
+}
+
+/* Numero maglia — watermark top-right */
+.pc-num{
+  position:absolute;top:.4rem;right:.7rem;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:3.5rem;line-height:1;
+  color:transparent;
+  -webkit-text-stroke:1.5px rgba(255,255,255,.15);
+  z-index:2;
+  transition:-webkit-text-stroke-color .3s,transform .3s;
+  letter-spacing:-.02em;
+  pointer-events:none;
+}
+.pc:hover .pc-num{-webkit-text-stroke-color:rgba(255,255,255,.4);transform:translateY(2px);}
+.pc-staff .pc-num{font-size:1.3rem;letter-spacing:.04em;-webkit-text-stroke:1px rgba(255,255,255,.2);top:.7rem;}
+
+/* Testo in basso */
+.pc-content{position:relative;z-index:3;padding:1rem .85rem .85rem;}
 .pc-name{
   font-family:'Barlow Condensed',sans-serif;font-weight:800;
-  font-size:.9rem;color:var(--white);text-transform:uppercase;
-  letter-spacing:.04em;line-height:1.1;margin-bottom:3px;
-  position:relative;z-index:3;
+  font-size:1.05rem;color:var(--white);text-transform:uppercase;
+  letter-spacing:.04em;line-height:1.1;margin-bottom:2px;
 }
-.pc-role{font-size:.58rem;text-transform:uppercase;letter-spacing:.14em;position:relative;z-index:3;}
+.pc-role{font-size:.58rem;text-transform:uppercase;letter-spacing:.14em;font-weight:600;}
 .pc-role.portiere{color:#FFD700;}
 .pc-role.centrale{color:var(--blue-md);}
 .pc-role.laterale{color:#4ECDC4;}
 .pc-role.pivot{color:#FF6B8A;}
 .pc-role.staff{color:#B0A0FF;}
-.pc-photo-wrap{position:relative;width:100%;margin-bottom:.8rem;overflow:hidden;border-radius:2px;}
-.pc-photo{width:100%;height:128px;object-fit:cover;filter:brightness(.82) saturate(1.1);transition:filter .4s;}
-.pc:hover .pc-photo{filter:brightness(1) saturate(1.2);}
-.pc-photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,6,14,.85) 0%,transparent 60%);}
+
+/* Accent bar colorata per ruolo — top della card */
+.pc-accent{position:absolute;top:0;left:0;right:0;height:3px;z-index:4;transition:height .3s;}
+.pc:hover .pc-accent{height:4px;}
+.pc-accent.portiere{background:linear-gradient(90deg,#FFD700 0%,transparent 80%);}
+.pc-accent.centrale{background:linear-gradient(90deg,var(--blue-md) 0%,transparent 80%);}
+.pc-accent.laterale{background:linear-gradient(90deg,#4ECDC4 0%,transparent 80%);}
+.pc-accent.pivot{background:linear-gradient(90deg,#FF6B8A 0%,transparent 80%);}
+.pc-accent.staff{background:linear-gradient(90deg,#B0A0FF 0%,transparent 80%);}
+
+/* Overlay effetto foil olografico (iniettato da JS) */
 .pc-foil{
-  position:absolute;inset:0;z-index:5;border-radius:3px;
+  position:absolute;inset:0;z-index:5;border-radius:6px;
   pointer-events:none;opacity:0;transition:opacity .3s;
   background:radial-gradient(circle at 50% 50%,rgba(200,16,46,0) 0%,rgba(0,80,204,0) 40%,transparent 70%);
   mix-blend-mode:screen;
 }
 .pc:hover .pc-foil{opacity:1;}
-.pc-ea-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(165deg,rgba(0,20,70,.6) 0%,rgba(6,6,14,.5) 50%,rgba(90,4,18,.35) 100%);opacity:0;transition:opacity .5s;}
+/* Overlay EA e video bg (iniettati da JS — compatibilità) */
+.pc-ea-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(165deg,rgba(0,20,70,.55) 0%,rgba(6,6,14,.45) 50%,rgba(90,4,18,.3) 100%);opacity:0;transition:opacity .5s;}
 .pc-bg-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .65s;pointer-events:none;z-index:0;filter:blur(1.5px) brightness(.5) saturate(1.4);}
 .pc:hover .pc-ea-overlay,.pc.t-hover .pc-ea-overlay{opacity:1;}
 .pc:hover .pc-bg-media,.pc.t-hover .pc-bg-media{opacity:1;}
@@ -557,10 +624,12 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 /* ============================================================
    RESPONSIVE
 ============================================================ */
+@media(max-width:1200px){
+  .squad-grid{grid-template-columns:repeat(3,1fr);}
+}
 @media(max-width:1050px){
   .news-grid{grid-template-columns:repeat(2,1fr);}
   .card.featured{grid-column:1 / -1;flex-direction:row;}
-  .squad-grid{grid-template-columns:repeat(3,1fr);}
 }
 @media(max-width:900px){
   .mc-content{grid-template-columns:1fr;}
@@ -576,13 +645,22 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 @media(max-width:800px){
   .hamburger{display:flex;}
   .nav-links{display:none;}
+  .hero-panel::before{width:100%;clip-path:polygon(0 56%,100% 47%,100% 100%,0 100%);}
+  .hero-panel::after{width:100%;clip-path:polygon(0 56%,5% 56%,5% 100%,0 100%);}
+  .hero-stats{gap:1.2rem 1.8rem;}
+}
+@media(max-width:768px){
+  /* Squad — card 2 colonne, aspect-ratio ridotto */
+  .squad-grid{grid-template-columns:repeat(2,1fr);gap:.85rem;}
+  .pc{aspect-ratio:1/1.45;}
+  .pc-num{font-size:2.8rem;top:.2rem;right:.5rem;}
+  .pc-name{font-size:.88rem;}
+  .pc-role{font-size:.52rem;}
+  /* Tab squadra a colonna su mobile */
   .squad-tabs{width:100%;flex-direction:column;}
   .sq-tab{padding:.82rem 0;width:100%;}
   .sq-tab::after{display:none;}
   .sq-tab.active{color:var(--red);}
-  .hero-panel::before{width:100%;clip-path:polygon(0 56%,100% 47%,100% 100%,0 100%);}
-  .hero-panel::after{width:100%;clip-path:polygon(0 56%,5% 56%,5% 100%,0 100%);}
-  .hero-stats{gap:1.2rem 1.8rem;}
 }
 @media(max-width:700px){
   .news-grid{grid-template-columns:1fr;}
@@ -592,31 +670,14 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   .footer-top,.footer-bottom{flex-direction:column;align-items:flex-start;}
   .kc-item:not(:last-child){border-right:none;margin-right:0;padding-right:0;}
   .kit-credit-bar{flex-direction:column;}
-  .squad-grid{grid-template-columns:repeat(2,1fr);gap:.75rem;}
-  .pc{padding:0;min-height:110px;display:grid;grid-template-columns:1fr 72px;grid-template-rows:auto auto auto 1fr;grid-template-areas:"num photo" "name photo" "role photo" "gap photo";align-items:start;gap:0;}
-  .pc-num{grid-area:num;font-size:2.6rem;line-height:1;padding:.7rem 0 .15rem .8rem;margin-bottom:0;}
-  .pc-name{grid-area:name;font-size:.75rem;padding:0 .5rem 0 .8rem;white-space:normal;word-break:break-word;}
-  .pc-role{grid-area:role;padding:0 .5rem .7rem .8rem;}
-  .pc-photo-wrap{grid-area:photo;width:72px;height:100%;min-height:110px;margin-bottom:0;border-radius:0 3px 3px 0;overflow:hidden;position:relative;}
-  .pc-photo{width:100%;height:100%;min-height:110px;object-fit:cover;object-position:top center;}
-  .pc-photo-overlay{display:none;}
-  .pc.pc-staff{grid-template-columns:1fr;grid-template-areas:"num" "name" "role";padding:.9rem 1rem;min-height:auto;}
-  .pc.pc-staff .pc-num{padding:0 0 .35rem 0;}
-  .pc.pc-staff .pc-name{padding:0;}
-  .pc.pc-staff .pc-role{padding:0;}
-  .pc:not(:has(.pc-photo-wrap)){grid-template-columns:1fr;grid-template-areas:"num" "name" "role" "gap";padding:.8rem 1rem;}
-  .pc:not(:has(.pc-photo-wrap)) .pc-num{padding:0 0 .15rem 0;}
-  .pc:not(:has(.pc-photo-wrap)) .pc-name{padding:0;}
-  .pc:not(:has(.pc-photo-wrap)) .pc-role{padding:0;}
 }
 @media(max-width:600px){
   .sec-label::before{display:none;}
   .contacts-grid{grid-template-columns:1fr;}
 }
-@media(max-width:420px){
+@media(max-width:400px){
   .squad-grid{grid-template-columns:1fr;}
-  .pc{grid-template-columns:1fr 60px;}
-  .pc-photo-wrap{width:60px;}
+  .pc-name{font-size:.82rem;}
 }
 </style>
 </head>
@@ -734,6 +795,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 
 <!-- ══════════════════════════════════════════════
      SEZIONE 2 — SQUADRA (La Rosa)
+     HTML da index_da_rivedere_dopo.html — copia conforme
 ══════════════════════════════════════════════ -->
 <section id="scene3" aria-labelledby="squadra-h">
   <div class="scene3-header">
@@ -750,7 +812,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
     </button>
   </div>
 
-  <!-- ── Prima Squadra ── -->
+  <!-- Prima Squadra -->
   <div class="tab-panel active" id="panel-prima" role="tabpanel" aria-labelledby="tab-prima">
     <div class="role-leg">
       <span class="rdot portiere">Portiere</span>
@@ -760,38 +822,141 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       <span class="rdot staff">Staff</span>
     </div>
     <div class="squad-grid" id="gridPrima">
-      <div class="pc pc-staff"><div class="pc-num">PRES</div><div class="pc-name">Federico Morrone</div><div class="pc-role staff">Presidente</div></div>
-      <div class="pc pc-staff"><div class="pc-num">MIST</div><div class="pc-name">Marcello Galbiati</div><div class="pc-role staff">Mister</div></div>
-      <div class="pc pc-staff"><div class="pc-num">P.P</div><div class="pc-name">Emanuele Marchetti</div><div class="pc-role staff">Prep. Portieri</div></div>
-      <div class="pc"><div class="pc-num">01</div><div class="pc-name">Niccolò Renna</div><div class="pc-role portiere">Portiere · Cap.</div></div>
-      <div class="pc"><div class="pc-num">12</div><div class="pc-name">Matteo Petro</div><div class="pc-role portiere">Portiere</div></div>
-      <div class="pc">
-        <div class="pc-num">77</div>
-        <div class="pc-photo-wrap">
-          <picture>
-            <source srcset="arena.png" type="image/png">
-            <img src="arena.png" alt="Amos Arena" class="pc-photo">
-          </picture>
-          <div class="pc-photo-overlay"></div>
-        </div>
-        <div class="pc-name">Amos Arena</div>
-        <div class="pc-role portiere">Portiere</div>
+      <!-- STAFF -->
+      <div class="pc pc-staff">
+        <div class="pc-accent staff"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">PRES</div>
+        <div class="pc-content"><div class="pc-name">Federico Morrone</div><div class="pc-role staff">Presidente</div></div>
       </div>
-      <div class="pc"><div class="pc-num">03</div><div class="pc-name">Alessandro Porta</div><div class="pc-role centrale">Centrale</div></div>
-      <div class="pc"><div class="pc-num">04</div><div class="pc-name">Roberto Martini</div><div class="pc-role centrale">Centrale</div></div>
-      <div class="pc"><div class="pc-num">05</div><div class="pc-name">Luca Ferrari</div><div class="pc-role centrale">Centrale</div></div>
-      <div class="pc"><div class="pc-num">07</div><div class="pc-name">Andrea Colombo</div><div class="pc-role centrale">Centrale</div></div>
-      <div class="pc"><div class="pc-num">08</div><div class="pc-name">Federico Gallo</div><div class="pc-role laterale">Laterale</div></div>
-      <div class="pc"><div class="pc-num">09</div><div class="pc-name">Davide Conti</div><div class="pc-role laterale">Laterale</div></div>
-      <div class="pc"><div class="pc-num">11</div><div class="pc-name">Matteo Romano</div><div class="pc-role laterale">Laterale</div></div>
-      <div class="pc"><div class="pc-num">14</div><div class="pc-name">Simone Villa</div><div class="pc-role laterale">Laterale</div></div>
-      <div class="pc"><div class="pc-num">06</div><div class="pc-name">Alessandro Bruno</div><div class="pc-role pivot">Pivot</div></div>
-      <div class="pc"><div class="pc-num">10</div><div class="pc-name">Simone Ricci</div><div class="pc-role pivot">Pivot · V.Cap.</div></div>
-      <div class="pc"><div class="pc-num">13</div><div class="pc-name">Thomas Greco</div><div class="pc-role pivot">Pivot</div></div>
+      <div class="pc pc-staff">
+        <div class="pc-accent staff"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">MIST</div>
+        <div class="pc-content"><div class="pc-name">Marcello Galbiati</div><div class="pc-role staff">Allenatore</div></div>
+      </div>
+      <div class="pc pc-staff">
+        <div class="pc-accent staff"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">VICE</div>
+        <div class="pc-content"><div class="pc-name">Marco Testa</div><div class="pc-role staff">Vice Allenatore</div></div>
+      </div>
+      <div class="pc pc-staff">
+        <div class="pc-accent staff"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">ATL</div>
+        <div class="pc-content"><div class="pc-name">Luca Verga</div><div class="pc-role staff">Prep. Atletico</div></div>
+      </div>
+      <!-- PORTIERI -->
+      <div class="pc">
+        <div class="pc-accent portiere"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Marco Colombo" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">1</div>
+        <div class="pc-content"><div class="pc-name">Marco Colombo</div><div class="pc-role portiere">Portiere</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent portiere"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Francesco Cantù" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">12</div>
+        <div class="pc-content"><div class="pc-name">Francesco Cantù</div><div class="pc-role portiere">Portiere</div></div>
+      </div>
+      <!-- CENTRALI -->
+      <div class="pc">
+        <div class="pc-accent centrale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Andrea Riva" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">2</div>
+        <div class="pc-content"><div class="pc-name">Andrea Riva</div><div class="pc-role centrale">Centrale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent centrale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Simone Fumagalli" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">4</div>
+        <div class="pc-content"><div class="pc-name">Simone Fumagalli</div><div class="pc-role centrale">Centrale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent centrale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Giacomo Molteni" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">13</div>
+        <div class="pc-content"><div class="pc-name">Giacomo Molteni</div><div class="pc-role centrale">Centrale</div></div>
+      </div>
+      <!-- LATERALI -->
+      <div class="pc">
+        <div class="pc-accent laterale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Luca Brambilla" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">3</div>
+        <div class="pc-content"><div class="pc-name">Luca Brambilla</div><div class="pc-role laterale">Laterale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent laterale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Davide Citterio" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">5</div>
+        <div class="pc-content"><div class="pc-name">Davide Citterio</div><div class="pc-role laterale">Laterale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent laterale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Roberto Bernasconi" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">6</div>
+        <div class="pc-content"><div class="pc-name">Roberto Bernasconi</div><div class="pc-role laterale">Laterale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent laterale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Matteo Sala" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">7</div>
+        <div class="pc-content"><div class="pc-name">Matteo Sala</div><div class="pc-role laterale">Laterale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent laterale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Paolo Viganò" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">8</div>
+        <div class="pc-content"><div class="pc-name">Paolo Viganò</div><div class="pc-role laterale">Laterale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent laterale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Nicola Airoldi" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">11</div>
+        <div class="pc-content"><div class="pc-name">Nicola Airoldi</div><div class="pc-role laterale">Laterale</div></div>
+      </div>
+      <!-- PIVOT -->
+      <div class="pc">
+        <div class="pc-accent pivot"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Christian Ferrario" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">9</div>
+        <div class="pc-content"><div class="pc-name">Christian Ferrario</div><div class="pc-role pivot">Pivot</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent pivot"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Emanuele Castelli" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">10</div>
+        <div class="pc-content"><div class="pc-name">Emanuele Castelli</div><div class="pc-role pivot">Pivot</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent pivot"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Alessandro Rizzi" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">14</div>
+        <div class="pc-content"><div class="pc-name">Alessandro Rizzi</div><div class="pc-role pivot">Pivot</div></div>
+      </div>
     </div>
   </div>
 
-  <!-- ── Seconda Squadra ── -->
+  <!-- Seconda Squadra -->
   <div class="tab-panel" id="panel-seconda" role="tabpanel" aria-labelledby="tab-seconda">
     <div class="role-leg">
       <span class="rdot portiere">Portiere</span>
@@ -801,32 +966,69 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       <span class="rdot staff">Staff</span>
     </div>
     <div class="squad-grid" id="gridSeconda">
-      <div class="pc pc-staff"><div class="pc-num">MIST</div><div class="pc-name">Antonio Sala</div><div class="pc-role staff">Mister</div></div>
-      <div class="pc pc-staff"><div class="pc-num">P.P</div><div class="pc-name">Marco Neri</div><div class="pc-role staff">Prep. Portieri</div></div>
-      <div class="pc">
-        <div class="pc-num">01</div>
-        <div class="pc-photo-wrap">
-          <picture>
-            <source srcset="arena.png" type="image/png">
-            <img src="arena.png" alt="Amos Arena" class="pc-photo">
-          </picture>
-          <div class="pc-photo-overlay"></div>
-        </div>
-        <div class="pc-name">Amos Arena</div>
-        <div class="pc-role portiere">Portiere · Cap.</div>
+      <div class="pc pc-staff">
+        <div class="pc-accent staff"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">MIST</div>
+        <div class="pc-content"><div class="pc-name">Antonio Rivolta</div><div class="pc-role staff">Allenatore</div></div>
       </div>
-      <div class="pc"><div class="pc-num">16</div><div class="pc-name">Diego Fusi</div><div class="pc-role portiere">Portiere</div></div>
-      <div class="pc"><div class="pc-num">03</div><div class="pc-name">Alberto Conti</div><div class="pc-role centrale">Centrale</div></div>
-      <div class="pc"><div class="pc-num">04</div><div class="pc-name">Marco Sanna</div><div class="pc-role centrale">Centrale</div></div>
-      <div class="pc"><div class="pc-num">05</div><div class="pc-name">Paolo Rizzo</div><div class="pc-role centrale">Centrale</div></div>
-      <div class="pc"><div class="pc-num">07</div><div class="pc-name">Cristian Moreno</div><div class="pc-role centrale">Centrale</div></div>
-      <div class="pc"><div class="pc-num">08</div><div class="pc-name">Lorenzo Ricci</div><div class="pc-role laterale">Laterale</div></div>
-      <div class="pc"><div class="pc-num">09</div><div class="pc-name">Mattia Greco</div><div class="pc-role laterale">Laterale</div></div>
-      <div class="pc"><div class="pc-num">11</div><div class="pc-name">Giovanni Ferrari</div><div class="pc-role laterale">Laterale</div></div>
-      <div class="pc"><div class="pc-num">14</div><div class="pc-name">Filippo Bruno</div><div class="pc-role laterale">Laterale</div></div>
-      <div class="pc"><div class="pc-num">06</div><div class="pc-name">Kevin Sala</div><div class="pc-role pivot">Pivot</div></div>
-      <div class="pc"><div class="pc-num">10</div><div class="pc-name">Jacopo Arena</div><div class="pc-role pivot">Pivot · V.Cap.</div></div>
-      <div class="pc"><div class="pc-num">12</div><div class="pc-name">Edoardo Neri</div><div class="pc-role pivot">Pivot</div></div>
+      <div class="pc">
+        <div class="pc-accent portiere"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Stefano Longo" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">1</div>
+        <div class="pc-content"><div class="pc-name">Stefano Longo</div><div class="pc-role portiere">Portiere</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent centrale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Marco Meroni" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">4</div>
+        <div class="pc-content"><div class="pc-name">Marco Meroni</div><div class="pc-role centrale">Centrale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent centrale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Giorgio Villa" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">6</div>
+        <div class="pc-content"><div class="pc-name">Giorgio Villa</div><div class="pc-role centrale">Centrale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent laterale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Riccardo Frigerio" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">7</div>
+        <div class="pc-content"><div class="pc-name">Riccardo Frigerio</div><div class="pc-role laterale">Laterale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent laterale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Davide Colombo" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">8</div>
+        <div class="pc-content"><div class="pc-name">Davide Colombo</div><div class="pc-role laterale">Laterale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent laterale"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Andrea Terraneo" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">11</div>
+        <div class="pc-content"><div class="pc-name">Andrea Terraneo</div><div class="pc-role laterale">Laterale</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent pivot"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Fabio Ferrante" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">9</div>
+        <div class="pc-content"><div class="pc-name">Fabio Ferrante</div><div class="pc-role pivot">Pivot</div></div>
+      </div>
+      <div class="pc">
+        <div class="pc-accent pivot"></div>
+        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Lorenzo Mazza" loading="lazy">
+        <div class="pc-gradient"></div>
+        <div class="pc-num">10</div>
+        <div class="pc-content"><div class="pc-name">Lorenzo Mazza</div><div class="pc-role pivot">Pivot</div></div>
+      </div>
     </div>
   </div>
 </section>
