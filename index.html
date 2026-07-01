@@ -293,7 +293,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 
 /*
  * DEFENSIVE DESIGN: .pc non ha opacity:0 nel CSS.
- * animateFan() imposta lo stato iniziale via gsap.set() (additivo).
+ * Le card entrano via revealCards() con gsap.set() (additivo).
  * Se JS fallisce le card restano visibili per default.
  *
  * Grid auto-fill: fluida da 4 a 3 col senza breakpoint rigidi.
@@ -313,17 +313,18 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   border-radius:6px;
   position:relative;
   overflow:hidden;
-  transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;
+  transition:opacity .3s ease, border-color .3s ease, box-shadow .3s ease;
   cursor:default;
   width:100%;
   aspect-ratio:3/4;
   display:flex;
   flex-direction:column;
   justify-content:flex-end;
+  opacity:0.6;
 }
 .pc:hover{
+  opacity:1;
   border-color:rgba(200,16,46,.4);
-  transform:translateY(-5px);
   box-shadow:0 20px 48px rgba(0,0,0,.55);
 }
 .pc::before{
@@ -389,19 +390,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 .pc-accent.pivot{background:linear-gradient(90deg,#FF6B8A 0%,transparent 80%);}
 .pc-accent.staff{background:linear-gradient(90deg,#B0A0FF 0%,transparent 80%);}
 
-/* Overlay effetto foil olografico (iniettato da JS) */
-.pc-foil{
-  position:absolute;inset:0;z-index:5;border-radius:6px;
-  pointer-events:none;opacity:0;transition:opacity .3s;
-  background:radial-gradient(circle at 50% 50%,rgba(200,16,46,0) 0%,rgba(0,80,204,0) 40%,transparent 70%);
-  mix-blend-mode:screen;
-}
-.pc:hover .pc-foil{opacity:1;}
-/* Overlay EA e video bg (iniettati da JS — compatibilità) */
-.pc-ea-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(165deg,rgba(0,20,70,.55) 0%,rgba(6,6,14,.45) 50%,rgba(90,4,18,.3) 100%);opacity:0;transition:opacity .5s;}
-.pc-bg-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .65s;pointer-events:none;z-index:0;filter:blur(1.5px) brightness(.5) saturate(1.4);}
-.pc:hover .pc-ea-overlay,.pc.t-hover .pc-ea-overlay{opacity:1;}
-.pc:hover .pc-bg-media,.pc.t-hover .pc-bg-media{opacity:1;}
+
 
 /* ============================================================
    SEZIONE 3 — MATCH CENTER (#match-center / Risultati)
@@ -825,28 +814,28 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       <!-- STAFF -->
       <div class="pc pc-staff">
         <div class="pc-accent staff"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">PRES</div>
         <div class="pc-content"><div class="pc-name">Federico Morrone</div><div class="pc-role staff">Presidente</div></div>
       </div>
       <div class="pc pc-staff">
         <div class="pc-accent staff"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">MIST</div>
         <div class="pc-content"><div class="pc-name">Marcello Galbiati</div><div class="pc-role staff">Allenatore</div></div>
       </div>
       <div class="pc pc-staff">
         <div class="pc-accent staff"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">VICE</div>
         <div class="pc-content"><div class="pc-name">Marco Testa</div><div class="pc-role staff">Vice Allenatore</div></div>
       </div>
       <div class="pc pc-staff">
         <div class="pc-accent staff"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">ATL</div>
         <div class="pc-content"><div class="pc-name">Luca Verga</div><div class="pc-role staff">Prep. Atletico</div></div>
@@ -854,36 +843,36 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       <!-- PORTIERI -->
       <div class="pc">
         <div class="pc-accent portiere"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Niccolò Renna" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Marco Colombo" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">1</div>
-        <div class="pc-content"><div class="pc-name">Niccolò Renna</div><div class="pc-role portiere">Portiere</div></div>
+        <div class="pc-content"><div class="pc-name">Marco Colombo</div><div class="pc-role portiere">Portiere</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent portiere"></div>
-        <img src="arena.png" class="pc-bg-photo" alt="Amos Arena" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Francesco Cantù" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">12</div>
-        <div class="pc-content"><div class="pc-name">Amos Arena</div><div class="pc-role portiere">Portiere</div></div>
+        <div class="pc-content"><div class="pc-name">Francesco Cantù</div><div class="pc-role portiere">Portiere</div></div>
       </div>
       <!-- CENTRALI -->
       <div class="pc">
         <div class="pc-accent centrale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Andrea Riva" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Andrea Riva" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">2</div>
         <div class="pc-content"><div class="pc-name">Andrea Riva</div><div class="pc-role centrale">Centrale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent centrale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Simone Fumagalli" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Simone Fumagalli" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">4</div>
         <div class="pc-content"><div class="pc-name">Simone Fumagalli</div><div class="pc-role centrale">Centrale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent centrale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Giacomo Molteni" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Giacomo Molteni" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">13</div>
         <div class="pc-content"><div class="pc-name">Giacomo Molteni</div><div class="pc-role centrale">Centrale</div></div>
@@ -891,42 +880,42 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       <!-- LATERALI -->
       <div class="pc">
         <div class="pc-accent laterale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Luca Brambilla" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Luca Brambilla" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">3</div>
         <div class="pc-content"><div class="pc-name">Luca Brambilla</div><div class="pc-role laterale">Laterale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent laterale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Davide Citterio" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Davide Citterio" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">5</div>
         <div class="pc-content"><div class="pc-name">Davide Citterio</div><div class="pc-role laterale">Laterale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent laterale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Roberto Bernasconi" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Roberto Bernasconi" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">6</div>
         <div class="pc-content"><div class="pc-name">Roberto Bernasconi</div><div class="pc-role laterale">Laterale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent laterale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Matteo Sala" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Matteo Sala" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">7</div>
         <div class="pc-content"><div class="pc-name">Matteo Sala</div><div class="pc-role laterale">Laterale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent laterale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Paolo Viganò" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Paolo Viganò" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">8</div>
         <div class="pc-content"><div class="pc-name">Paolo Viganò</div><div class="pc-role laterale">Laterale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent laterale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Nicola Airoldi" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Nicola Airoldi" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">11</div>
         <div class="pc-content"><div class="pc-name">Nicola Airoldi</div><div class="pc-role laterale">Laterale</div></div>
@@ -934,21 +923,21 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
       <!-- PIVOT -->
       <div class="pc">
         <div class="pc-accent pivot"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Christian Ferrario" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Christian Ferrario" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">9</div>
         <div class="pc-content"><div class="pc-name">Christian Ferrario</div><div class="pc-role pivot">Pivot</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent pivot"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Emanuele Castelli" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Emanuele Castelli" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">10</div>
         <div class="pc-content"><div class="pc-name">Emanuele Castelli</div><div class="pc-role pivot">Pivot</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent pivot"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Alessandro Rizzi" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Alessandro Rizzi" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">14</div>
         <div class="pc-content"><div class="pc-name">Alessandro Rizzi</div><div class="pc-role pivot">Pivot</div></div>
@@ -968,63 +957,63 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
     <div class="squad-grid" id="gridSeconda">
       <div class="pc pc-staff">
         <div class="pc-accent staff"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">MIST</div>
         <div class="pc-content"><div class="pc-name">Antonio Rivolta</div><div class="pc-role staff">Allenatore</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent portiere"></div>
-        <img src="arena.png" class="pc-bg-photo" alt="Amos Arena" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Stefano Longo" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">1</div>
-        <div class="pc-content"><div class="pc-name">Amos Arena</div><div class="pc-role portiere">Portiere</div></div>
+        <div class="pc-content"><div class="pc-name">Stefano Longo</div><div class="pc-role portiere">Portiere</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent centrale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Marco Meroni" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Marco Meroni" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">4</div>
         <div class="pc-content"><div class="pc-name">Marco Meroni</div><div class="pc-role centrale">Centrale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent centrale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Giorgio Villa" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Giorgio Villa" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">6</div>
         <div class="pc-content"><div class="pc-name">Giorgio Villa</div><div class="pc-role centrale">Centrale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent laterale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Riccardo Frigerio" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Riccardo Frigerio" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">7</div>
         <div class="pc-content"><div class="pc-name">Riccardo Frigerio</div><div class="pc-role laterale">Laterale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent laterale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Davide Colombo" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Davide Colombo" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">8</div>
         <div class="pc-content"><div class="pc-name">Davide Colombo</div><div class="pc-role laterale">Laterale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent laterale"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Andrea Terraneo" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Andrea Terraneo" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">11</div>
         <div class="pc-content"><div class="pc-name">Andrea Terraneo</div><div class="pc-role laterale">Laterale</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent pivot"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Fabio Ferrante" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Fabio Ferrante" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">9</div>
         <div class="pc-content"><div class="pc-name">Fabio Ferrante</div><div class="pc-role pivot">Pivot</div></div>
       </div>
       <div class="pc">
         <div class="pc-accent pivot"></div>
-        <img src="path/to/image.jpg" class="pc-bg-photo" alt="Lorenzo Mazza" loading="lazy">
+        <img src="path/to/image.png" class="pc-bg-photo" alt="Lorenzo Mazza" loading="lazy">
         <div class="pc-gradient"></div>
         <div class="pc-num">10</div>
         <div class="pc-content"><div class="pc-name">Lorenzo Mazza</div><div class="pc-role pivot">Pivot</div></div>
@@ -1563,82 +1552,31 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
   })();
 
   // ────────────────────────────────────────────────────────────
-  // 4. PLAYER CARDS — Fan Entry + Holographic Foil
-  //    DEFENSIVE DESIGN: .pc non ha opacity:0 in CSS.
-  //    gsap.set() imposta lo stato iniziale PRIMA che le card
-  //    siano visibili a schermo (sono sotto il fold).
-  //    Se GSAP non funziona → card visibili per default ✓
+  // 4. PLAYER CARDS — scroll reveal semplice (senza fan/foil/tilt)
+  //    Le card entrano da sotto con fade, poi restano ferme.
+  //    Opacità base 0.6 → 1.0 gestita interamente via CSS :hover.
   // ────────────────────────────────────────────────────────────
-  function animateFan(gridId) {
-    var cards = document.querySelectorAll('#' + gridId + ' .pc');
-    var total = cards.length;
-
-    // Calcola angoli fan e imposta stato iniziale via GSAP (non CSS)
-    cards.forEach(function(c, i) {
-      var mid = (total - 1) / 2;
-      var fanAngle = (i - mid) * 2.8;
-      c.style.setProperty('--fan-rot', fanAngle + 'deg');
+  (function revealCards() {
+    var grids = ['gridPrima', 'gridSeconda'];
+    grids.forEach(function(gridId) {
+      var cards = document.querySelectorAll('#' + gridId + ' .pc');
+      gsap.set(cards, { opacity: 0, y: 40 });
+      ScrollTrigger.create({
+        trigger: '#' + gridId,
+        start: 'top 88%',
+        once: true,
+        onEnter: function() {
+          gsap.to(cards, {
+            opacity: 0.6,   /* rispetta l'opacità base CSS */
+            y: 0,
+            duration: .7,
+            stagger: { amount: .8, from: 'start' },
+            ease: 'power3.out'
+          });
+        }
+      });
     });
-    gsap.set(cards, { opacity: 0, y: 80, rotate: 'var(--fan-rot)' });
-
-    ScrollTrigger.create({
-      trigger: '#' + gridId,
-      start: 'top 85%',
-      once: true,
-      onEnter: function() {
-        gsap.to(cards, {
-          opacity: 1, y: 0, rotate: 0,
-          duration: .9,
-          stagger: { amount: 1.1, from: 'center' },
-          ease: 'back.out(1.4)'
-        });
-      }
-    });
-  }
-  animateFan('gridPrima');
-  animateFan('gridSeconda');
-
-  // Foil olografico e 3D tilt al passaggio del mouse
-  document.querySelectorAll('.pc:not(.pc-staff)').forEach(function(card) {
-    var foil = document.createElement('div');
-    foil.className = 'pc-foil';
-    card.appendChild(foil);
-
-    var eaOv = document.createElement('div');
-    eaOv.className = 'pc-ea-overlay';
-    card.insertBefore(eaOv, card.firstChild);
-
-    var vid = document.createElement('video');
-    vid.className = 'pc-bg-media';
-    vid.muted = true; vid.loop = true; vid.playsInline = true;
-    card.insertBefore(vid, card.firstChild);
-
-    card.addEventListener('mousemove', function(e) {
-      var r = card.getBoundingClientRect();
-      var px = ((e.clientX - r.left) / r.width * 100).toFixed(1);
-      var py = ((e.clientY - r.top)  / r.height * 100).toFixed(1);
-      foil.style.background = 'radial-gradient(circle at ' + px + '% ' + py + '%, ' +
-        'rgba(255,80,120,.28) 0%, rgba(80,80,255,.22) 25%, ' +
-        'rgba(80,220,200,.18) 50%, rgba(255,200,80,.12) 70%, transparent 90%)';
-      var rx = ((e.clientY - r.top)  / r.height - .5) * -14;
-      var ry = ((e.clientX - r.left) / r.width  - .5) *  14;
-      gsap.to(card, { rotateX: rx, rotateY: ry, duration: .3, ease: 'power2.out', transformPerspective: 500, transformOrigin: 'center center' });
-    });
-    card.addEventListener('mouseleave', function() {
-      foil.style.background = '';
-      gsap.to(card, { rotateX: 0, rotateY: 0, duration: .5, ease: 'elastic.out(1,.6)' });
-    });
-    card.addEventListener('click', function() {
-      if (window.matchMedia('(hover:hover)').matches) return;
-      card.classList.toggle('t-hover');
-    });
-    card.addEventListener('mouseenter', function() {
-      if (vid.src && vid.src !== window.location.href) vid.play().catch(function(){});
-    });
-    card.addEventListener('mouseleave', function() {
-      if (vid.readyState > 0) { vid.pause(); vid.currentTime = 0; }
-    });
-  });
+  })();
 
   // ────────────────────────────────────────────────────────────
   // 5. SCROLL REVEAL GENERICO (.fi)
