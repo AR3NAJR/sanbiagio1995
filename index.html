@@ -335,21 +335,24 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 }
 .pc:hover::before{height:100%;}
 
-/* Foto di sfondo — aggiungere src="percorso/immagine.jpg" manualmente */
-.pc-bg-photo{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;object-position:center top;
-  opacity:.28;
-  transition:opacity .4s,transform .4s;
-  pointer-events:none;z-index:0;
+/* Foto di sfondo - Modificata per il tuo 60% -> 100% */
+.pc-bg-photo {
+  position: absolute; 
+  inset: 0; 
+  width: 100%; 
+  height: 100%;
+  object-fit: cover; 
+  object-position: center top;
+  opacity: 0.6; /* <--- Qui parte al 60% */
+  transition: opacity 0.4s ease, transform 0.4s;
+  pointer-events: none; 
+  z-index: 0;
 }
-.pc:hover .pc-bg-photo{opacity:.55;transform:scale(1.03);}
 
-/* Gradiente che garantisce sempre la leggibilità del testo */
-.pc-gradient{
-  position:absolute;inset:0;z-index:1;
-  background:linear-gradient(to top,rgba(6,6,14,.98) 0%,rgba(6,6,14,.7) 35%,rgba(6,6,14,.1) 100%);
-  pointer-events:none;
+/* Hover - Qui la foto diventa piena */
+.pc:hover .pc-bg-photo {
+  opacity: 1; /* <--- Qui arriva al 100% */
+  transform: scale(1.05);
 }
 
 /* Numero maglia — watermark top-right */
