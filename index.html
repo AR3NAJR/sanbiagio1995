@@ -75,6 +75,13 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
   border-bottom:1.5px solid transparent;
   transition:background .4s,border-color .4s,backdrop-filter .4s;
 }
+/* Scroll progress bar — avanzamento lettura pagina */
+#scrollProgress{
+  position:fixed;top:0;left:0;width:100%;height:2px;
+  background:linear-gradient(90deg,var(--red) 0%,var(--blue-md) 100%);
+  transform:scaleX(0);transform-origin:left center;
+  z-index:950;pointer-events:none;will-change:transform;
+}
 .main-nav.scrolled{
   background:rgba(6,6,14,.96);
   backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
@@ -554,6 +561,10 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 .card-link{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--red);display:inline-flex;align-items:center;gap:7px;align-self:flex-start;transition:gap .2s;}
 .card-link::after{content:'→';}
 .card-link:hover{gap:13px;}
+.card-progress{margin-bottom:1.1rem;}
+.card-progress-track{width:100%;height:4px;background:rgba(0,0,0,.08);border-radius:2px;overflow:hidden;margin-bottom:.45rem;}
+.card-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--red) 0%,var(--blue-md) 100%);border-radius:2px;}
+.card-progress-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
 .card.featured{grid-column:1 / span 2;flex-direction:row;}
 .card.featured .card-vis{width:42%;flex-shrink:0;aspect-ratio:unset;}
 .card.featured .card-vis-txt{font-size:clamp(48px,7vw,110px);}
@@ -690,6 +701,8 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
 <!-- ══════════════════════════════════════════════
      NAVIGAZIONE
 ══════════════════════════════════════════════ -->
+<div id="scrollProgress" aria-hidden="true"></div>
+
 <nav class="main-nav" id="mainNav" aria-label="Navigazione principale">
   <a href="#scene1" class="nav-logo" aria-label="San Biagio 1995 A.S.D. – Homepage">
     <img src="https://b2-content.tuttocampo.it/Teams/Original/1009806.png?v=1" alt="San Biagio 1995 A.S.D." class="nav-logo-img" width="44" height="44" onerror="this.style.opacity='.3'">
@@ -1228,6 +1241,12 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
         <p class="card-date">12 Giugno 2025</p>
         <h3 class="card-title">La C1 è a due punti: il San Biagio 1995 A.S.D. non si ferma più</h3>
         <p class="card-excerpt">Cinque vittorie consecutive, un girone di ritorno da manuale e una classifica che, per la prima volta nella storia del club, sorride davvero. I rossoblu si trovano a soli due punti dalla promozione diretta in C1 — il traguardo inseguito da tre stagioni.</p>
+        <div class="card-progress">
+          <div class="card-progress-track">
+            <div class="card-progress-fill" data-target="92"></div>
+          </div>
+          <span class="card-progress-lbl">Distacco dalla promozione diretta in C1</span>
+        </div>
         <a href="#" class="card-link">Leggi tutto</a>
       </div>
     </article>
@@ -1789,6 +1808,45 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.05);padding:
     if (thGol) thGol.classList.add('s-desc');
 
     renderTable(team);
+  })();
+
+  // ────────────────────────────────────────────────────────────
+  // 12. SCROLL PROGRESS BAR
+  //     scaleX 0→1 legato all'avanzamento totale della pagina.
+  //     Solo transform (no layout), nessun pin: costo trascurabile.
+  //     Indicatore funzionale (non decorativo) → nessun gating su
+  //     prefers-reduced-motion, coerente col nav-tint esistente.
+  // ────────────────────────────────────────────────────────────
+  (function initScrollProgress() {
+    var bar = document.getElementById('scrollProgress');
+    if (!bar) return;
+    gsap.to(bar, {
+      scaleX: 1,
+      ease: 'none',
+      scrollTrigger: { start: 0, end: 'max', scrub: true }
+    });
+  })();
+
+  // ────────────────────────────────────────────────────────────
+  // 13. NEWS — INDICATORE "DISTACCO DALLA PROMOZIONE"
+  //     Riempimento one-shot al primo ingresso in viewport.
+  //     data-target sulla .card-progress-fill = valore da
+  //     aggiornare a mano con il dato reale di classifica.
+  // ────────────────────────────────────────────────────────────
+  (function initCardProgress() {
+    var fill = document.querySelector('.card-progress-fill');
+    if (!fill) return;
+    var target = parseFloat(fill.dataset.target) || 0;
+    if (reducedMotion) { fill.style.width = target + '%'; return; }
+    var progObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          gsap.to(fill, { width: target + '%', duration: 1.1, ease: 'power3.out' });
+          progObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    progObs.observe(fill.closest('.card'));
   })();
 
 })();
