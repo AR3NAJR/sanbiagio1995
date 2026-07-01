@@ -102,6 +102,13 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
 .hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
 .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
 
+/* Aumentiamo lo spessore della barra solo su desktop */
+@media (min-width: 1024px) {
+  #scrollProgress {
+    height: 5px; /* Qui puoi mettere 4, 5 o 6 a seconda di quanto la vuoi spessa */
+  }
+}
+
 /* ============================================================
    MOBILE OVERLAY
 ============================================================ */
